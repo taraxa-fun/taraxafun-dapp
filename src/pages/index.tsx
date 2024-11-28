@@ -6,7 +6,7 @@ import { Navbar } from "@/components/Navbar/navbar";
 import { PumpEmperor } from "@/components/Dashboard/PumpEmperor";
 import  { TokenSearch } from "@/components/Dashboard/TokenSection/tokenSearch";
 import { TokenGrid } from "@/components/Dashboard/TokenSection/tokenGrid";
-import { ToekenPagination } from "@/components/Dashboard/TokenSection/tokenPagination";
+import { TokenPagination } from "@/components/Dashboard/TokenSection/tokenPagination";
 import { TokenCreate } from "@/components/Dashboard/TokenSection/tokenCreate";
 import { TokenFilter } from "@/components/Dashboard/TokenSection/tokenFilter";
 
@@ -41,7 +41,7 @@ const Dashboard: NextPage = () => {
           <TokenCreate />
           <TokenFilter />
           <TokenGrid />
-          <ToekenPagination />
+          <TokenPagination />
         </div>
       </main>
     </>

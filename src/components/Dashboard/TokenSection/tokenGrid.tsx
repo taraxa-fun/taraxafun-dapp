@@ -6,49 +6,44 @@ import placeHodlerRounded from "../../../assets/placeholderNavRounded.png";
 import { TokenType } from "@/type/tokenType";
 
 export const TokenGrid = () => {
-    const { 
-      getCurrentTokens, 
-      isLoading, 
-      filteredTokens,
-      hasSearched 
-    } = useTokenStore();
-  
-    const currentTokens = getCurrentTokens();
-  
-    if (isLoading) {
-      return (
-        <div className="px-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 px-4">
-          {[...Array(10)].map((_, i) => (
-            <div key={i} className="flex flex-col">
-              <Skeleton className="h-40 w-full mb-4" />
-              <Skeleton className="h-4 w-3/4 mb-2" />
-              <Skeleton className="h-4 w-1/2" />
-            </div>
-          ))}
-        </div>
-      );
-    }
-  
-    if (hasSearched && filteredTokens?.length === 0) {
-      return (
-        <div className="px-4 text-center text-gray-400 py-8">
-          No tokens found for your search
-        </div>
-      );
-    }
-  
+  const { getCurrentTokens, isLoading, filteredTokens, hasSearched } =
+    useTokenStore();
+
+  const currentTokens = getCurrentTokens();
+
+  if (isLoading) {
+    return (
+      <div className="px-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        {[...Array(10)].map((_, i) => (
+          <div key={i} className="flex flex-col">
+            <Skeleton className="h-40 w-full mb-4" />
+            <Skeleton className="h-4 w-3/4 mb-2" />
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (hasSearched && filteredTokens?.length === 0) {
+    return (
+      <div className="px-4 text-center text-gray-400 py-8">
+        No tokens found for your search
+      </div>
+    );
+  }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 px-4">
+    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-10 px-4">
       {currentTokens.map((token: TokenType, index: number) => (
         <div key={`${token.symbol}-${index}`} className="flex flex-col">
-          <div className="mb-4">
+          <div className="mb-4 w-[200px] h-[200px] relative overflow-hidden flex items-center justify-center">
             <Image
               src={token.imagePath}
               alt={`Token ${token.creator}`}
               width={200}
               height={200}
-              className="w-full"
+              className="object-cover w-full h-full"
             />
           </div>
 
@@ -75,6 +70,9 @@ export const TokenGrid = () => {
             </div>
 
             <p className="text-gray-300 font-normal text-xs">
+              <span className="text-white font-bold">
+                {token.name} ({token.symbol}):
+              </span>{" "}
               {token.description}
             </p>
           </div>

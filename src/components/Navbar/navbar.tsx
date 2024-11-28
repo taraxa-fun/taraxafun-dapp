@@ -51,90 +51,67 @@ export const Navbar = () => {
       {isOpen && <div className="fixed inset-0 z-[100] backdrop-blur-sm" />}
 
       {/* Desktop Navbar */}
-      <nav className="fixed w-full lg:w-12/12 lg:mx-auto z-[101] lg:top-2 top-0 px-4 backdrop-blur-[10px] rounded-none lg:rounded-full">
-        <div className="flex items-center justify-between mx-auto py-2">
-          <div className="flex items-center gap-4">
-            <a href="/" className="flex-shrink-0">
-              <Image
-                src={taraxafunlogo}
-                alt="Taraxafun Logo"
-                width={40}
-                height={40}
-              />
-            </a>
+      <nav className="absolute w-full lg:w-12/12 lg:mx-auto z-[101] lg:top-2 top-0 px-4 backdrop-blur-[10px] rounded-none lg:rounded-full">
+  <div className="grid grid-cols-12 items-center mx-auto py-2">
 
-            <div className="flex flex-col  lg:flex-row items-start md:items-center lg:items-center gap-2">
-              <div className="flex flex-col lg:flex-row gap-2">
-                <p className="text-sm font-semibold">(how it works)</p>
-                <p className="text-sm font-semibold">(support)</p>
-              </div>
+    <div className="col-span-3 flex items-center gap-4">
+      <a href="/" className="flex-shrink-0">
+        <Image
+          src={taraxafunlogo}
+          alt="Taraxafun Logo"
+          width={40}
+          height={40}
+        />
+      </a>
 
-              <div className="flex items-center gap-1">
-                <Image src={xLogo} alt="X Logo" width={18} height={18} />
-                <Image
-                  src={telegramLogo}
-                  alt="Telegram Logo"
-                  width={18}
-                  height={18}
-                />
-                <Image
-                  src={instagramLogo}
-                  alt="Instagram Logo"
-                  width={18}
-                  height={18}
-                />
-                <Image
-                  src={tiktokLogo}
-                  alt="Tiktok Logo"
-                  width={18}
-                  height={18}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="items-center space-x-4 ">
-            <ul className="flex gap-4">
-              <li className="sm:hidden md:block lg:block hidden">
-                <a
-                  href=""
-                  target="_blank"
-                  className="flex items-center gap-2 px-2 py-2 rounded bg-[#79FF62] text-black font-normal text-sm"
-                >
-                  <Image src={placeholderNav} alt="Placeholder Nav" />
-                  <span>1Ly231 bought 5.2k TARA of $MEME</span>
-                  <Image src={placeholderNavRounded} alt="Placeholder Nav" />
-                </a>
-              </li>
-              <li className="sm:hidden md:hidden lg:block hidden">
-                <a
-                  href=""
-                  target="_blank"
-                  className="flex items-center gap-2 px-2 py-2 rounded bg-[#FFE862] text-black font-normal text-sm"
-                >
-                  <Image src={placeholderNav} alt="Placeholder Nav" />
-                  <span>1Ly231 created $TARA</span>
-                  <Image src={placeholderNavRounded} alt="Placeholder Nav" />
-                </a>
-              </li>
-            </ul>
-          </div>
-
- 
-            <CustomBtnApp className="text-sm font-semibold" />
-            {/** 
-            <a
-              href=""
-              target="_blank"
-              className="flex items-center gap-2 px-2 py-1 rounded bg-transparent text-white border-[0.3px] border-gray-200 font-normal text-sm"
-            >
-              <Image src={placeholderNav} alt="Placeholder Nav" />
-              <span>donpumpfun (5M $TARA)</span>
-            </a>
-            */}
-    
+      <div className="flex flex-col lg:flex-row items-start md:items-center lg:items-center gap-2">
+        <div className="flex flex-col lg:flex-row gap-2">
+          <p className="text-sm font-semibold">(how it works)</p>
+          <p className="text-sm font-semibold">(support)</p>
         </div>
-      </nav>
+
+        <div className="flex items-center gap-1">
+          <Image src={xLogo} alt="X Logo" width={18} height={18} />
+          <Image src={telegramLogo} alt="Telegram Logo" width={18} height={18} />
+          <Image src={instagramLogo} alt="Instagram Logo" width={18} height={18} />
+          <Image src={tiktokLogo} alt="Tiktok Logo" width={18} height={18} />
+        </div>
+      </div>
+    </div>
+
+    <div className="col-span-6 flex justify-center items-center space-x-4">
+      <ul className="flex gap-4">
+        <li className="sm:hidden md:block lg:block hidden">
+          <a
+            href=""
+            target="_blank"
+            className="flex items-center gap-2 px-2 py-2 rounded bg-[#79FF62] text-black font-normal text-sm"
+          >
+            <Image src={placeholderNav} alt="Placeholder Nav" />
+            <span>1Ly231 bought 5.2k TARA of $MEME</span>
+            <Image src={placeholderNavRounded} alt="Placeholder Nav" />
+          </a>
+        </li>
+        <li className="sm:hidden md:hidden lg:block hidden">
+          <a
+            href=""
+            target="_blank"
+            className="flex items-center gap-2 px-2 py-2 rounded bg-[#FFE862] text-black font-normal text-sm"
+          >
+            <Image src={placeholderNav} alt="Placeholder Nav" />
+            <span>1Ly231 created $TARA</span>
+            <Image src={placeholderNavRounded} alt="Placeholder Nav" />
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    {/* Right section - 3 columns */}
+    <div className="col-span-3 flex justify-end">
+      <CustomBtnApp className="text-sm font-semibold" />
+    </div>
+  </div>
+</nav>
     </>
   );
 };
