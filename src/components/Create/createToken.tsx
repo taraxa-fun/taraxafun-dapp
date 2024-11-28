@@ -64,17 +64,16 @@ export const CreateToken = () => {
 
   return (
     <section className="pt-32 pb-20 lg:w-6/12 w-12/12 md:w-8/12 mx-auto max-w-lg">
-<div className="relative w-full mb-8">
-  {/* Go Back */}
-  <p className="font-semibold text-md cursor-pointer absolute left-0 top-1/2 -translate-y-1/2">
-    (go back)
-  </p>
-  {/* Centered H2 */}
-  <h2 className="knewave text-[40px] bg-gradient-to-b from-[#D6C8FF] to-[#8100FB] text-transparent bg-clip-text title-shadow text-center">
-    Create token
-  </h2>
-</div>
-
+      <div className="relative w-full mb-8">
+        {/* Go Back */}
+        <a href="/" className="font-semibold text-md cursor-pointer absolute left-0 top-1/2 -translate-y-1/2">
+          (go back)
+        </a>
+        {/* Centered H2 */}
+        <h2 className="knewave text-[40px] bg-gradient-to-b from-[#D6C8FF] to-[#8100FB] text-transparent bg-clip-text title-shadow text-center">
+          Create token
+        </h2>
+      </div>
 
       <div className="space-y-6">
         {/* Name */}
