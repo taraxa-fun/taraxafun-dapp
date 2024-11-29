@@ -53,7 +53,7 @@ export const Replies = ({ replies }: RepliesProps) => {
 
   return (
     <>
-      <div className="mt-8 space-y-4">
+      <div className="mt-8 space-y-4 lg:px-4 px-1">
         {currentReplies.map((reply) => (
           <div key={reply.id} className="bg-[#2D0060] p-4 rounded-lg">
             <div className="flex justify-between items-center mb-4">

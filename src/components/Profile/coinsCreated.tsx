@@ -59,11 +59,11 @@ export const CoinsCreated = ({ coins }: CoinsCreatedProps) => {
 
   return (
     <>
-      <div className="mt-8 grid grid-cols-1 gap-4">
+      <div className="mt-8 grid grid-cols-1 gap-4 ">
         {currentCoins.map((token: TokenType, index: number) => (
           <div
             key={`${token.symbol}-${index}`}
-            className="flex md:gap-3 gap-1 mx-auto lg:px-4 px-1"
+            className="flex md:gap-3 gap-1 mx-auto lg:px-4 px-1 w-full"
           >
             <div className="flex-shrink-0">
               <Image
@@ -75,9 +75,9 @@ export const CoinsCreated = ({ coins }: CoinsCreatedProps) => {
             </div>
 
             <div className="flex flex-col space-y-1 justify-center">
-              <div className="flex items-center gap-4">
+              <div className="flex items-center lg:gap-4 gap-1">
                 <p className="text-xs font-normal">created by</p>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   <Image
                     src={placeHodlerRounded}
                     alt="creator avatar"

@@ -29,7 +29,7 @@ export const CoinsHeld = ({ coins }: CoinsHeldProps) => {
  
   if (isLoading) {
     return (
-      <div className="mt-8 space-y-4">
+      <div className="mt-8 space-y-4 ">
         {[...Array(5)].map((_, index) => (
           <div key={index} className="flex items-center justify-between w-full">
             <div className="flex items-center gap-2">
@@ -61,7 +61,7 @@ export const CoinsHeld = ({ coins }: CoinsHeldProps) => {
  
   return (
     <>
-      <div className="mt-8 space-y-4">
+      <div className="mt-8 space-y-4 w-full max-w-lg px-4">
         {currentCoins.map((coin, index) => (
           <div key={index} className="flex items-center justify-between w-full">
             <div className="flex items-center gap-2">

@@ -82,10 +82,8 @@ const ProfilePage: NextPage = () => {
           </div>
         </div>
       </div>
-      <div className="max-w-lg">
         <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
         {renderTabContent()}
-      </div>
     </section>
   );
 };

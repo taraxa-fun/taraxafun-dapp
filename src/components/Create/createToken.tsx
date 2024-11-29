@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import Image from "next/image";
+import Link from "next/link";
 
 interface TokenData {
   name: string;
@@ -122,13 +123,14 @@ export const CreateToken = () => {
   return (
     <section className="pt-32 pb-20 lg:w-6/12 w-12/12 md:w-8/12 mx-auto max-w-lg px-4">
       <div className="relative w-full mb-8">
-        {/* Go Back */}
-        <a
+        {/* 
+         */}
+        <Link
           href="/"
           className="font-semibold text-md cursor-pointer absolute left-0 top-1/2 -translate-y-1/2"
         >
           (go back)
-        </a>
+        </Link>
         {/* Centered H2 */}
         <h2 className="knewave text-[40px] bg-gradient-to-b from-[#D6C8FF] to-[#8100FB] text-transparent bg-clip-text title-shadow text-center">
           Create token
