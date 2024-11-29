@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import type { NextPage } from "next";
-import Head from "next/head";
 import { Navbar } from "@/components/Navbar/navbar";
 import { PumpEmperor } from "@/components/Dashboard/PumpEmperor";
 import { TokenSearch } from "@/components/Dashboard/TokenSection/tokenSearch";
