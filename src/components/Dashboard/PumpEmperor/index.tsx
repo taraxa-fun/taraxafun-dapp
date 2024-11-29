@@ -17,7 +17,7 @@ export const PumpEmperor = () => {
             <p className="text-xs font-normal">created by</p>
             <div className="flex items-center gap-2">
               <Image src={placeHodlerRounded} alt="placholder" />
-              <p className="text-xs font-normal">GSD1ED</p>
+              <a href="/profile/0xPumper_001" className="text-xs font-normal">0xPumper_001</a>
             </div>
             <p className="text-xs">16mn ago</p>
           </div>
