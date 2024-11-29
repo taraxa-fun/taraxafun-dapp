@@ -1,21 +1,25 @@
-// store/useFilterStore.ts
+import { SortOption } from '@/type/sortOption';
+import { SortOrder } from '@/type/sortOrder';
 import { create } from 'zustand';
 
-type SortOption = 'featured' | 'lastTrade' | 'creationTime' | 'lastReply' | 'marketCap';
+
+
 
 interface FilterStore {
   showAnimation: boolean;
   showNSFW: boolean;
   selectedSort: SortOption;
+  sortOrder: SortOrder;
   toggleAnimation: () => void;
   toggleNSFW: () => void;
-  setSort: (sort: SortOption) => void;
+  setSort: (sort: SortOption, order?: SortOrder) => void;
 }
 
 export const useFilterStore = create<FilterStore>((set) => ({
   showAnimation: false,
   showNSFW: false,
   selectedSort: 'featured',
+  sortOrder: 'desc',
 
   toggleAnimation: () => set((state) => ({ 
     showAnimation: !state.showAnimation
@@ -25,5 +29,5 @@ export const useFilterStore = create<FilterStore>((set) => ({
     showNSFW: !state.showNSFW
   })),
 
-  setSort: (sort) => set({ selectedSort: sort })
+  setSort: (sort, order = 'desc') => set({ selectedSort: sort, sortOrder: order }),
 }));
