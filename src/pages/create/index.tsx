@@ -4,7 +4,7 @@ import { NextPage } from "next";
 
 const Create: NextPage = () => {
   return (
-<div className="relative min-h-screen px-4">
+<div className="relative min-h-screen ">
   <Navbar />
   <CreateToken />
 </div>

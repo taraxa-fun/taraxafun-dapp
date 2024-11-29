@@ -19,6 +19,7 @@ interface TokenData {
   initialSupply: string;
   bondingCurve: string;
   maxBuy: string;
+  maxBuyAmount: string;
   socialLinks: {
     twitter: string;
     telegram: string;
@@ -35,6 +36,7 @@ export const CreateToken = () => {
     initialSupply: "",
     bondingCurve: "linear",
     maxBuy: "no",
+    maxBuyAmount: "",
     socialLinks: {
       twitter: "",
       telegram: "",
@@ -71,6 +73,10 @@ export const CreateToken = () => {
       setErrors("Initial supply is required");
       return false;
     }
+    if (tokenData.maxBuy === "yes" && !tokenData.maxBuyAmount?.trim()) {
+      setErrors("Max buy amount is required when max buy is enabled");
+      return false;
+    }
 
     setErrors(null);
     return true;
@@ -95,6 +101,14 @@ export const CreateToken = () => {
     setTokenData((prev) => ({ ...prev, image: file }));
   };
 
+  const handleMaxBuyChange = (value: "no" | "yes") => {
+    setTokenData((prev) => ({
+      ...prev,
+      maxBuy: value,
+      maxBuyAmount: value === "no" ? "" : prev.maxBuyAmount,
+    }));
+  };
+
   const handleSubmit = () => {
     const { name, ticker, description, image } = tokenData;
     if (!name || !ticker || !description || !image) {
@@ -106,7 +120,7 @@ export const CreateToken = () => {
   };
 
   return (
-    <section className="pt-32 pb-20 lg:w-6/12 w-12/12 md:w-8/12 mx-auto max-w-lg">
+    <section className="pt-32 pb-20 lg:w-6/12 w-12/12 md:w-8/12 mx-auto max-w-lg px-4">
       <div className="relative w-full mb-8">
         {/* Go Back */}
         <a
@@ -307,6 +321,51 @@ export const CreateToken = () => {
                     <p className="mt-1 text-xs text-gray-300 ml-6">
                       Faster price increase, higher potential returns.
                     </p>
+                  </div>
+                </div>
+              </div>
+              {/* max buy per wallet */}
+              <div className="space-y-4">
+                <label className="text-[#9A62FF] text-base font-medium">
+                  Max buy per wallet
+                </label>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="maxBuy"
+                      value="no"
+                      checked={tokenData.maxBuy === "no"}
+                      onChange={() => handleMaxBuyChange("no")}
+                      className="w-4 h-4 accent-[#9A62FF]"
+                    />
+                    <span className="text-white">No (default)</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="maxBuy"
+                        value="yes"
+                        checked={tokenData.maxBuy === "yes"}
+                        onChange={() => handleMaxBuyChange("yes")}
+                        className="w-4 h-4 accent-[#9A62FF]"
+                      />
+                      <span className="text-white">Yes</span>
+                    </div>
+                    {tokenData.maxBuy === "yes" && (
+                      <div className="ml-6">
+                        <input
+                          type="text"
+                          value={tokenData.maxBuyAmount}
+                          onChange={(e) =>
+                            handleInputChange("maxBuyAmount", e.target.value)
+                          }
+                          placeholder=""
+                          className="bg-transparent border border-white rounded-lg p-4 text-white focus:outline-none focus:border-[#9A62FF] w-full"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
