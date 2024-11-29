@@ -130,7 +130,7 @@ export const usersData: UserType[] = [
         date: "2024-02-28",
         time: "14:30",
         text: "This is the next big thing! 🚀 Don't miss out on this gem!",
-        coinId: "PEPE"
+        coinId: "PEPE",
       },
       {
         id: 2,
@@ -138,7 +138,7 @@ export const usersData: UserType[] = [
         date: "2024-02-28",
         time: "15:45",
         text: "Look at these amazing stats! Bullish AF! 📈",
-        imagePath: "/assets/reply-image-1.png",
+        imagePath: "/assets/placeHolderReply.png",
         coinId: "MEME"
       },
       {
