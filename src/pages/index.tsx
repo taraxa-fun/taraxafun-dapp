@@ -1,9 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import type { NextPage } from "next";
-import Head from "next/head";
+import { Navbar } from "@/components/Navbar/navbar";
+import { PumpEmperor } from "@/components/Dashboard/PumpEmperor";
+import { TokenSearch } from "@/components/Dashboard/TokenSection/tokenSearch";
+import { TokenGrid } from "@/components/Dashboard/TokenSection/tokenGrid";
+import { TokenPagination } from "@/components/Dashboard/TokenSection/tokenPagination";
+import { TokenCreate } from "@/components/Dashboard/TokenSection/tokenCreate";
+import { TokenFilter } from "@/components/Dashboard/TokenSection/tokenFilter";
 
-const Home: NextPage = () => {
+const Dashboard: NextPage = () => {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -15,19 +21,16 @@ const Home: NextPage = () => {
   }
 
   return (
-    <>
-      <Head>
-        <title>Taraxafun</title>
-        <meta content="" name="Taraxafun" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&display=swap" />
-      </Head>
-      <main>
-        <h1 className="text-center">Taraxa</h1>
-      </main>
-    </>
+    <div className="relative min-h-screen">
+      <Navbar />
+      <PumpEmperor />
+      <TokenSearch />
+      <TokenCreate />
+      <TokenFilter />
+      <TokenGrid />
+      <TokenPagination />
+    </div>
   );
 };
 
-export default Home;
+export default Dashboard;
