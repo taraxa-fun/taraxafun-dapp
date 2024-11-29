@@ -1,5 +1,16 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
+import TaraxaLogoChain from "../../assets/logo/TARALogoChain.png";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import Image from "next/image";
+
 interface TokenData {
   name: string;
   ticker: string;
@@ -33,12 +44,44 @@ export const CreateToken = () => {
 
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showSocial, setShowSocial] = useState(false);
+  const [isDialogAllowed, setIsDialogAllowed] = useState(false);
+  const [errors, setErrors] = useState<string | null>(null);
+
+  const validateForm = () => {
+    if (!tokenData.name.trim()) {
+      setErrors("Name is required");
+      return false;
+    }
+
+    if (!tokenData.ticker.trim()) {
+      setErrors("Ticker is required");
+      return false;
+    }
+
+    if (!tokenData.description.trim()) {
+      setErrors("Description is required");
+      return false;
+    }
+
+    if (!tokenData.image) {
+      setErrors("Image is required");
+      return false;
+    }
+    if (showAdvanced && !tokenData.initialSupply.trim()) {
+      setErrors("Initial supply is required");
+      return false;
+    }
+
+    setErrors(null);
+    return true;
+  };
 
   type TokenKey = keyof typeof tokenData;
   type SocialKey = keyof typeof tokenData.socialLinks;
 
   const handleInputChange = (key: TokenKey, value: string) => {
     setTokenData((prev) => ({ ...prev, [key]: value }));
+    setErrors(null);
   };
 
   const handleSocialChange = (key: SocialKey, value: string) => {
@@ -66,7 +109,10 @@ export const CreateToken = () => {
     <section className="pt-32 pb-20 lg:w-6/12 w-12/12 md:w-8/12 mx-auto max-w-lg">
       <div className="relative w-full mb-8">
         {/* Go Back */}
-        <a href="/" className="font-semibold text-md cursor-pointer absolute left-0 top-1/2 -translate-y-1/2">
+        <a
+          href="/"
+          className="font-semibold text-md cursor-pointer absolute left-0 top-1/2 -translate-y-1/2"
+        >
           (go back)
         </a>
         {/* Centered H2 */}
@@ -115,20 +161,32 @@ export const CreateToken = () => {
 
         {/* Image */}
         <div className="flex flex-col gap-2">
-          <label className="text-[#9A62FF] text-base font-medium">Image</label>
+          <label className="text-[#9A62FF] text-base font-medium">
+            Image or video
+          </label>
           <div className="relative border flex-col space-y-2 border-white rounded-lg p-4 flex items-center justify-between">
             {tokenData.image ? (
-              <>
-                <p className="text-white text-sm font-medium">
-                  Selected file: {tokenData.image.name}
-                </p>
-                <button
-                  onClick={() => handleFileChange(null)}
-                  className="bg-[#9A62FF] text-white px-3 py-1 rounded-lg hover:bg-red-600 transition"
-                >
-                  Remove
-                </button>
-              </>
+              <div className="w-full flex flex-col items-center gap-4">
+                <img
+                  src={URL.createObjectURL(tokenData.image)}
+                  alt="Preview"
+                  className="max-h-[200px] object-contain rounded-lg"
+                />
+                <label className="bg-[#9A62FF] font-normal text-white px-3 py-2 rounded-lg cursor-pointer">
+                  Select another file
+                  <input
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const files = e.target.files;
+                      if (files && files[0]) {
+                        handleFileChange(files[0]);
+                      }
+                    }}
+                  />
+                </label>
+              </div>
             ) : (
               <>
                 <svg
@@ -338,12 +396,57 @@ export const CreateToken = () => {
             </div>
           )}
         </div>
-        <button
-          onClick={handleSubmit}
-          className="px-3 py-4 w-full bg-[#5600AA] text-base font-normal"
-        >
-          Create Token
-        </button>
+        {errors && <p className="text-red-500 text-center text-lg">{errors}</p>}
+        <Dialog>
+          <DialogTrigger
+            className="px-3 py-4 w-full bg-[#5600AA] text-base font-normal rounded"
+            onClick={(e) => {
+              if (!validateForm()) {
+                e.preventDefault();
+              }
+            }}
+          >
+            Create Token
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="text-center text-sm font-normal">
+                (optional)
+              </DialogTitle>
+              <DialogTitle className="text-center text-2xl font-bold">
+                Choose how many <br /> [
+                {tokenData.ticker ? tokenData.ticker : ""}] you want to buy
+              </DialogTitle>
+              <DialogDescription className="text-[#A9A8AD] text-base font-normal">
+                tip: its optional but buying a small amount of coins helps
+                protect your coin from snipers
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex flex-col space-y-1">
+              <p className="text-end text-base font-normal">
+                (--switch to {tokenData.ticker ? tokenData.ticker : ""}--)
+              </p>
+              <div className="flex gap-2 items-center border border-white rounded">
+                <input className="flex-1 bg-transparent p-4 outline-none focus:outline-none" />
+                <div className="flex items-center gap-1 p-4">
+                  <Image
+                    src={TaraxaLogoChain}
+                    alt="Taraxa Logo Chain"
+                    width={32}
+                    height={32}
+                  />
+                  <span>TARA</span>
+                </div>
+              </div>
+              <p className="text-base font-normal text-[#A9A8AD]">
+                you receive 1000000 MIMI
+              </p>
+            </div>
+            <button className="p-2 rounded w-full bg-[#5600AA] text-base font-normal">
+              Create token
+            </button>
+          </DialogContent>
+        </Dialog>
         <p className="text-center">
           when your coin completes its bonding curve you receive 100k TARA
         </p>
