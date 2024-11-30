@@ -8,6 +8,7 @@ import tiktokLogo from "../../assets/logo/tiktokLogo.png";
 import placeholderNav from "../../assets/placeholderNav.png";
 import placeholderNavRounded from "../../assets/placeholderNavRounded.png";
 import { CustomBtnApp } from "../connect-btn";
+import { HowItWorksModal } from "../HowItWorks/modalHowItWorks";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -65,7 +66,7 @@ export const Navbar = () => {
 
             <div className="flex flex-col lg:flex-row items-start md:items-center lg:items-center gap-2">
               <div className="flex flex-col lg:flex-row gap-2">
-                <p className="text-sm font-semibold">(how it works)</p>
+                <HowItWorksModal />
                 <p className="text-sm font-semibold">(support)</p>
               </div>
 
@@ -93,35 +94,35 @@ export const Navbar = () => {
             </div>
           </div>
 
-          <div className="col-span-6 flex justify-center items-center space-x-4">
-  <ul className="flex gap-4">
-    <li className="sm:hidden md:block lg:block hidden shake-animation">
-      <a
-        href=""
-        target="_blank"
-        className="flex items-center gap-2 px-2 py-2 rounded bg-[#79FF62] text-black font-normal text-sm"
-      >
-        <Image src={placeholderNav} alt="Placeholder Nav" />
-        <span>1Ly231 bought 5.2k TARA of $MEME</span>
-        <Image src={placeholderNavRounded} alt="Placeholder Nav" />
-      </a>
-    </li>
-    <li className="sm:hidden md:hidden lg:block hidden shake-animation">
-      <a
-        href=""
-        target="_blank"
-        className="flex items-center gap-2 px-2 py-2 rounded bg-[#FFE862] text-black font-normal text-sm"
-      >
-        <Image src={placeholderNav} alt="Placeholder Nav" />
-        <span>1Ly231 created $TARA</span>
-        <Image src={placeholderNavRounded} alt="Placeholder Nav" />
-      </a>
-    </li>
-  </ul>
-</div>
+          <div className="sm:col-span-6 flex justify-center items-center space-x-4">
+            <ul className="flex gap-4">
+              <li className="hidden md:block lg:block">
+                <a
+                  href=""
+                  target="_blank"
+                  className="flex items-center gap-2 px-2 py-2 rounded bg-[#79FF62] text-black font-normal text-sm"
+                >
+                  <Image src={placeholderNav} alt="Placeholder Nav" />
+                  <span>1Ly231 bought 5.2k TARA of $MEME</span>
+                  <Image src={placeholderNavRounded} alt="Placeholder Nav" />
+                </a>
+              </li>
+              <li className="hidden md:hidden lg:block">
+                <a
+                  href=""
+                  target="_blank"
+                  className="flex items-center gap-2 px-2 py-2 rounded bg-[#FFE862] text-black font-normal text-sm"
+                >
+                  <Image src={placeholderNav} alt="Placeholder Nav" />
+                  <span>1Ly231 created $TARA</span>
+                  <Image src={placeholderNavRounded} alt="Placeholder Nav" />
+                </a>
+              </li>
+            </ul>
+          </div>
 
-          {/* Right section - 3 columns */}
-          <div className="col-span-3 flex justify-end">
+          {/* Right section */}
+          <div className="col-span-8 sm:col-span-3 flex justify-end">
             <CustomBtnApp className="text-sm font-semibold" />
           </div>
         </div>

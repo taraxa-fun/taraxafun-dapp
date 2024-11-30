@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import Image from "next/image";
 import Link from "next/link";
+import { useToast } from "@/hooks/use-toast"
 
 interface TokenData {
   name: string;
@@ -29,6 +30,7 @@ interface TokenData {
 }
 
 export const CreateToken = () => {
+  const { toast } = useToast()
   const [tokenData, setTokenData] = useState<TokenData>({
     name: "",
     ticker: "",
@@ -113,11 +115,17 @@ export const CreateToken = () => {
   const handleSubmit = () => {
     const { name, ticker, description, image } = tokenData;
     if (!name || !ticker || !description || !image) {
-      toast.error("Please fill in all required fields.");
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields.",
+      });
       return;
     }
     console.log("Token Data:", tokenData);
-    toast.success("Token created successfully!");
+    toast({
+      title: `Create coin called Mimi the cat [${ticker}]`,
+      description: "transaction confirmed",
+    })
   };
 
   return (

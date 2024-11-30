@@ -1,4 +1,5 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { ModalProfile } from "../Profile/modalProfile";
 
 interface CustomBtnAppProps {
   className?: string;
@@ -58,13 +59,7 @@ export const CustomBtnApp: React.FC<CustomBtnAppProps> = ({ className }) => {
                 );
               }
               return (
-                <button
-                  className={` whitespace-nowrap ${className}`}
-                  onClick={openAccountModal}
-                  type="button"
-                >
-                  <span className="">{account.displayName}</span>
-                </button>
+               <ModalProfile/>
               );
             })()}
           </div>
