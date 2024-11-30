@@ -49,10 +49,9 @@ export const Navbar = () => {
 
   return (
     <>
-      {isOpen && <div className="fixed inset-0 z-[100] backdrop-blur-sm" />}
 
       {/* Desktop Navbar */}
-      <nav className="absolute w-full lg:w-12/12 lg:mx-auto z-[101] lg:top-2 top-0 px-4 backdrop-blur-[10px] rounded-none lg:rounded-full">
+      <nav className="absolute w-full lg:w-12/12 lg:mx-auto z-40 lg:top-2 top-0 px-4 backdrop-blur-[10px] rounded-none lg:rounded-full">
         <div className="grid grid-cols-12 items-center mx-auto py-2">
           <div className="col-span-3 flex items-center gap-4">
             <a href="/" className="flex-shrink-0">
