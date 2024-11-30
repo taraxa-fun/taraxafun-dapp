@@ -79,7 +79,7 @@ export const TokenFilter = () => {
       </div>
     )}
   </div>
-  <div className="flex w-full flex-wrap gap-4 lg:flex-nowrap lg:w-auto">
+  <div className="flex w-full flex-col gap-4 lg:flex-nowrap lg:w-auto">
     <div className="flex items-center gap-2">
       <span className="text-sm font-medium text-white">Show animations</span>
       <label className="inline-flex items-center cursor-pointer">
