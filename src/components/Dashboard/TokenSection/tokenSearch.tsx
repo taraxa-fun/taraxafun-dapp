@@ -1,5 +1,5 @@
 // components/TokenSearch.tsx
-import { useTokenStore } from '@/store/useTokenStore';
+import { useTokenStore } from '@/store/useAllTokenStore';
 
 export const TokenSearch = () => {
   const { 

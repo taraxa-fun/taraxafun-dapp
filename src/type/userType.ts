@@ -1,3 +1,4 @@
+import { CoinHeld } from "./coinHeld";
 import { Reply } from "./reply";
 import { TokenType } from "./tokenType";
 
@@ -12,7 +13,7 @@ export interface UserType {
   followers: number;
   likesReceived: number;
   mentionsReceived: number;
-  coinsHeld: { symbol: string; amount: string }[];
+  coinsHeld: CoinHeld[];
   coinsCreated: TokenType[]; 
   replies: Reply[]; 
 }

@@ -13,8 +13,8 @@ export const usersData: UserType[] = [
     likesReceived: 2500,
     mentionsReceived: 350,
     coinsHeld: [
-      { symbol: "$MEME", amount: "120984109" },
-      { symbol: "$SHNJ", amount: "123023020" },
+      { symbol: "$MEME", amount: "120984109", id: 1 },
+      { symbol: "$SHNJ", amount: "123023020", id: 2 },
     ],
     coinsCreated: [
       {
@@ -31,6 +31,7 @@ export const usersData: UserType[] = [
         creator: "0xPumper_001",
         timestamp: 3600,
         marketCap: "$245.8k",
+        address: "0x1234567890abcdef",
         replyCount: 3,
         replies: [
           {
@@ -65,6 +66,7 @@ export const usersData: UserType[] = [
         creator: "0xPumper_001",
         timestamp: 7200,
         marketCap: "$567.2k",
+        address: "0x1234567890abcdef",
         replyCount: 2,
         replies: [
           {

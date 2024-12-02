@@ -12,15 +12,12 @@ interface TokenStore {
   isLoading: boolean;
   hasSearched: boolean;
   
-  // Actions
   setSearchQuery: (query: string) => void;
   searchTokens: (query: string) => Promise<void>;
   clearSearch: () => void;
   goToNextPage: () => void;
   goToPreviousPage: () => void;
   setCurrentPage: (page: number) => void;
-  
-  // Computed getters
   getCurrentTokens: () => TokenType[];
   getTotalPages: () => number;
 }
