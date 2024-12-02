@@ -1,7 +1,7 @@
 // store/useTokenStore.ts
 import { create } from 'zustand';
 import { TokenType } from '@/type/tokenType';
-import { pumpEmperorData } from '@/data/tokenData';
+import { tokenData } from '@/data/tokenData';
 
 interface TokenStore {
   allTokens: TokenType[];
@@ -26,7 +26,7 @@ interface TokenStore {
 }
 
 export const useTokenStore = create<TokenStore>((set, get) => ({
-  allTokens: pumpEmperorData,
+  allTokens: tokenData,
   filteredTokens: null,
   currentPage: 1,
   tokensPerPage: 10,
@@ -54,7 +54,7 @@ export const useTokenStore = create<TokenStore>((set, get) => ({
     set({ isLoading: true });
     try {
       await new Promise(resolve => setTimeout(resolve, 500));
-      const searchResults = pumpEmperorData.filter(token => 
+      const searchResults = tokenData.filter(token => 
         token.name.toLowerCase().includes(query.toLowerCase()) ||
         token.symbol.toLowerCase().includes(query.toLowerCase())
       );

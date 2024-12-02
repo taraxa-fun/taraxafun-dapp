@@ -1,4 +1,8 @@
+import { Reply } from "./reply";
+import { Trade } from "./trade";
+
 export interface TokenType {
+  id: number;
   name: string;
   symbol: string;
   description: string;
@@ -6,12 +10,14 @@ export interface TokenType {
   telegram?: string;
   website?: string;
   supply: number;
-  bondigCurve: number;
+  bondingCurve: number;
   minBuy: number;
   maxBuy: number;
   imagePath: string;
   creator: string;
   timestamp: number;
   marketCap: string;
-  replies: number;
+  replyCount: number;
+  replies: Reply[];
+  trades: Trade[];
 }

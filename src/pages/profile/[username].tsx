@@ -11,6 +11,7 @@ import { usersData } from "@/data/userData";
 import { handleCopy } from "@/utils/copy";
 import { CoinsCreated } from "@/components/Profile/coinsCreated";
 import { Replies } from "@/components/Profile/replies";
+import { ModalProfile } from "@/components/Profile/modalProfile";
 
 const ProfilePage: NextPage = () => {
   const router = useRouter();
@@ -51,7 +52,12 @@ const ProfilePage: NextPage = () => {
         <p className="text-gray-300 font-normal text-sm max-w-md mx-auto">
           {user.description}
         </p>
-        <p className="font-semibold text-sm">(--- edit profile ---)</p>
+
+        <ModalProfile
+          trigger={
+            <p className="font-semibold text-sm">(--- edit profile ---)</p>
+          }
+        />
         <p className="text-lg font-medium mb-4">
           {user.followers} followers | {user.likesReceived} likes received |{" "}
           {user.mentionsReceived} mentions received
@@ -82,8 +88,8 @@ const ProfilePage: NextPage = () => {
           </div>
         </div>
       </div>
-        <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
-        {renderTabContent()}
+      <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+      {renderTabContent()}
     </section>
   );
 };
