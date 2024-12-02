@@ -12,8 +12,10 @@ import { handleCopy } from "@/utils/copy";
 import { CoinsCreated } from "@/components/Profile/coinsCreated";
 import { Replies } from "@/components/Profile/replies";
 import { ModalProfile } from "@/components/Profile/modalProfile";
+import { useDisconnect } from "wagmi";
 
 const ProfilePage: NextPage = () => {
+  const { disconnect } = useDisconnect(); 
   const router = useRouter();
   const { username } = router.query;
   const [activeTab, setActiveTab] = useState<ProfileTab>("coins-held");
@@ -58,6 +60,12 @@ const ProfilePage: NextPage = () => {
             <p className="font-semibold text-sm">(--- edit profile ---)</p>
           }
         />
+             <button
+                    className="p-1 bg-red-500 text-white rounded text-xs font-normal"
+                    onClick={() => disconnect()}
+                  >
+                    Logout
+                  </button>
         <p className="text-lg font-medium mb-4">
           {user.followers} followers | {user.likesReceived} likes received |{" "}
           {user.mentionsReceived} mentions received
