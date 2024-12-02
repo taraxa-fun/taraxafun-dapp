@@ -2,6 +2,12 @@ import Image from "next/image";
 import placeHodlerRounded from "../../assets/placeholderRounded.png";
 import { useEffect, useRef } from "react";
 
+declare global {
+  interface Window {
+    TradingView: any;
+  }
+}
+
 export const CoinChart = () => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
 
