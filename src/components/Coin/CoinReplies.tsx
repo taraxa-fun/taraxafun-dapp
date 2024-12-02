@@ -1,33 +1,44 @@
 import { useEffect } from "react";
 import Image from "next/image";
-
-import { useRepliesStore } from "@/store/useRepliesStore";
 import { Pagination } from "../Shared/pagination";
 import { Skeleton } from "../ui/skeleton";
-import { Reply } from "@/type/reply";
+import { useRepliesStoreCoinId } from "@/store/Coin/useRepliesCoinId";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { TokenType } from "@/type/tokenType";
+import { tokenData } from "@/data/tokenData";
 
-interface RepliesProps {
-  replies: Reply[];
-}
+export const CoinReplies = () => {
+  const router = useRouter();
+  const { id: coinId } = router.query;
 
-export const Replies = ({ replies }: RepliesProps) => {
+  const token: TokenType | undefined = tokenData.find(
+    (t) => t.id.toString() === String(coinId)
+  );
+
+  if (!token) {
+    return <div className="text-red-500">Token not found</div>;
+  }
+
   const {
     setReplies,
     getCurrentPageReplies,
     currentPage,
-    getTotalPages,
+    totalPages,
+    isLoading,
     goToNextPage,
     goToPreviousPage,
-    isLoading,
-  } = useRepliesStore();
+  } = useRepliesStoreCoinId();
 
   useEffect(() => {
-    setReplies(replies);
-  }, [replies, setReplies]);
+    if (token.replies) {
+      setReplies(token.replies);
+    }
+  }, [token.replies, setReplies]);
 
   if (isLoading) {
     return (
-      <div className="mt-8 space-y-4 w-full">
+      <div className="mt-8 space-y-4">
         {[...Array(5)].map((_, i) => (
           <div key={i} className="bg-[#2D0060] p-4 rounded-lg">
             <div className="flex justify-between items-center mb-4">
@@ -44,8 +55,7 @@ export const Replies = ({ replies }: RepliesProps) => {
       </div>
     );
   }
-
-  if (replies.length === 0) {
+  if (!token.replies || token.replies.length === 0) {
     return <div className="mt-8 text-center text-white">No replies yet</div>;
   }
 
@@ -53,23 +63,20 @@ export const Replies = ({ replies }: RepliesProps) => {
 
   return (
     <>
-      <div className="mt-8 space-y-4 lg:px-4 px-1  w-full">
+      <div className="mt-8 space-y-4 ">
         {currentReplies.map((reply) => (
           <div key={reply.id} className="bg-[#2D0060] p-4 rounded-lg">
             <div className="flex justify-between items-center mb-4">
               <div className="flex items-center gap-4">
-                <span className="bg-[#FFE862] px-2 py-1 rounded text-black text-sm">
-                  @{reply.username}
-                </span>
+                <Link href={`/profile/${reply.username}`}>
+                  <span className="bg-[#FFE862] px-2 py-1 rounded text-black text-sm">
+                    @{reply.username}
+                  </span>
+                </Link>
                 <span className="text-xs text-gray-300">
                   {reply.date} | {reply.time} | #{reply.id}
                 </span>
               </div>
-              {reply.coinId && (
-                <button className="text-xs hover:text-[#9A62FF]">
-                  (view coin)
-                </button>
-              )}
             </div>
 
             {reply.imagePath && (
@@ -91,7 +98,7 @@ export const Replies = ({ replies }: RepliesProps) => {
 
       <Pagination
         currentPage={currentPage}
-        totalPages={getTotalPages()}
+        totalPages={totalPages}
         onNextPage={goToNextPage}
         onPreviousPage={goToPreviousPage}
       />

@@ -1,7 +1,6 @@
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -10,7 +9,11 @@ import logoPlaceHolder from "../../assets/logo/taraxafunLogo.png";
 import Image from "next/image";
 import { useState } from "react";
 
-export const ModalProfile = () => {
+interface ModalProfileProps {
+  trigger: React.ReactNode; 
+}
+
+export const ModalProfile: React.FC<ModalProfileProps> = ({trigger }) => {
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [bioText, setBioText] = useState("");
 
@@ -30,22 +33,11 @@ export const ModalProfile = () => {
 
   return (
     <Dialog>
-      <DialogTrigger className="p-1 w-full bg-transparent border border-white text-xs font-normal rounded flex items-center">
-        <div className="w-4 h-4 rounded-full overflow-hidden mr-2">
-          <Image
-            src={logoPlaceHolder}
-            alt="Placeholder"
-            width={16}
-            height={16}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        donpumpfun (5M $TARA)
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="max-w-sm">
         <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold">
-            Create your profile
+          Create your profile
           </DialogTitle>
           <div className="pb-6 flex justify-center">
             <div className="w-24 h-24 rounded-full overflow-hidden">
@@ -83,13 +75,16 @@ export const ModalProfile = () => {
           />
         </DialogHeader>
         <div className="flex flex-col space-y-4">
-          <div className="flex flex-col ">
-            <label className="text-sm font-normal mb-1">username</label>
-            <input className="flex-1 bg-transparent p-1 border rounded border-white  outline-none focus:outline-none" />
+          <div className="flex flex-col">
+            <label className="text-sm font-normal mb-1">Username</label>
+            <input
+              className="flex-1 bg-transparent p-1 border rounded border-white outline-none focus:outline-none"
+              placeholder="Enter your username"
+            />
           </div>
-          <div className="flex flex-col ">
+          <div className="flex flex-col">
             <div className="flex items-center justify-between mb-1">
-              <label className="text-sm font-normal">Bio (optionnal)</label>
+              <label className="text-sm font-normal">Bio (optional)</label>
               <div className="text-sm text-gray-400">
                 {bioCharactersRemaining}/{bioCharacterLimit}
               </div>

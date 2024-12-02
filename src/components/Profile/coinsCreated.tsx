@@ -93,7 +93,7 @@ export const CoinsCreated = ({ coins }: CoinsCreatedProps) => {
                 <p className="text-xs font-normal text-[#79FF62]">
                   market cap: {token.marketCap}
                 </p>
-                <p className="text-xs font-normal">replies: {token.replies}</p>
+                <p className="text-xs font-normal">replies: {token.replyCount}</p>
               </div>
 
               <p className="text-gray-300 font-normal text-xs">

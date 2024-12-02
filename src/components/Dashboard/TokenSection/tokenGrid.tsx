@@ -4,6 +4,8 @@ import { getTimeAgo } from "@/utils/calculeTime";
 import { Skeleton } from "@/components/ui/skeleton";
 import placeHodlerRounded from "../../../assets/placeholderNavRounded.png";
 import { TokenType } from "@/type/tokenType";
+import Link from "next/link";
+
 
 export const TokenGrid = () => {
   const { getCurrentTokens, isLoading, filteredTokens, hasSearched } =
@@ -36,6 +38,7 @@ export const TokenGrid = () => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-10 px-4">
       {currentTokens.map((token: TokenType, index: number) => (
+        <Link href={`/coin/${token.id}`}>
         <div key={`${token.symbol}-${index}`} className="flex flex-col">
           <div className="mb-4 w-[200px] h-[200px] relative overflow-hidden flex items-center justify-center">
             <Image
@@ -66,7 +69,7 @@ export const TokenGrid = () => {
               <p className="text-xs font-normal text-[#79FF62]">
                 market cap: {token.marketCap}
               </p>
-              <p className="text-xs font-normal">replies: {token.replies}</p>
+              <p className="text-xs font-normal">replies: {token.replyCount}</p>
             </div>
 
             <p className="text-gray-300 font-normal text-xs">
@@ -77,6 +80,7 @@ export const TokenGrid = () => {
             </p>
           </div>
         </div>
+        </Link>
       ))}
     </div>
   );
