@@ -13,12 +13,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { TokenData } from "@/type/tokenDataCreate";
-import { deployToken } from "@/hooks/useDeploy";
-import { useWriteContract } from "wagmi";
+import { deployToken, useSupply } from "@/hooks/useDeploy";
+import { useAccount, useWriteContract } from "wagmi";
 
 export const CreateToken = () => {
   const { toast } = useToast();
-  const [tokenData, setTokenData] = useState<TokenData>({
+  const initialTokenData = {
     _name: "",
     _symbol: "",
     _data: "",
@@ -30,13 +30,26 @@ export const CreateToken = () => {
     _maxBuyPerWallet: "",
     bondingCurveType: "linear",
     socialLinks: { twitter: "", telegram: "", website: "" },
-  });
+  };
+
+  const [tokenData, setTokenData] = useState<TokenData>(initialTokenData);
+
+  const resetForm = () => {
+    setTokenData(initialTokenData);
+  };
+
   const { writeContractAsync } = useWriteContract();
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showMaxBuy, setShowMaxBuy] = useState(false);
   const [showSocial, setShowSocial] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<string | null>(null);
+  const { address } = useAccount();
+  const { suplyValue } = useSupply(address as any, false, false);
+  type TokenKey = keyof typeof tokenData;
+  type SocialKey = keyof typeof tokenData.socialLinks;
 
+  // check if all fields are correctly filled
   const validateForm = () => {
     if (!tokenData._name.trim()) {
       setErrors("Name is required");
@@ -57,11 +70,6 @@ export const CreateToken = () => {
       return false;
     }
 
-    if (showAdvanced && !tokenData._totalSupply.trim()) {
-      setErrors("Initial supply is required");
-      return false;
-    }
-
     if (showMaxBuy && !tokenData._maxBuyPerWallet.trim()) {
       setErrors("Max buy per wallet is required when anti-snipe is enabled");
       return false;
@@ -70,14 +78,13 @@ export const CreateToken = () => {
     return true;
   };
 
-  type TokenKey = keyof typeof tokenData;
-  type SocialKey = keyof typeof tokenData.socialLinks;
-
+  // saves the value in the object relative to the input
   const handleInputChange = (key: TokenKey, value: string) => {
     setTokenData((prev) => ({ ...prev, [key]: value }));
     setErrors(null);
   };
 
+  // saves the value in the object relative to the social input
   const handleSocialChange = (key: SocialKey, value: string) => {
     setTokenData((prev) => ({
       ...prev,
@@ -85,6 +92,7 @@ export const CreateToken = () => {
     }));
   };
 
+  // saves the image in the object
   const handleFileChange = (file: File | null) => {
     setTokenData((prev) => ({
       ...prev,
@@ -92,17 +100,23 @@ export const CreateToken = () => {
     }));
   };
 
+  // sends the data to the contract
   const handleSubmit = async () => {
+    setLoading(true);
     try {
       const isAntiSnipeEnabled =
         parseFloat(tokenData._amountAntiSnipe || "0") > 0;
+      const finalTotalSupply =
+        !tokenData._totalSupply || parseFloat(tokenData._totalSupply) === 0
+          ? suplyValue.toString()
+          : tokenData._totalSupply;
 
       const transactionResult = await deployToken(
         writeContractAsync,
         tokenData._name,
         tokenData._symbol,
         tokenData._data,
-        tokenData._totalSupply,
+        finalTotalSupply,
         tokenData._liquidityETHAmount,
         isAntiSnipeEnabled,
         tokenData._amountAntiSnipe || "0",
@@ -114,16 +128,18 @@ export const CreateToken = () => {
           title: `Coin "${tokenData._name}" [${tokenData._symbol}] created successfully!`,
           description: "Transaction confirmed on the blockchain.",
         });
+        resetForm(); // reset the form after the transaction is successful
       } else {
         throw new Error("Transaction failed.");
       }
     } catch (error) {
-      console.error("Error during token deployment:", error);
       toast({
         title: "Error",
         description: "Failed to create the token. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -542,7 +558,7 @@ export const CreateToken = () => {
               className="p-2 rounded w-full bg-[#5600AA] text-base font-normal"
               onClick={handleSubmit}
             >
-              Create token
+              {loading ? "Creating token..." : "Create token"}
             </button>
           </DialogContent>
         </Dialog>
