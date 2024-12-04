@@ -11,7 +11,7 @@ export const tokenData: TokenType[] = [
     telegram: "https://t.me/pepeultraofficial",
     website: "https://pepeultra.io",
     supply: 1000000000000,
-    bondingCurve: 0.00001,
+    bondingCurve: 10,
     minBuy: 0.01,
     maxBuy: 5,
     imagePath: "/assets/exTokenImg1.png",
@@ -19,6 +19,7 @@ export const tokenData: TokenType[] = [
     timestamp: 3600,
     marketCap: "$245.8k",
     replyCount: 1337,
+    address: "0x1234567890abcdef",
     replies: [
       {
         id: 1,
@@ -72,14 +73,15 @@ export const tokenData: TokenType[] = [
     twitter: "https://twitter.com/moondogeai",
     telegram: "https://t.me/moondogeaiofficial",
     supply: 420690000000,
-    bondingCurve: 0.000015,
+    bondingCurve: 15,
     minBuy: 0.05,
     maxBuy: 3,
     imagePath: "/assets/exTokenImg2.png",
-    creator: "MoonMaker420",
-    timestamp: 7200, // 2 hours ago
+    creator: "0xPumper_001",
+    timestamp: 7200, 
     marketCap: "$567.2k",
     replyCount: 2891,
+    address: "0x1234567890abcdef",
     replies: [
       {
         id: 2,
@@ -132,14 +134,15 @@ export const tokenData: TokenType[] = [
       "The gigachad of cryptocurrencies. If you have to ask what utility CHAD has, you're not gonna make it. Built by chads, for chads. No weak hands allowed.",
     telegram: "https://t.me/chadtoken",
     supply: 69420000000,
-    bondingCurve: 0.00002,
+    bondingCurve: 29,
     minBuy: 0.1,
     maxBuy: 4,
     imagePath: "/assets/exTokenImg1.png",
     creator: "GigaChad",
-    timestamp: 14400, // 4 hours ago
+    timestamp: 14400, 
     marketCap: "$892.1k",
     replyCount: 4207,
+    address: "0x1234567890abcdef",
     replies: [
       {
         id: 3,
@@ -177,7 +180,7 @@ export const tokenData: TokenType[] = [
     twitter: "https://twitter.com/wojakfinance",
     website: "https://wojak.finance",
     supply: 2100000000,
-    bondingCurve: 0.000025,
+    bondingCurve: 98,
     minBuy: 0.02,
     maxBuy: 2,
     imagePath: "/assets/exTokenImg2.png",
@@ -185,6 +188,7 @@ export const tokenData: TokenType[] = [
     timestamp: 28800, // 8 hours ago
     marketCap: "$156.3k",
     replyCount: 1889,
+    address: "0x1234567890abcdef",
     replies: [
       {
         id: 4,
@@ -239,7 +243,7 @@ export const tokenData: TokenType[] = [
     telegram: "https://t.me/copiumcommunity",
     website: "https://copium.network",
     supply: 999999999,
-    bondingCurve: 0.00003,
+    bondingCurve: 47,
     minBuy: 0.03,
     maxBuy: 6,
     imagePath: "/assets/exTokenImg1.png",
@@ -247,6 +251,7 @@ export const tokenData: TokenType[] = [
     timestamp: 43200, // 12 hours ago
     marketCap: "$78.9k",
     replyCount: 923,
+    address: "0x1234567890abcdef",
     replies: [
       {
         id: 5,

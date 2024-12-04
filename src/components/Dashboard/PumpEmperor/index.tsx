@@ -1,6 +1,7 @@
 import Image from "next/image";
 import placeHodlerPumpEmpror from "../../../assets/placeHodlerPumpEmperor.png";
 import placeHodlerRounded from "../../../assets/placeholderNavRounded.png";
+import Link from "next/link";
 
 export const PumpEmperor = () => {
   return (
@@ -17,7 +18,7 @@ export const PumpEmperor = () => {
             <p className="text-xs font-normal">created by</p>
             <div className="flex items-center gap-2">
               <Image src={placeHodlerRounded} alt="placholder" />
-              <a href="/profile/0xPumper_001" className="text-xs font-normal">0xPumper_001</a>
+              <Link href="/profile/0xPumper_001" className="text-xs font-normal">0xPumper_001</Link>
             </div>
             <p className="text-xs">16mn ago</p>
           </div>

@@ -20,4 +20,5 @@ export interface TokenType {
   replyCount: number;
   replies: Reply[];
   trades: Trade[];
+  address: string;
 }

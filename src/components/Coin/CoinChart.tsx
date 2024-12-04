@@ -1,5 +1,3 @@
-import Image from "next/image";
-import placeHodlerRounded from "../../assets/placeholderRounded.png";
 import { useEffect, useRef } from "react";
 
 declare global {
@@ -13,7 +11,6 @@ export const CoinChart = () => {
 
   useEffect(() => {
     const scriptId = "tradingview-widget-script";
-
     if (!document.getElementById(scriptId)) {
       const script = document.createElement("script");
       script.id = scriptId;
@@ -54,26 +51,6 @@ export const CoinChart = () => {
   }, []);
   return (
     <div className="gap-4">
-      <div className="flex justify-between">
-        <p className="">MEME OF THE YEAR (MEME)</p>
-        <div>
-          <div className="flex items-center gap-2">
-            <p className="text-xs font-normal">created by</p>
-            <Image
-              src={placeHodlerRounded}
-              alt="placholder"
-              width={12}
-              height={12}
-            />
-            <a href="/profile/0xPumper_001" className="text-xs font-normal">
-              0xPumper_001
-            </a>
-            <p>16mn ago</p>
-            <p>market cap: $12.5k</p>
-            <p>replies : 12343</p>
-          </div>
-        </div>
-      </div>
       <div
         id="tradingview_chart"
         ref={chartContainerRef}
