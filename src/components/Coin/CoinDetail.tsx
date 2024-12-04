@@ -42,7 +42,7 @@ export const TokenDetails = () => {
   }
 
   return (
-    <div className="flex flex-col gap-4 mx-auto lg:px-4 px-1 w-full mt-4">
+    <div className="flex flex-col gap-4 mx-auto w-full mt-4">
       <div className="flex md:gap-3 gap-1">
         <div className="flex-shrink-0">
           <Image
@@ -63,8 +63,9 @@ export const TokenDetails = () => {
                 height={20}
               />
               <p className="text-xs font-normal">{token.creator}</p>
+
+              <p className="text-xs">{getTimeAgo(token.timestamp)}</p>
             </div>
-            <p className="text-xs">{getTimeAgo(token.timestamp)}</p>
           </div>
           <div className="flex justify-between">
             <p className="text-xs font-normal text-[#79FF62]">

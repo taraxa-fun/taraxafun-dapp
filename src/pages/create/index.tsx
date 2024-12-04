@@ -1,4 +1,4 @@
-import { CreateToken } from "@/components/Create/createToken";
+import { CreateToken } from "@/components/CreateToken/createToken";
 import { Navbar } from "@/components/Navbar/navbar";
 import { NextPage } from "next";
 

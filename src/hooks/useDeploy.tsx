@@ -38,7 +38,6 @@ export const deployToken = async (
     }
     return false;
   } catch (e) {
-    console.log(e);
     return false;
   }
 };

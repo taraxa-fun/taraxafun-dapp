@@ -8,6 +8,7 @@ import Link from "next/link";
 import { CoinHeader } from "@/components/Coin/CoinHeader";
 import { CardTransaction } from "@/components/Coin/CardTransaction";
 import { TokenDetails } from "@/components/Coin/CoinDetail";
+import { CreateReply } from "@/components/CreateReply/createReply";
 
 const CoinPage: NextPage = () => {
   const [activeTab, setActiveTab] = useState<"thread" | "trades">("thread");
@@ -33,31 +34,42 @@ const CoinPage: NextPage = () => {
 
     {/* Thread and Trades */}
     <div className="col-span-12 lg:col-span-8 space-y-8 order-4 lg:order-2">
-      <div className="flex gap-4">
-        <button
-          className={`py-2 px-4 rounded-md ${
-            activeTab === "thread"
-              ? "bg-[#5600AA] text-white"
-              : " text-[#A9A8AD]"
-          }`}
-          onClick={() => setActiveTab("thread")}
-        >
-          thread
-        </button>
-        <button
-          className={`py-2 px-4 rounded-md ${
-            activeTab === "trades"
-              ? "bg-[#5600AA] text-white"
-              : " text-[#A9A8AD]"
-          }`}
-          onClick={() => setActiveTab("trades")}
-        >
-          trades
-        </button>
-      </div>
-      {activeTab === "thread" && <CoinReplies />}
-      {activeTab === "trades" && <CoinTrades />}
+  <div className="flex justify-between items-center gap-4">
+    {/* Navigation Tabs */}
+    <div className="flex gap-4">
+      <button
+        className={`py-2 px-4 rounded-md ${
+          activeTab === "thread"
+            ? "bg-[#5600AA] text-white"
+            : " text-[#A9A8AD]"
+        }`}
+        onClick={() => setActiveTab("thread")}
+      >
+        thread
+      </button>
+      <button
+        className={`py-2 px-4 rounded-md ${
+          activeTab === "trades"
+            ? "bg-[#5600AA] text-white"
+            : " text-[#A9A8AD]"
+        }`}
+        onClick={() => setActiveTab("trades")}
+      >
+        trades
+      </button>
     </div>
+
+    {/* CreateReply Component */}
+    <div>
+      <CreateReply />
+    </div>
+  </div>
+
+  {/* Content based on active tab */}
+  {activeTab === "thread" && <CoinReplies />}
+  {activeTab === "trades" && <CoinTrades />}
+</div>
+
 
     {/* Token Details */}
     <div className="col-span-12 lg:col-span-4 order-3 lg:order-3">

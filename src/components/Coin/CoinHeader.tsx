@@ -5,6 +5,7 @@ import { tokenData } from "@/data/tokenData";
 import { useRouter } from "next/router";
 import { Skeleton } from "../ui/skeleton";
 import { getTimeAgo } from "@/utils/calculeTime";
+import Link from "next/link";
 
 export const CoinHeader = () => {
   const router = useRouter();
@@ -42,9 +43,9 @@ export const CoinHeader = () => {
             width={12}
             height={12}
           />
-          <a href={`/profile/${token.creator}`} className="text-xs font-normal">
+          <Link href={`/profile/${token.creator}`} className="text-xs font-normal">
             {token.creator}
-          </a>
+          </Link>
           <p className="text-sm">{getTimeAgo(token.timestamp)}</p>
           <p className="text-[#79FF62] text-xs font-normal">
             market cap: {token.marketCap}

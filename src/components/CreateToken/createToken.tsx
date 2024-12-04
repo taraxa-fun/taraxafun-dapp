@@ -49,8 +49,22 @@ export const CreateToken = () => {
   type TokenKey = keyof typeof tokenData;
   type SocialKey = keyof typeof tokenData.socialLinks;
 
-  // check if all fields are correctly filled
+  // check if all fields are correctly filled and check if the wallet is connected
   const validateForm = () => {
+    if (!address) {
+      toast({
+        title: "Error",
+        description: (
+          <p className="text-base font-normal">
+            Please connect your wallet to create a token
+          </p>
+        ),
+        className: "w-full border border-red-500",
+        duration: 100,
+      });
+      return false;
+    }
+
     if (!tokenData._name.trim()) {
       setErrors("Name is required");
       return false;
@@ -126,11 +140,28 @@ export const CreateToken = () => {
       if (transactionResult) {
         toast({
           title: `Coin "${tokenData._name}" [${tokenData._symbol}] created successfully!`,
-          description: "Transaction confirmed on the blockchain.",
+          description: (
+            <div className="flex items-center justify-between gap-4 min-w-[300px]">
+              <p className="text-base font-normal">Transaction confirmed</p>
+              <a
+                href={`https://etherscan.io/tx/${transactionResult}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#9A62FF] text-white px-4 py-2 rounded text-sm hover:bg-[#8100FB] transition-colors whitespace-nowrap"
+              >
+                View Transaction
+              </a>
+            </div>
+          ),
+          className: "w-full border border-[#79FF62]",
         });
-        resetForm(); // reset the form after the transaction is successful
+        resetForm();
       } else {
-        throw new Error("Transaction failed.");
+        toast({
+          title: "Error",
+          description: "Transaction failed.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       toast({
