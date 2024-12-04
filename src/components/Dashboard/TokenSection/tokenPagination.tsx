@@ -1,5 +1,5 @@
 import { Pagination } from "@/components/Shared/pagination";
-import { useTokenStore } from "@/store/useTokenStore";
+import { useTokenStore } from "@/store/useAllTokenStore";
 
 export const TokenPagination = () => {
   const { 

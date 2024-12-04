@@ -11,59 +11,70 @@ import {
 } from "@/components/ui/dialog";
 import Image from "next/image";
 import Link from "next/link";
-import { useToast } from "@/hooks/use-toast"
-
-interface TokenData {
-  name: string;
-  ticker: string;
-  description: string;
-  image: File | null;
-  initialSupply: string;
-  bondingCurve: string;
-  maxBuy: string;
-  maxBuyAmount: string;
-  socialLinks: {
-    twitter: string;
-    telegram: string;
-    website: string;
-  };
-}
+import { useToast } from "@/hooks/use-toast";
+import { TokenData } from "@/type/tokenDataCreate";
+import { deployToken, useSupply } from "@/hooks/useDeploy";
+import { useAccount, useWriteContract } from "wagmi";
 
 export const CreateToken = () => {
-  const { toast } = useToast()
-  const [tokenData, setTokenData] = useState<TokenData>({
-    name: "",
-    ticker: "",
-    description: "",
+  const { toast } = useToast();
+  const initialTokenData = {
+    _name: "",
+    _symbol: "",
+    _data: "",
+    _totalSupply: "",
+    _liquidityETHAmount: "",
+    _antiSnipe: false,
     image: null,
-    initialSupply: "",
-    bondingCurve: "linear",
-    maxBuy: "no",
-    maxBuyAmount: "",
-    socialLinks: {
-      twitter: "",
-      telegram: "",
-      website: "",
-    },
-  });
+    _amountAntiSnipe: "",
+    _maxBuyPerWallet: "",
+    bondingCurveType: "linear",
+    socialLinks: { twitter: "", telegram: "", website: "" },
+  };
 
+  const [tokenData, setTokenData] = useState<TokenData>(initialTokenData);
+
+  const resetForm = () => {
+    setTokenData(initialTokenData);
+  };
+
+  const { writeContractAsync } = useWriteContract();
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showMaxBuy, setShowMaxBuy] = useState(false);
   const [showSocial, setShowSocial] = useState(false);
-  const [isDialogAllowed, setIsDialogAllowed] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<string | null>(null);
+  const { address } = useAccount();
+  const { suplyValue } = useSupply(address as any, false, false);
+  type TokenKey = keyof typeof tokenData;
+  type SocialKey = keyof typeof tokenData.socialLinks;
 
+  // check if all fields are correctly filled and check if the wallet is connected
   const validateForm = () => {
-    if (!tokenData.name.trim()) {
-      setErrors("Name is required");
+    if (!address) {
+      toast({
+        title: "Error",
+        description: (
+          <p className="text-base font-normal">
+            Please connect your wallet to create a token
+          </p>
+        ),
+        className: "w-full border border-red-500",
+        duration: 100,
+      });
       return false;
     }
 
-    if (!tokenData.ticker.trim()) {
+    if (!tokenData._name.trim()) {
+      setErrors("Name is required");
+      return false;
+    }
+    if (!tokenData._symbol.trim()) {
       setErrors("Ticker is required");
       return false;
     }
 
-    if (!tokenData.description.trim()) {
+    if (!tokenData._data.trim()) {
       setErrors("Description is required");
       return false;
     }
@@ -72,27 +83,22 @@ export const CreateToken = () => {
       setErrors("Image is required");
       return false;
     }
-    if (showAdvanced && !tokenData.initialSupply.trim()) {
-      setErrors("Initial supply is required");
-      return false;
-    }
-    if (tokenData.maxBuy === "yes" && !tokenData.maxBuyAmount?.trim()) {
-      setErrors("Max buy amount is required when max buy is enabled");
-      return false;
-    }
 
+    if (showMaxBuy && !tokenData._maxBuyPerWallet.trim()) {
+      setErrors("Max buy per wallet is required when anti-snipe is enabled");
+      return false;
+    }
     setErrors(null);
     return true;
   };
 
-  type TokenKey = keyof typeof tokenData;
-  type SocialKey = keyof typeof tokenData.socialLinks;
-
+  // saves the value in the object relative to the input
   const handleInputChange = (key: TokenKey, value: string) => {
     setTokenData((prev) => ({ ...prev, [key]: value }));
     setErrors(null);
   };
 
+  // saves the value in the object relative to the social input
   const handleSocialChange = (key: SocialKey, value: string) => {
     setTokenData((prev) => ({
       ...prev,
@@ -100,38 +106,78 @@ export const CreateToken = () => {
     }));
   };
 
+  // saves the image in the object
   const handleFileChange = (file: File | null) => {
-    setTokenData((prev) => ({ ...prev, image: file }));
-  };
-
-  const handleMaxBuyChange = (value: "no" | "yes") => {
     setTokenData((prev) => ({
       ...prev,
-      maxBuy: value,
-      maxBuyAmount: value === "no" ? "" : prev.maxBuyAmount,
+      image: file,
     }));
   };
 
-  const handleSubmit = () => {
-    const { name, ticker, description, image } = tokenData;
-    if (!name || !ticker || !description || !image) {
+  // sends the data to the contract
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      const isAntiSnipeEnabled =
+        parseFloat(tokenData._amountAntiSnipe || "0") > 0;
+      const finalTotalSupply =
+        !tokenData._totalSupply || parseFloat(tokenData._totalSupply) === 0
+          ? suplyValue.toString()
+          : tokenData._totalSupply;
+
+      const transactionResult = await deployToken(
+        writeContractAsync,
+        tokenData._name,
+        tokenData._symbol,
+        tokenData._data,
+        finalTotalSupply,
+        tokenData._liquidityETHAmount,
+        isAntiSnipeEnabled,
+        tokenData._amountAntiSnipe || "0",
+        showMaxBuy ? tokenData._maxBuyPerWallet || "0" : "0"
+      );
+
+      if (transactionResult) {
+        toast({
+          title: `Coin "${tokenData._name}" [${tokenData._symbol}] created successfully!`,
+          description: (
+            <div className="flex items-center justify-between gap-4 min-w-[300px]">
+              <p className="text-base font-normal">Transaction confirmed</p>
+              <a
+                href={`https://etherscan.io/tx/${transactionResult}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#9A62FF] text-white px-4 py-2 rounded text-sm hover:bg-[#8100FB] transition-colors whitespace-nowrap"
+              >
+                View Transaction
+              </a>
+            </div>
+          ),
+          className: "w-full border border-[#79FF62]",
+        });
+        resetForm();
+      } else {
+        toast({
+          title: "Error",
+          description: "Transaction failed.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
       toast({
         title: "Error",
-        description: "Please fill in all required fields.",
+        description: "Failed to create the token. Please try again.",
+        variant: "destructive",
       });
-      return;
+    } finally {
+      setLoading(false);
     }
-    console.log("Token Data:", tokenData);
-    toast({
-      title: `Create coin called Mimi the cat [${ticker}]`,
-      description: "transaction confirmed",
-    })
   };
 
   return (
     <section className="pt-32 pb-20 lg:w-6/12 w-12/12 md:w-8/12 mx-auto max-w-lg px-4">
       <div className="relative w-full mb-8">
-        {/* 
+        {/*
          */}
         <Link
           href="/"
@@ -151,8 +197,8 @@ export const CreateToken = () => {
           <label className="text-[#9A62FF] text-base font-medium">Name</label>
           <input
             type="text"
-            value={tokenData.name}
-            onChange={(e) => handleInputChange("name", e.target.value)}
+            value={tokenData._name}
+            onChange={(e) => handleInputChange("_name", e.target.value)}
             className="bg-transparent border border-white rounded-lg p-4 text-white focus:outline-none focus:border-[#9A62FF]"
             placeholder="Enter token name"
           />
@@ -163,10 +209,15 @@ export const CreateToken = () => {
           <label className="text-[#9A62FF] text-base font-medium">Ticker</label>
           <input
             type="text"
-            value={tokenData.ticker}
-            onChange={(e) => handleInputChange("ticker", e.target.value)}
+            value={tokenData._symbol}
+            onChange={(e) => {
+              const value = e.target.value.toUpperCase().slice(0, 10);
+              const lettersOnly = value.replace(/[^A-Z]/g, "");
+              handleInputChange("_symbol", lettersOnly);
+            }}
             className="bg-transparent border border-white rounded-lg p-4 text-white focus:outline-none focus:border-[#9A62FF]"
-            placeholder="Enter token ticker"
+            placeholder="Enter token ticker (10 letters max)"
+            maxLength={4}
           />
         </div>
 
@@ -176,8 +227,8 @@ export const CreateToken = () => {
             Description
           </label>
           <textarea
-            value={tokenData.description}
-            onChange={(e) => handleInputChange("description", e.target.value)}
+            value={tokenData._data}
+            onChange={(e) => handleInputChange("_data", e.target.value)}
             className="bg-transparent border border-white rounded-lg p-4 text-white focus:outline-none focus:border-[#9A62FF] min-h-[100px]"
             placeholder="Enter token description"
           />
@@ -191,11 +242,18 @@ export const CreateToken = () => {
           <div className="relative border flex-col space-y-2 border-white rounded-lg p-4 flex items-center justify-between">
             {tokenData.image ? (
               <div className="w-full flex flex-col items-center gap-4">
-                <img
-                  src={URL.createObjectURL(tokenData.image)}
-                  alt="Preview"
-                  className="max-h-[200px] object-contain rounded-lg"
-                />
+                {tokenData.image ? (
+                  <img
+                    src={URL.createObjectURL(tokenData.image)}
+                    alt="Preview"
+                    className="max-h-[200px] object-contain rounded-lg"
+                  />
+                ) : (
+                  <div className="max-h-[200px] flex items-center justify-center text-white">
+                    No image selected
+                  </div>
+                )}
+
                 <label className="bg-[#9A62FF] font-normal text-white px-3 py-2 rounded-lg cursor-pointer">
                   Select another file
                   <input
@@ -281,10 +339,13 @@ export const CreateToken = () => {
                 </label>
                 <input
                   type="text"
-                  value={tokenData.initialSupply}
-                  onChange={(e) =>
-                    handleInputChange("initialSupply", e.target.value)
-                  }
+                  value={tokenData._totalSupply}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d*\.?\d*$/.test(value)) {
+                      handleInputChange("_totalSupply", value);
+                    }
+                  }}
                   className="bg-transparent border border-white rounded-lg p-4 text-white focus:outline-none focus:border-[#9A62FF]"
                   placeholder="Enter initial supply"
                 />
@@ -300,11 +361,11 @@ export const CreateToken = () => {
                     <div className="flex items-center gap-2">
                       <input
                         type="radio"
-                        name="bondingCurve"
+                        name="bondingCurveType"
                         value="linear"
-                        checked={tokenData.bondingCurve === "linear"}
+                        checked={tokenData.bondingCurveType === "linear"}
                         onChange={(e) =>
-                          handleInputChange("bondingCurve", e.target.value)
+                          handleInputChange("bondingCurveType", e.target.value)
                         }
                         className="w-4 h-4 accent-[#9A62FF]"
                       />
@@ -320,9 +381,9 @@ export const CreateToken = () => {
                         type="radio"
                         name="bondingCurve"
                         value="exponential"
-                        checked={tokenData.bondingCurve === "exponential"}
+                        checked={tokenData.bondingCurveType === "exponential"}
                         onChange={(e) =>
-                          handleInputChange("bondingCurve", e.target.value)
+                          handleInputChange("bondingCurveType", e.target.value)
                         }
                         className="w-4 h-4 accent-[#9A62FF]"
                       />
@@ -339,14 +400,15 @@ export const CreateToken = () => {
                 <label className="text-[#9A62FF] text-base font-medium">
                   Max buy per wallet
                 </label>
-                <div className="space-y-4">
+
+                <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <input
                       type="radio"
                       name="maxBuy"
                       value="no"
-                      checked={tokenData.maxBuy === "no"}
-                      onChange={() => handleMaxBuyChange("no")}
+                      checked={!showMaxBuy}
+                      onChange={() => setShowMaxBuy(false)}
                       className="w-4 h-4 accent-[#9A62FF]"
                     />
                     <span className="text-white">No (default)</span>
@@ -357,21 +419,27 @@ export const CreateToken = () => {
                         type="radio"
                         name="maxBuy"
                         value="yes"
-                        checked={tokenData.maxBuy === "yes"}
-                        onChange={() => handleMaxBuyChange("yes")}
+                        checked={showMaxBuy}
+                        onChange={() => setShowMaxBuy(true)}
                         className="w-4 h-4 accent-[#9A62FF]"
                       />
                       <span className="text-white">Yes</span>
                     </div>
-                    {tokenData.maxBuy === "yes" && (
+                    {showMaxBuy && (
                       <div className="ml-6">
                         <input
                           type="text"
-                          value={tokenData.maxBuyAmount}
-                          onChange={(e) =>
-                            handleInputChange("maxBuyAmount", e.target.value)
-                          }
-                          placeholder=""
+                          value={tokenData._maxBuyPerWallet}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (/^\d*\.?\d*$/.test(value)) {
+                              handleInputChange(
+                                "_maxBuyPerWallet",
+                                e.target.value
+                              );
+                            }
+                          }}
+                          placeholder="Enter max buy amount per wallet"
                           className="bg-transparent border border-white rounded-lg p-4 text-white focus:outline-none focus:border-[#9A62FF] w-full"
                         />
                       </div>
@@ -484,7 +552,7 @@ export const CreateToken = () => {
               </DialogTitle>
               <DialogTitle className="text-center text-2xl font-bold">
                 Choose how many <br /> [
-                {tokenData.ticker ? tokenData.ticker : ""}] you want to buy
+                {tokenData._symbol ? tokenData._symbol : ""}] you want to buy
               </DialogTitle>
               <DialogDescription className="text-[#A9A8AD] text-base font-normal">
                 tip: its optional but buying a small amount of coins helps
@@ -492,11 +560,17 @@ export const CreateToken = () => {
               </DialogDescription>
             </DialogHeader>
             <div className="flex flex-col space-y-1">
-              <p className="text-end text-base font-normal">
-                (--switch to {tokenData.ticker ? tokenData.ticker : ""}--)
-              </p>
               <div className="flex gap-2 items-center border border-white rounded">
-                <input className="flex-1 bg-transparent p-4 outline-none focus:outline-none" />
+                <input
+                  className="flex-1 bg-transparent p-4 outline-none focus:outline-none"
+                  value={tokenData._amountAntiSnipe}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d*\.?\d*$/.test(value)) {
+                      handleInputChange("_amountAntiSnipe", e.target.value);
+                    }
+                  }}
+                />
                 <div className="flex items-center gap-1 p-4">
                   <Image
                     src={TaraxaLogoChain}
@@ -511,8 +585,11 @@ export const CreateToken = () => {
                 you receive 1000000 MIMI
               </p>
             </div>
-            <button className="p-2 rounded w-full bg-[#5600AA] text-base font-normal">
-              Create token
+            <button
+              className="p-2 rounded w-full bg-[#5600AA] text-base font-normal"
+              onClick={handleSubmit}
+            >
+              {loading ? "Creating token..." : "Create token"}
             </button>
           </DialogContent>
         </Dialog>

@@ -10,18 +10,16 @@ import Cookies from "js-cookie";
 import { useState, useEffect } from "react";
 
 export const HowItWorksModal = () => {
-  // Utilisation d'un état local pour gérer l'ouverture de la modal
   const [isOpen, setIsOpen] = useState(false);
 
-  // Vérifier les cookies et initialiser l'état local
   useEffect(() => {
     const hasSeenModal = Cookies.get("has_seen_how_it_works_modal");
-    setIsOpen(hasSeenModal === undefined); // Ouvrir la modal si le cookie n'existe pas
+    setIsOpen(hasSeenModal === undefined);
   }, []);
 
   const handleModalClose = () => {
     Cookies.set("has_seen_how_it_works_modal", "true", { expires: 365 });
-    setIsOpen(false); // Fermer la modal immédiatement
+    setIsOpen(false); 
   };
 
   return (
