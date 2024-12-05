@@ -15,6 +15,14 @@ export const deployToken = async (
   maxBuyPerWallet: string
 ) => {
   try {
+    console.log(  nameToken,
+      ticker,
+      description,
+      totalSupply,
+      liquidityETHAmount,
+      antiSnipe,
+      parseEther(amountAntiSnipe),
+      parseEther(maxBuyPerWallet),);
     const tx = await writeContractAsync({
       ...deployerContract,
       functionName: "CreateFun",
@@ -38,6 +46,7 @@ export const deployToken = async (
     }
     return false;
   } catch (e) {
+    console.log(e);
     return false;
   }
 };

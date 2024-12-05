@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { toast } from "react-toastify";
 import TaraxaLogoChain from "../../assets/logo/TARALogoChain.png";
 import {
   Dialog,
@@ -60,7 +59,6 @@ export const CreateToken = () => {
           </p>
         ),
         className: "w-full border border-red-500",
-        duration: 100,
       });
       return false;
     }
@@ -124,7 +122,7 @@ export const CreateToken = () => {
         !tokenData._totalSupply || parseFloat(tokenData._totalSupply) === 0
           ? suplyValue.toString()
           : tokenData._totalSupply;
-
+          console.log(finalTotalSupply)
       const transactionResult = await deployToken(
         writeContractAsync,
         tokenData._name,
@@ -217,7 +215,7 @@ export const CreateToken = () => {
             }}
             className="bg-transparent border border-white rounded-lg p-4 text-white focus:outline-none focus:border-[#9A62FF]"
             placeholder="Enter token ticker (10 letters max)"
-            maxLength={4}
+            maxLength={10}
           />
         </div>
 
@@ -338,6 +336,7 @@ export const CreateToken = () => {
                   Initial supply
                 </label>
                 <input
+                disabled
                   type="text"
                   value={tokenData._totalSupply}
                   onChange={(e) => {

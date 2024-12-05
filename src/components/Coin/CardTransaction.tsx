@@ -4,8 +4,17 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import TaraxaLogoChain from "../../assets/logo/TARALogoChain.png";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { handleCopy } from "@/utils/copy";
+import { useToast } from "@/hooks/use-toast";
+import { getAmountTokens } from "@/hooks/usePool";
+import { buyToken } from "@/hooks/useBuy";
+import { useAccount, useWriteContract } from "wagmi";
 
 interface TradeDataType {
   amount: string;
@@ -21,13 +30,21 @@ export const CardTransaction = () => {
   >("buy");
   const [selectedToken, setSelectedToken] = useState<TokenType | null>(null);
   const [errors, setErrors] = useState<string | null>(null);
+  const initialTradeData = {
+    amount: "",
+    priorityFee: "",
+    slippage: "1",
+  };
   const [tradeData, setTradeData] = useState<TradeDataType>({
     amount: "",
     priorityFee: "",
-    slippage: "",
+    slippage: "1",
   });
+  const [loading, setLoading] = useState(false);
+  const { address } = useAccount();
+  const { toast } = useToast();
   const [copied, isCopied] = useState(false);
-
+  const { writeContractAsync } = useWriteContract();
   const router = useRouter();
   const { id: coinId } = router.query;
 
@@ -35,16 +52,12 @@ export const CardTransaction = () => {
     (t) => t.id.toString() === String(coinId)
   );
 
-  const handleTypeSelect = (type: "buy" | "sell") => {
-    setSelectedTransactionType(type);
+  const resetForm = () => {
+    setTradeData(initialTradeData);
   };
 
-  const handleTokenSwitch = () => {
-    if (selectedToken) {
-      setSelectedToken(null);
-    } else if (token) {
-      setSelectedToken(token);
-    }
+  const handleTypeSelect = (type: "buy" | "sell") => {
+    setSelectedTransactionType(type);
   };
 
   const handleInputChange = (value: string, field: InputField) => {
@@ -77,6 +90,78 @@ export const CardTransaction = () => {
     return true;
   };
 
+  const handleSubmitBuy = async () => {
+    if (!address) return;
+
+    setLoading(true); // Début du chargement
+    try {
+      if (!tradeData.amount) {
+        toast({
+          title: "Error",
+          description: "Please enter an amount and select a token",
+          variant: "destructive",
+        });
+        setLoading(false); // Fin du chargement en cas d'erreur
+        return;
+      }
+
+      const amountOut = await getAmountTokens(
+        "0xFd926F7f4a3CC1155A6131E115Ae0002e5fCdfF7",
+        tradeData.amount
+      );
+      console.log(amountOut);
+
+      const slippagePercent = parseFloat(tradeData.slippage);
+      const slippageValue = BigInt(Math.floor(slippagePercent * 100));
+      const slippageRatio = BigInt(10000) - slippageValue;
+
+      const minTokens = (
+        (amountOut * slippageRatio) /
+        BigInt(10000)
+      ).toString(); // Calcul après slippage
+      console.log("Min Tokens:", minTokens);
+
+      // Appel de la fonction buyToken
+      const tx = await buyToken(
+        writeContractAsync,
+        "0xFd926F7f4a3CC1155A6131E115Ae0002e5fCdfF7",
+        minTokens,
+        address,
+        tradeData.amount
+      );
+
+      if (tx) {
+        toast({
+          title: "Transaction confirmed",
+          description: (
+            <div className="flex items-center justify-between gap-4 min-w-[300px]">
+              <p className="text-base font-normal">Transaction confirmed</p>
+              <a
+                href={`https://etherscan.io/tx/${tx}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#9A62FF] text-white px-4 py-2 rounded text-sm hover:bg-[#8100FB] transition-colors whitespace-nowrap"
+              >
+                View Transaction
+              </a>
+            </div>
+          ),
+          className: "bg-[#201F23] border border-green-500",
+        });
+        resetForm();
+      }
+    } catch (error) {
+      console.error("Error during buy:", error);
+      toast({
+        title: "Error",
+        description: "Failed to complete the purchase. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false); // Fin du chargement, que la transaction réussisse ou échoue
+    }
+  };
+
   return (
     <div>
       <div className="bg-[#2D0060] lg:p-8 p-4 w-full rounded-lg">
@@ -103,11 +188,13 @@ export const CardTransaction = () => {
           </button>
         </div>
         <div className="flex items-center justify-between gap-2 mb-1">
+          {/*
           {selectedTransactionType === "buy" && (
             <button className="text-white" onClick={handleTokenSwitch}>
               (switch to {selectedToken ? "TARA" : token?.symbol})
             </button>
           )}
+             */}
           <Dialog>
             <DialogTrigger className="text-white underline text-sm">
               Set max. slippage (%)
@@ -154,10 +241,13 @@ export const CardTransaction = () => {
                   </div>
                 </div>
               </div>
-              <button className="p-2 rounded w-full bg-[#5600AA] text-base font-normal">
-                Create token
-              </button>
+              <DialogClose asChild>
+                <button className="p-2 rounded w-full bg-[#5600AA] text-base font-normal">
+                  Close
+                </button>
+              </DialogClose>
             </DialogContent>
+            <DialogClose className="absolute right-4 top-4"></DialogClose>
           </Dialog>
         </div>
         <div className="flex gap-2 items-center border border-[#9A62FF] rounded mb-4">
@@ -276,10 +366,12 @@ export const CardTransaction = () => {
           onClick={(e) => {
             if (!validateForm()) {
               e.preventDefault();
+            } else {
+              handleSubmitBuy();
             }
           }}
         >
-          Place trade
+          {loading ? "Loading..." : "Place trade"}
         </button>
       </div>
       <div className="flex flex-col gap-2 mx-auto">
