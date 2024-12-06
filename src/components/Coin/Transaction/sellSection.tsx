@@ -50,29 +50,22 @@ export const SellSection = () => {
     const sanitizedValue = value.replace(/[^0-9.]/g, "");
     const numValue = parseFloat(sanitizedValue);
 
-    if (!isNaN(numValue) && numValue >= 0) {
-      if (inputField === "slippage" && numValue > 49) {
-        return;
-      }
-      if (inputField === "amount") {
-        setAmount(sanitizedValue);
-      } else if (inputField === "slippage") {
-        setSlippage(parseFloat(sanitizedValue));
-      }
-    } else if (sanitizedValue === "") {
-      if (inputField === "amount") {
-        setAmount("");
-      } else if (inputField === "slippage") {
-        setSlippage(1);
+    if (inputField === "amount") {
+      setAmount(sanitizedValue);
+    } else if (inputField === "slippage") {
+      if (sanitizedValue === "") {
+        setSlippage(0);
+      } else if (!isNaN(numValue) && numValue <= 49) {
+        setSlippage(numValue);
       }
     }
   };
+
   const handleSetPercentage = (percentage: number) => {
-    if (!balance) return; 
-    const balanceInTokens = parseFloat(formatEther(balance)); 
-    console.log(parseFloat(formatEther(balance)));
-    const calculatedAmount = (balanceInTokens * percentage) / 100;
-    setAmount(calculatedAmount.toString()); 
+    if (!balance) return;
+    const balanceInTokens = formatEther(balance);
+    const calculatedAmount = (Number(balanceInTokens) * percentage) / 100;
+    setAmount(calculatedAmount.toString());
   };
 
   const handleSubmitSell = async () => {
@@ -83,7 +76,7 @@ export const SellSection = () => {
         variant: "destructive",
       });
     }
-  
+
     setLoading(true);
     try {
       if (!amount) {
@@ -95,7 +88,7 @@ export const SellSection = () => {
         setLoading(false);
         return;
       }
-  
+
       if (balance && parseFloat(amount) > parseFloat(formatEther(balance))) {
         toast({
           title: "Error",
@@ -105,12 +98,13 @@ export const SellSection = () => {
         setLoading(false);
         return;
       }
+      
       const approveTx = await approveSell(
         writeContractAsync,
         amount,
         "0x670C0728e70ac7c2E4f5E0917F9BBFcaF6Fbef61"
       );
-  
+
       if (!approveTx) {
         toast({
           title: "Error",
@@ -120,21 +114,20 @@ export const SellSection = () => {
         setLoading(false);
         return;
       }
- 
-      
+
       const amountOut = await getAmountOutETH(
         "0x670C0728e70ac7c2E4f5E0917F9BBFcaF6Fbef61",
         amount
       );
-  
-      const slippageValue = BigInt(Math.floor(slippage * 100));
-      const slippageRatio = BigInt(10000) - slippageValue;
-  
+
+      const slippageValue = BigInt(Math.floor(slippage * 100)); 
+      const slippageRatio = BigInt(10000) - slippageValue; 
+      
       const minTokens = (
         (amountOut * slippageRatio) /
-        BigInt(10000)
-      ).toString();
-  
+        BigInt(10000) 
+      ) 
+      
       const tx = await sellToken(
         writeContractAsync,
         "0x670C0728e70ac7c2E4f5E0917F9BBFcaF6Fbef61",
@@ -142,7 +135,7 @@ export const SellSection = () => {
         minTokens,
         address
       );
-  
+
       if (tx) {
         toast({
           title: "Transaction confirmed",
@@ -176,7 +169,7 @@ export const SellSection = () => {
       setLoading(false);
     }
   };
-  
+
   return (
     <>
       <div className="flex items-center justify-between gap-2 mb-1">

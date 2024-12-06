@@ -1,20 +1,21 @@
 import { poolContract, taraxaContract, web3Config } from "@/config";
 import { waitForTransactionReceipt } from "@wagmi/core";
 import { erc20Abi, parseEther } from "viem";
+import { getAmountTokens } from "./usePool";
 
 export const sellToken = async (
   writeContractAsync: (params: any) => Promise<any>,
   funToken: string,
   tokenAmount: string,
-  minETH: string,
+  minETH: BigInt,
   _affiliate: string
 ) => {
-  console.log(funToken, tokenAmount, minETH, _affiliate);
+  console.log(parseEther(tokenAmount), minETH);
   try {
     const tx = await writeContractAsync({
       ...poolContract,
       functionName: "sellTokens",
-      args: [funToken, "100", 0, _affiliate],
+      args: [funToken, parseEther(tokenAmount), 0, _affiliate],
     });
     const result = await waitForTransactionReceipt(web3Config, {
       hash: tx,
@@ -36,10 +37,10 @@ export const approveSell = async (
 ) => {
   try {
     const tx = await writeContractAsync({
-      address: poolContract.address,
+      address:addressToken,
       abi: erc20Abi,
       functionName: "approve",
-      args: [addressToken, parseEther(amountApprove)],
+      args: [poolContract.address, parseEther(amountApprove)],
     });
 
     const result = await waitForTransactionReceipt(web3Config, {

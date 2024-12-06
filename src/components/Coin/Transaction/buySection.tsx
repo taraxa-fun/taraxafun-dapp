@@ -186,10 +186,12 @@ export const BuySection = () => {
                 when placing trades
               </p>
             </div>
+            {/**  PRORITY FEE
             <div className="flex flex-col space-y-1">
               <label className="font-medium text-base">Priority fee</label>
               <div className="flex gap-2 items-center border border-[#9A62FF] rounded mb-4">
                 <input
+                disabled
                   className="flex-1 bg-transparent p-4 outline-none focus:outline-none"
                   value={tradeData.priorityFee}
                   onChange={(e) =>
@@ -209,6 +211,7 @@ export const BuySection = () => {
                 </div>
               </div>
             </div>
+            */}
             <DialogClose asChild>
               <button className="p-2 rounded w-full bg-[#5600AA] text-base font-normal">
                 Close

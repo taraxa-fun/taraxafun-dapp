@@ -30,16 +30,13 @@ export const getAmountOutETH = async (tokenAddress: string, amountIn: string): P
   return result;
 };
 
-export const getBalance = async (tokenAddress: `0x${string}`, accountAddress: `0x${string}`): Promise<bigint> => {
+export const getBalance = async (tokenAddress: `0x${string}`, accountAddress: `0x${string}`): Promise<any> => {
   const result = await readContract(web3Config, {
     address: tokenAddress,
     abi: erc20Abi,
     functionName: "balanceOf",
     args: [accountAddress],
   });
-  if (typeof result !== "bigint") {
-    throw new Error("Expected bigint result from readContract");
-  }
   return result;
 }
 
