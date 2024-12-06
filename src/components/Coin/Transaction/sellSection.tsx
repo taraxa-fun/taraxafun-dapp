@@ -14,9 +14,9 @@ import {
 import { getAmountOutETH, getBalance } from "@/hooks/usePool";
 import { approveSell, sellToken } from "@/hooks/useSell";
 import { formatEther, parseEther } from "viem";
+import { useBalanceAllowanceOfUser } from "@/hooks/useBalanceAllowanceOfUser";
 
 export const SellSection = () => {
-  const [balance, setBalance] = useState<bigint | null>(null);
   const [amount, setAmount] = useState("");
   const [slippage, setSlippage] = useState<number>(1);
   const [errors, setErrors] = useState<string | null>(null);
@@ -29,19 +29,10 @@ export const SellSection = () => {
   const token: TokenType | undefined = tokenData.find(
     (t) => t.address.toString() === tokenAddress
   );
-
-  useEffect(() => {
-    if (address) {
-      getBalance("0x670C0728e70ac7c2E4f5E0917F9BBFcaF6Fbef61", address)
-        .then((balance) => {
-          setBalance(balance);
-        })
-        .catch((error) => {
-          console.error("Error fetching balance:", error);
-          setBalance(null);
-        });
-    }
-  }, []);
+  const { balanceOfUser, allowanceOfUser } = useBalanceAllowanceOfUser(
+    "0x670C0728e70ac7c2E4f5E0917F9BBFcaF6Fbef61" as `0x${string}`,
+    address as `0x${string}`, update
+  );
 
   const handleInputChange = (
     value: string,
@@ -62,8 +53,8 @@ export const SellSection = () => {
   };
 
   const handleSetPercentage = (percentage: number) => {
-    if (!balance) return;
-    const balanceInTokens = formatEther(balance);
+    if (!balanceOfUser) return;
+    const balanceInTokens = formatEther(balanceOfUser);
     const calculatedAmount = (Number(balanceInTokens) * percentage) / 100;
     setAmount(calculatedAmount.toString());
   };
@@ -76,7 +67,7 @@ export const SellSection = () => {
         variant: "destructive",
       });
     }
-
+  
     setLoading(true);
     try {
       if (!amount) {
@@ -88,8 +79,8 @@ export const SellSection = () => {
         setLoading(false);
         return;
       }
-
-      if (balance && parseFloat(amount) > parseFloat(formatEther(balance))) {
+  
+      if (balanceOfUser && parseFloat(amount) > parseFloat(formatEther(balanceOfUser))) {
         toast({
           title: "Error",
           description: "Insufficient balance",
@@ -98,36 +89,37 @@ export const SellSection = () => {
         setLoading(false);
         return;
       }
-      
-      const approveTx = await approveSell(
-        writeContractAsync,
-        amount,
-        "0x670C0728e70ac7c2E4f5E0917F9BBFcaF6Fbef61"
-      );
 
-      if (!approveTx) {
-        toast({
-          title: "Error",
-          description: "Approval failed. Please try again.",
-          variant: "destructive",
-        });
-        setLoading(false);
-        return;
+      if (allowanceOfUser && parseEther(amount) > allowanceOfUser) {
+        const approveTx = await approveSell(
+          writeContractAsync,
+          amount,
+          "0x670C0728e70ac7c2E4f5E0917F9BBFcaF6Fbef61"
+        );
+  
+        if (!approveTx) {
+          toast({
+            title: "Error",
+            description: "Approval failed. Please try again.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+      } else {
+        console.log("Approval not required, sufficient allowance available.");
       }
-
+  
       const amountOut = await getAmountOutETH(
         "0x670C0728e70ac7c2E4f5E0917F9BBFcaF6Fbef61",
         amount
       );
-
-      const slippageValue = BigInt(Math.floor(slippage * 100)); 
-      const slippageRatio = BigInt(10000) - slippageValue; 
-      
-      const minTokens = (
-        (amountOut * slippageRatio) /
-        BigInt(10000) 
-      ) 
-      
+  
+      const slippageValue = BigInt(Math.floor(slippage * 100));
+      const slippageRatio = BigInt(10000) - slippageValue;
+  
+      const minTokens = (amountOut * slippageRatio) / BigInt(10000);
+  
       const tx = await sellToken(
         writeContractAsync,
         "0x670C0728e70ac7c2E4f5E0917F9BBFcaF6Fbef61",
@@ -135,7 +127,7 @@ export const SellSection = () => {
         minTokens,
         address
       );
-
+  
       if (tx) {
         toast({
           title: "Transaction confirmed",
@@ -169,6 +161,7 @@ export const SellSection = () => {
       setLoading(false);
     }
   };
+  
 
   return (
     <>
