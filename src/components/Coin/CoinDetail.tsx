@@ -11,15 +11,15 @@ import { Progress } from "../ui/progress";
 
 export const TokenDetails = () => {
   const router = useRouter();
-  const { id } = router.query;
+  const { address: tokenAddress } = router.query;
   const { setToken, token, isLoading } = useSingleTokenStore();
 
   useEffect(() => {
-    if (id) {
-      const foundToken = tokenData.find((t) => t.id.toString() === id);
+    if (tokenAddress) {
+      const foundToken = tokenData.find((t) => t.address.toString() === tokenAddress);
       setToken(foundToken || null);
     }
-  }, [id, setToken]);
+  }, [tokenAddress, setToken]);
 
   if (isLoading || !token) {
     return (

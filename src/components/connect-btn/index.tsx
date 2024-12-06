@@ -4,7 +4,7 @@ import Image from "next/image";
 import logoPlaceHolder from "../../assets/logo/taraxafunLogo.png";
 import Link from "next/link";
 import { web3Config } from "@/config";
-import { sepolia } from "viem/chains";
+import { bscTestnet, sepolia } from "viem/chains";
 
 interface CustomBtnAppProps {
   className?: string;
@@ -29,7 +29,7 @@ export const CustomBtnApp: React.FC<CustomBtnAppProps> = ({ className }) => {
           (!authenticationStatus || authenticationStatus === "authenticated");
         const { data: balanceData, isLoading: isBalanceLoading } = useBalance({
           address: account?.address as any,
-          chainId: sepolia.id,
+          chainId: bscTestnet.id,
         });
 
         return (

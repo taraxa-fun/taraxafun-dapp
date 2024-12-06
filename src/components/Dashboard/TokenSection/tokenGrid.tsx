@@ -37,7 +37,7 @@ export const TokenGrid = () => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-10 px-4">
       {currentTokens.map((token: TokenType, index: number) => (
-        <Link href={`/coin/${token.id}`} key={`${token.symbol}-${index}`}>
+        <Link href={`/coin/${token.address}`} key={`${token.symbol}-${index}`}>
           <div className="flex flex-col hover:shadow-lg transition-all">
             <div className="mb-4 w-[200px] h-[200px] relative overflow-hidden flex items-center justify-center">
               <Image

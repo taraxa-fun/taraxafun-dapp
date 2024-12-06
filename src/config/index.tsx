@@ -1,5 +1,5 @@
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
-import {  sepolia } from "viem/chains";
+import {  bscTestnet, sepolia } from "viem/chains";
 import {  http } from "wagmi";
 import deployerAbi from "./abi/deployerAbi.json";
 import erc20Abi from "./abi/erc20Abi.json";
@@ -8,10 +8,10 @@ import poolAbi from "./abi/poolAbi.json"
 export const web3Config = getDefaultConfig({
   appName: "Taraxafun",
   projectId: "dzdezdzedez",
-  chains: [sepolia as any],
+  chains: [bscTestnet as any],
   ssr: false,
   transports : {
-    [sepolia.id]: http()
+    [bscTestnet.id]: http()
   }
 });
 
@@ -21,12 +21,12 @@ export const taraxaContract = {
 } as const;
 
 export const poolContract = {
-  address: "0x1207F60d12cA5BF8A943A1Ba700E4d9340F659f9",
+  address: "0xb714D168D7737DDC12F75d227da00FcF158c5dAF",
   abi: poolAbi as any,
 } as const
 
 export const deployerContract = {
-  address: "0xC4967B6F11546AB72F8A61cC25B896a03b93764a",
+  address: "0xbD12Ba1114c1d72A362FC34c4b738B80ce398737",
   abi: deployerAbi as any,
 } as const;
 

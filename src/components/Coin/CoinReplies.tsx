@@ -10,10 +10,10 @@ import { tokenData } from "@/data/tokenData";
 
 export const CoinReplies = () => {
   const router = useRouter();
-  const { id: coinId } = router.query;
+  const { address: tokenAddress } = router.query;
 
   const token: TokenType | undefined = tokenData.find(
-    (t) => t.id.toString() === String(coinId)
+    (t) => t.address.toString() === tokenAddress
   );
 
   if (!token) {

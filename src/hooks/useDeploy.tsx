@@ -1,5 +1,5 @@
 import { deployerContract, web3Config } from "@/config";
-import { parseEther } from "viem";
+import { parseEther, parseGwei } from "viem";
 import { multicall, waitForTransactionReceipt } from "@wagmi/core";
 import { useEffect, useState } from "react";
 
@@ -15,7 +15,8 @@ export const deployToken = async (
   maxBuyPerWallet: string
 ) => {
   try {
-    console.log(  nameToken,
+    console.log(
+      nameToken,
       ticker,
       description,
       totalSupply,
@@ -31,12 +32,12 @@ export const deployToken = async (
         ticker,
         description,
         totalSupply,
-        liquidityETHAmount,
+        0, //liquidityETHAmount
         antiSnipe,
         parseEther(amountAntiSnipe),
         parseEther(maxBuyPerWallet),
       ],
-      value: "10000000",
+      value: amountAntiSnipe ? parseEther(amountAntiSnipe + 10000000).toString() :"10000000",
     });
     const result = await waitForTransactionReceipt(web3Config, {
       hash: tx,

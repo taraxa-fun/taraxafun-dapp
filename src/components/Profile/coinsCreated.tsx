@@ -62,7 +62,7 @@ export const CoinsCreated = ({ coins }: CoinsCreatedProps) => {
     <>
       <div className="mt-8 grid grid-cols-1 gap-4 ">
         {currentCoins.map((token: TokenType, index: number) => (
-          <Link href={`/coin/${token.id}`} key={`${token.symbol}-${index}`}>
+          <Link href={`/coin/${token.address}`} key={`${token.symbol}-${index}`}>
           <div
             key={`${token.symbol}-${index}`}
             className="flex md:gap-3 gap-1 mx-auto lg:px-4 px-1 w-full"

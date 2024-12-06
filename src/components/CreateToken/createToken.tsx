@@ -22,7 +22,7 @@ export const CreateToken = () => {
     _symbol: "",
     _data: "",
     _totalSupply: "",
-    _liquidityETHAmount: "",
+    _liquidityETHAmount: "0",
     _antiSnipe: false,
     image: null,
     _amountAntiSnipe: "",
@@ -36,7 +36,7 @@ export const CreateToken = () => {
   const resetForm = () => {
     setTokenData(initialTokenData);
   };
-
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { writeContractAsync } = useWriteContract();
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showMaxBuy, setShowMaxBuy] = useState(false);
@@ -122,8 +122,7 @@ export const CreateToken = () => {
         !tokenData._totalSupply || parseFloat(tokenData._totalSupply) === 0
           ? suplyValue.toString()
           : tokenData._totalSupply;
-          console.log(finalTotalSupply)
-      const transactionResult = await deployToken(
+        const transactionResult = await deployToken(
         writeContractAsync,
         tokenData._name,
         tokenData._symbol,
@@ -136,6 +135,7 @@ export const CreateToken = () => {
       );
 
       if (transactionResult) {
+        setIsDialogOpen(false)
         toast({
           title: `Coin "${tokenData._name}" [${tokenData._symbol}] created successfully!`,
           description: (
@@ -336,7 +336,7 @@ export const CreateToken = () => {
                   Initial supply
                 </label>
                 <input
-                disabled
+                  disabled
                   type="text"
                   value={tokenData._totalSupply}
                   onChange={(e) => {
@@ -533,7 +533,7 @@ export const CreateToken = () => {
           )}
         </div>
         {errors && <p className="text-red-500 text-center text-lg">{errors}</p>}
-        <Dialog>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger
             className="px-3 py-4 w-full bg-[#5600AA] text-base font-normal rounded"
             onClick={(e) => {
@@ -563,6 +563,7 @@ export const CreateToken = () => {
                 <input
                   className="flex-1 bg-transparent p-4 outline-none focus:outline-none"
                   value={tokenData._amountAntiSnipe}
+                  disabled={loading}
                   onChange={(e) => {
                     const value = e.target.value;
                     if (/^\d*\.?\d*$/.test(value)) {
