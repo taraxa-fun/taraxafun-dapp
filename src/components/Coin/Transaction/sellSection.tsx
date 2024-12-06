@@ -26,11 +26,12 @@ export const SellSection = () => {
   const { address: tokenAddress } = router.query;
   const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
-  const token: TokenType | undefined = tokenData.find(
-    (t) => t.address.toString() === tokenAddress
+  const tokenUrl = tokenData.find(
+    (token: TokenType) => token.address === tokenAddress
   );
+ 
   const { balanceOfUser, allowanceOfUser } = useBalanceAllowanceOfUser(
-    "0x670C0728e70ac7c2E4f5E0917F9BBFcaF6Fbef61" as `0x${string}`,
+    tokenAddress as `0x${string}`,
     address as `0x${string}`, update
   );
 
@@ -94,7 +95,7 @@ export const SellSection = () => {
         const approveTx = await approveSell(
           writeContractAsync,
           amount,
-          "0x670C0728e70ac7c2E4f5E0917F9BBFcaF6Fbef61"
+          tokenAddress as `0x${string}`
         );
   
         if (!approveTx) {
@@ -111,7 +112,7 @@ export const SellSection = () => {
       }
   
       const amountOut = await getAmountOutETH(
-        "0x670C0728e70ac7c2E4f5E0917F9BBFcaF6Fbef61",
+        tokenAddress as `0x${string}`,
         amount
       );
   
@@ -122,7 +123,7 @@ export const SellSection = () => {
   
       const tx = await sellToken(
         writeContractAsync,
-        "0x670C0728e70ac7c2E4f5E0917F9BBFcaF6Fbef61",
+        tokenAddress as `0x${string}`,
         amount,
         minTokens,
         address
@@ -215,14 +216,14 @@ export const SellSection = () => {
           <div className="flex items-center gap-1">
             <div className="w-8 h-8 rounded-full overflow-hidden">
               <Image
-                src={token?.imagePath || ""}
-                alt={token?.name || ""}
+                src={tokenUrl?.imagePath || ""}
+                alt={tokenUrl?.name || ""}
                 width={32}
                 height={32}
                 className="w-full h-full object-cover"
               />
             </div>
-            <span>{token?.symbol}</span>
+            <span>{tokenUrl?.symbol}</span>
           </div>
         </div>
       </div>
