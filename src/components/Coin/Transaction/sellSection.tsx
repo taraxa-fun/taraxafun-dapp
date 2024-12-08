@@ -15,6 +15,7 @@ import { getAmountOutETH, getBalance } from "@/hooks/usePool";
 import { approveSell, sellToken } from "@/hooks/useSell";
 import { formatEther, parseEther } from "viem";
 import { useBalanceAllowanceOfUser } from "@/hooks/useBalanceAllowanceOfUser";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 export const SellSection = () => {
   const [amount, setAmount] = useState("");
@@ -29,10 +30,11 @@ export const SellSection = () => {
   const tokenUrl = tokenData.find(
     (token: TokenType) => token.address === tokenAddress
   );
- 
+
   const { balanceOfUser, allowanceOfUser } = useBalanceAllowanceOfUser(
     tokenAddress as `0x${string}`,
-    address as `0x${string}`, update
+    address as `0x${string}`,
+    update
   );
 
   const handleInputChange = (
@@ -68,7 +70,7 @@ export const SellSection = () => {
         variant: "destructive",
       });
     }
-  
+
     setLoading(true);
     try {
       if (!amount) {
@@ -80,8 +82,11 @@ export const SellSection = () => {
         setLoading(false);
         return;
       }
-  
-      if (balanceOfUser && parseFloat(amount) > parseFloat(formatEther(balanceOfUser))) {
+
+      if (
+        balanceOfUser &&
+        parseFloat(amount) > parseFloat(formatEther(balanceOfUser))
+      ) {
         toast({
           title: "Error",
           description: "Insufficient balance",
@@ -97,7 +102,7 @@ export const SellSection = () => {
           amount,
           tokenAddress as `0x${string}`
         );
-  
+
         if (!approveTx) {
           toast({
             title: "Error",
@@ -110,17 +115,17 @@ export const SellSection = () => {
       } else {
         console.log("Approval not required, sufficient allowance available.");
       }
-  
+
       const amountOut = await getAmountOutETH(
         tokenAddress as `0x${string}`,
         amount
       );
-  
+
       const slippageValue = BigInt(Math.floor(slippage * 100));
       const slippageRatio = BigInt(10000) - slippageValue;
-  
+
       const minTokens = (amountOut * slippageRatio) / BigInt(10000);
-  
+
       const tx = await sellToken(
         writeContractAsync,
         tokenAddress as `0x${string}`,
@@ -128,7 +133,7 @@ export const SellSection = () => {
         minTokens,
         address
       );
-  
+
       if (tx) {
         toast({
           title: "Transaction confirmed",
@@ -162,7 +167,6 @@ export const SellSection = () => {
       setLoading(false);
     }
   };
-  
 
   return (
     <>
@@ -179,6 +183,7 @@ export const SellSection = () => {
             Set max. slippage (%)
           </DialogTrigger>
           <DialogContent>
+            <DialogTitle></DialogTitle>
             <div className="flex flex-col space-y-1">
               <label className="font-medium text-base">
                 Set max. slippage (%)
@@ -212,20 +217,22 @@ export const SellSection = () => {
           type="text"
           placeholder="Enter amount"
         />
-        <div className="flex items-center gap-1 p-4">
-          <div className="flex items-center gap-1">
-            <div className="w-8 h-8 rounded-full overflow-hidden">
-              <Image
-                src={tokenUrl?.imagePath || ""}
-                alt={tokenUrl?.name || ""}
-                width={32}
-                height={32}
-                className="w-full h-full object-cover"
-              />
+        {tokenUrl && (
+          <div className="flex items-center gap-1 p-4">
+            <div className="flex items-center gap-1">
+              <div className="w-8 h-8 rounded-full overflow-hidden">
+                <Image
+                  src={tokenUrl?.imagePath || ""}
+                  alt={tokenUrl?.name || ""}
+                  width={32}
+                  height={32}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <span>{tokenUrl?.symbol}</span>
             </div>
-            <span>{tokenUrl?.symbol}</span>
           </div>
-        </div>
+        )}
       </div>
 
       {errors && <div className="text-red-500 text-sm mb-4">{errors}</div>}

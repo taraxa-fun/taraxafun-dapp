@@ -1,16 +1,33 @@
+// components/CustomBtnApp.tsx
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useAccount, useBalance } from "wagmi"; // Import the balance hook
+import { useAccount, useBalance, useSignMessage } from "wagmi";
 import Image from "next/image";
 import logoPlaceHolder from "../../assets/logo/taraxafunLogo.png";
+import { useEffect } from "react";
+import { useAuthStore } from "@/store/User/useAuthStore";
 import Link from "next/link";
-import { web3Config } from "@/config";
-import { bscTestnet, sepolia } from "viem/chains";
+import { bscTestnet } from "viem/chains";
 
-interface CustomBtnAppProps {
-  className?: string;
-}
+export const CustomBtnApp: React.FC<{ className?: string }> = ({
+  className,
+}) => {
+  const { address } = useAccount();
+  const { signMessageAsync } = useSignMessage();
+  const { initAuth, jwt, userMe, fetchUserMe } = useAuthStore();
 
-export const CustomBtnApp: React.FC<CustomBtnAppProps> = ({ className }) => {
+  useEffect(() => {
+    if (jwt && !userMe) {
+      console.log(jwt);
+      fetchUserMe();
+
+    }
+  }, [jwt, userMe, fetchUserMe]);
+
+  useEffect(() => {
+    if (address && !jwt && signMessageAsync) {
+      initAuth(address, signMessageAsync);
+    }
+  }, [address, jwt, signMessageAsync, initAuth]);
   return (
     <ConnectButton.Custom>
       {({
@@ -47,27 +64,28 @@ export const CustomBtnApp: React.FC<CustomBtnAppProps> = ({ className }) => {
               if (!connected) {
                 return (
                   <button
-                    className={` flex items-center justify-center whitespace-nowrap  ${className}`}
+                    className={`flex items-center justify-center whitespace-nowrap ${className}`}
                     onClick={openConnectModal}
                     type="button"
                   >
-                    <span>(Connect Wallet)</span>
+                    <span>Connect Wallet</span>
                   </button>
                 );
               }
               if (chain.unsupported) {
                 return (
                   <button
-                    className={` whitespace-nowrap ${className}`}
+                    className={`whitespace-nowrap ${className}`}
                     onClick={openChainModal}
                     type="button"
                   >
-                    <span className="">Wrong network</span>
+                    <span>Wrong Network</span>
                   </button>
                 );
               }
               return (
-                <Link href={`/profile/0xPumper_001`}>
+                
+                <Link href={`/profile/${userMe?.user.username}`}>
                   <div className="p-1 w-full bg-transparent border border-white text-xs font-normal rounded flex items-center">
                     <div className="w-4 h-4 rounded-full overflow-hidden mr-2">
                       <Image
@@ -79,10 +97,12 @@ export const CustomBtnApp: React.FC<CustomBtnAppProps> = ({ className }) => {
                       />
                     </div>
                     <span>
-                      0xPumper_001{" "}
+                      <strong>{userMe?.user.username} </strong>{"  "}
                       {isBalanceLoading
                         ? "Loading..."
-                        : `${parseFloat(balanceData?.formatted || "0").toFixed(4)} ETH`}
+                        : `${parseFloat(balanceData?.formatted || "0").toFixed(
+                            4
+                          )} ETH`}
                     </span>
                   </div>
                 </Link>

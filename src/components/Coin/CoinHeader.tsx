@@ -1,20 +1,14 @@
 import Image from "next/image";
 import placeHodlerRounded from "../../assets/placeholderRounded.png";
-import { TokenType } from "@/type/tokenType";
-import { tokenData } from "@/data/tokenData";
-import { useRouter } from "next/router";
 import { Skeleton } from "../ui/skeleton";
 import { getTimeAgo } from "@/utils/calculeTime";
 import Link from "next/link";
+import { useSingleTokenStore } from "@/store/SingleToken/useSingleTokenStore";
 
 export const CoinHeader = () => {
-  const router = useRouter();
-  const { address: tokenAddress } = router.query;
-  const token: TokenType | undefined = tokenData.find(
-    (t) => t.address.toString() === tokenAddress
-  );
-
-  if (!token) {
+  const { tokenData, singleTokenisLoading } = useSingleTokenStore();
+  console.log(tokenData);
+  if (!tokenData || singleTokenisLoading) {
     return (
       <div className="col-span-12 lg:col-span-8 space-y-8">
         <Skeleton className="h-6 w-full" />
@@ -33,7 +27,9 @@ export const CoinHeader = () => {
 
   return (
     <div className="col-span-12 lg:col-span-8 space-y-8">
-      <p className="">{token.name} ({token.symbol})</p>
+      <p className="">
+        {tokenData.name} ({tokenData.symbol})
+      </p>
       <div>
         <div className="flex items-center gap-2">
           <p className="text-xs font-normal">created by</p>
@@ -43,14 +39,15 @@ export const CoinHeader = () => {
             width={12}
             height={12}
           />
-          <Link href={`/profile/${token.creator}`} className="text-xs font-normal">
-            {token.creator}
+          <Link
+            href={`/profile/${tokenData.creator.username}`}
+            className="text-xs font-normal"
+          >
+            {tokenData.creator.username}
           </Link>
-          <p className="text-sm">{getTimeAgo(token.timestamp)}</p>
-          <p className="text-[#79FF62] text-xs font-normal">
-            market cap: {token.marketCap}
-          </p>
-          <p className="text-xs font-normal">replies : {token.replyCount}</p>
+          <p className="text-sm">{getTimeAgo(tokenData.created_at)}</p>
+          <p className="text-[#79FF62] text-xs font-normal">market cap: {tokenData.marketcap}</p>
+          <p className="text-xs font-normal">replies : {tokenData.commentsStats.count}</p>
         </div>
       </div>
     </div>

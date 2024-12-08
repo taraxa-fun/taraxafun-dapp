@@ -14,6 +14,10 @@ import { useToast } from "@/hooks/use-toast";
 import { TokenData } from "@/type/tokenDataCreate";
 import { deployToken, useSupply } from "@/hooks/useDeploy";
 import { useAccount, useWriteContract } from "wagmi";
+import { useAuthStore } from "@/store/User/useAuthStore";
+import { saveTokenToDatabase } from "@/utils/saveTokenToDb";
+import { useRouter } from "next/router";
+import { uploadImage } from "@/utils/uploadImage";
 
 export const CreateToken = () => {
   const { toast } = useToast();
@@ -30,12 +34,12 @@ export const CreateToken = () => {
     bondingCurveType: "linear",
     socialLinks: { twitter: "", telegram: "", website: "" },
   };
-
   const [tokenData, setTokenData] = useState<TokenData>(initialTokenData);
-
   const resetForm = () => {
     setTokenData(initialTokenData);
   };
+  const router = useRouter();
+  const { jwt } = useAuthStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { writeContractAsync } = useWriteContract();
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -114,6 +118,8 @@ export const CreateToken = () => {
 
   // sends the data to the contract
   const handleSubmit = async () => {
+    if (!jwt || !address) return; // if no address or jwt return
+
     setLoading(true);
     try {
       const isAntiSnipeEnabled =
@@ -122,7 +128,8 @@ export const CreateToken = () => {
         !tokenData._totalSupply || parseFloat(tokenData._totalSupply) === 0
           ? suplyValue.toString()
           : tokenData._totalSupply;
-        const transactionResult = await deployToken(
+
+      const transactionResult = await deployToken( // deploy token on SC
         writeContractAsync,
         tokenData._name,
         tokenData._symbol,
@@ -132,17 +139,37 @@ export const CreateToken = () => {
         isAntiSnipeEnabled,
         tokenData._amountAntiSnipe || "0",
         showMaxBuy ? tokenData._maxBuyPerWallet || "0" : "0"
-      );
+      ); 
 
       if (transactionResult) {
-        setIsDialogOpen(false)
+        console.log(
+          "Transaction Result Address:",
+          transactionResult.tokenAddress
+        );
+        const res = await saveTokenToDatabase( // save token to database
+          jwt,
+          transactionResult.tokenAddress,
+          tokenData.socialLinks.twitter,
+          tokenData.socialLinks.telegram,
+          tokenData.socialLinks.website
+        );
+        if (res === true && tokenData.image) {
+          const result = await uploadImage( // upload image to server
+            tokenData.image,
+            jwt,
+            `/token/upload-image/${transactionResult.tokenAddress}`
+          );
+          router.push(`/coin/${transactionResult.tokenAddress}`);
+        } else {
+          console.error("Error saving token to database:", res);
+        }
         toast({
           title: `Coin "${tokenData._name}" [${tokenData._symbol}] created successfully!`,
           description: (
             <div className="flex items-center justify-between gap-4 min-w-[300px]">
               <p className="text-base font-normal">Transaction confirmed</p>
               <a
-                href={`https://etherscan.io/tx/${transactionResult}`}
+                href={`https://etherscan.io/tx/${transactionResult.hash}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-[#9A62FF] text-white px-4 py-2 rounded text-sm hover:bg-[#8100FB] transition-colors whitespace-nowrap"
@@ -153,6 +180,7 @@ export const CreateToken = () => {
           ),
           className: "w-full border border-[#79FF62]",
         });
+
         resetForm();
       } else {
         toast({
@@ -162,11 +190,7 @@ export const CreateToken = () => {
         });
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create the token. Please try again.",
-        variant: "destructive",
-      });
+      console.error("Error during handleSubmit:", error);
     } finally {
       setLoading(false);
     }

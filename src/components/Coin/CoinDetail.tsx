@@ -1,27 +1,14 @@
-import { useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import placeHodlerRounded from "../../assets/placeholderRounded.png";
-import { TokenType } from "@/type/tokenType";
-import { tokenData } from "@/data/tokenData";
 import { Skeleton } from "../ui/skeleton";
 import { getTimeAgo } from "@/utils/calculeTime";
-import { useSingleTokenStore } from "@/store/useSingleTokenStore";
+import { useSingleTokenStore } from "@/store/SingleToken/useSingleTokenStore";
 import { Progress } from "../ui/progress";
 
 export const TokenDetails = () => {
-  const router = useRouter();
-  const { address: tokenAddress } = router.query;
-  const { setToken, token, isLoading } = useSingleTokenStore();
+  const { tokenData, singleTokenisLoading } = useSingleTokenStore();
 
-  useEffect(() => {
-    if (tokenAddress) {
-      const foundToken = tokenData.find((t) => t.address.toString() === tokenAddress);
-      setToken(foundToken || null);
-    }
-  }, [tokenAddress, setToken]);
-
-  if (isLoading || !token) {
+  if (singleTokenisLoading || !tokenData) {
     return (
       <div className="flex flex-col mt-4">
         <Skeleton className="h-40 w-full mb-4" />
@@ -46,8 +33,8 @@ export const TokenDetails = () => {
       <div className="flex md:gap-3 gap-1">
         <div className="flex-shrink-0">
           <Image
-            src={token.imagePath}
-            alt={`Token ${token.name}`}
+            src=""
+            alt=""
             width={200}
             height={200}
           />
@@ -62,32 +49,32 @@ export const TokenDetails = () => {
                 width={20}
                 height={20}
               />
-              <p className="text-xs font-normal">{token.creator}</p>
+              <p className="text-xs font-normal">{tokenData.creator.username}</p>
 
-              <p className="text-xs">{getTimeAgo(token.timestamp)}</p>
+              <p className="text-xs">{getTimeAgo(tokenData.created_at)}</p>
             </div>
           </div>
           <div className="flex justify-between">
             <p className="text-xs font-normal text-[#79FF62]">
-              market cap: {token.marketCap}
+              market cap: {tokenData.marketcap}
             </p>
-            <p className="text-xs font-normal">replies: {token.replyCount}</p>
+            <p className="text-xs font-normal">replies: {tokenData.commentsStats.count}</p>
           </div>
           <p className="text-gray-300 font-normal text-xs">
-            {token.symbol}: {token.description}
+            {tokenData.symbol}: {tokenData.description}
           </p>
         </div>
       </div>
       <div className="flex flex-col space-y-2">
         <div className="flex justify-between">
           <p className="font-medium text-base">
-            Bonding curve progress: {token.bondingCurve}%
+            Bonding curve progress: ??%
           </p>
           <p className="font-medium text-base">type: linear</p>
         </div>
 
         <Progress
-          value={token.bondingCurve}
+          value={50}
           fillColor="bg-[#79FF62]"
           backgroundColor="bg-[#458343]"
         />
@@ -98,7 +85,7 @@ export const TokenDetails = () => {
       </div>
       <div className="flex flex-col space-y-2">
         <p className="font-medium text-base">
-          Pump emperor progress {token.bondingCurve}%
+          Pump emperor progress  %
         </p>
 
         <Progress

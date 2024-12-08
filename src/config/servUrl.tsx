@@ -1,0 +1,1 @@
+export const servUrl = "https://taraxafun-server-590541650183.us-central1.run.app";

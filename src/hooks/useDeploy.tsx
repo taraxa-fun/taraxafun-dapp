@@ -13,17 +13,9 @@ export const deployToken = async (
   antiSnipe: boolean,
   amountAntiSnipe: string,
   maxBuyPerWallet: string
-) => {
+): Promise<{ hash: string; tokenAddress: string } | false> => {
   try {
-    console.log(
-      nameToken,
-      ticker,
-      description,
-      totalSupply,
-      liquidityETHAmount,
-      antiSnipe,
-      parseEther(amountAntiSnipe),
-      parseEther(maxBuyPerWallet),);
+    // Envoyer la transaction pour déployer le token
     const tx = await writeContractAsync({
       ...deployerContract,
       functionName: "CreateFun",
@@ -32,25 +24,36 @@ export const deployToken = async (
         ticker,
         description,
         totalSupply,
-        0, //liquidityETHAmount
+        0, 
         antiSnipe,
         parseEther(amountAntiSnipe),
         parseEther(maxBuyPerWallet),
       ],
-      value: amountAntiSnipe ? parseEther(amountAntiSnipe + 10000000).toString() :"10000000",
+      value: antiSnipe
+        ? parseEther(amountAntiSnipe + 10000000).toString()
+        : "10000000",
     });
+
     const result = await waitForTransactionReceipt(web3Config, {
       hash: tx,
     });
+
+    console.log("Transaction Result:", result);
+
     if (result.status === "success") {
-      return tx;
+      const tokenAddress = result.logs[0]?.address; 
+      if (!tokenAddress) {
+        console.error("Token address not found in transaction logs.");
+      }
+      return { hash: tx, tokenAddress };
     }
     return false;
   } catch (e) {
-    console.log(e);
+    console.error("Error deploying token:", e);
     return false;
   }
 };
+
 
 export const useSupply = (
   account: `0x${string}`,

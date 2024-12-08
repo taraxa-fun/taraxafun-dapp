@@ -1,17 +1,27 @@
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useState } from "react";
+import { useAuthStore } from "@/store/User/useAuthStore";
+import { useSingleTokenStore } from "@/store/SingleToken/useSingleTokenStore";
+import { useRepliesTokenIdStore } from "@/store/SingleToken/useRepliesTokenIdStore";
+import { useToast } from "@/hooks/use-toast";
 
 export const CreateReply = () => {
   const [comment, setComment] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const maxCharacters = 255;
   const charactersRemaining = maxCharacters - comment.length;
+
+  const { jwt } = useAuthStore();
+  const { tokenData } = useSingleTokenStore();
+  const { createReply } = useRepliesTokenIdStore();
+  const {toast} = useToast()
 
   const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (e.target.value.length <= maxCharacters) {
@@ -19,19 +29,40 @@ export const CreateReply = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (comment.trim().length === 0) {
       console.log("Cannot post an empty comment.");
       return;
     }
 
-    console.log("submit:", comment);
-    setComment("");
+    if (!jwt || !tokenData?.address) {
+      toast({
+        title: "Error",
+        description: "please connect to post a comment",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    const success = await createReply(jwt, tokenData.address, comment.trim());
+
+    if (success) {
+      setComment("");
+      setIsOpen(false); 
+    } else {
+      console.error("Failed to post comment.");
+    }
+
+    setIsSubmitting(false);
   };
 
   return (
-    <Dialog>
-      <DialogTrigger className="font-normal text-base hover:underline">
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger
+        className="font-normal text-base hover:underline"
+        onClick={() => setIsOpen(true)}
+      >
         (post a reply)
       </DialogTrigger>
       <DialogContent>
@@ -54,14 +85,14 @@ export const CreateReply = () => {
         </div>
         <button
           className={`p-2 rounded w-full text-base font-normal ${
-            comment.trim().length > 0
+            comment.trim().length > 0 && !isSubmitting
               ? "bg-[#5600AA] text-white hover:bg-[#8100FB]"
               : "bg-gray-500 text-gray-300 cursor-not-allowed"
           }`}
           onClick={handleSubmit}
-          disabled={comment.trim().length === 0}
+          disabled={comment.trim().length === 0 || isSubmitting}
         >
-          Post reply
+          {isSubmitting ? "Posting..." : "Post reply"}
         </button>
       </DialogContent>
     </Dialog>

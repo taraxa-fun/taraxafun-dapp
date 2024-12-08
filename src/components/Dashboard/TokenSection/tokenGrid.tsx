@@ -1,16 +1,19 @@
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { useTokenStore } from "@/store/useAllTokenStore";
 import { getTimeAgo } from "@/utils/calculeTime";
 import { Skeleton } from "@/components/ui/skeleton";
 import placeHodlerRounded from "../../../assets/placeholderNavRounded.png";
 import { TokenType } from "@/type/tokenType";
 import Link from "next/link";
+import placeHolderTokenImg from "../../../assets/placeHodlerPumpEmperor.png";
 
 export const TokenGrid = () => {
-  const { getCurrentTokens, isLoading, filteredTokens, hasSearched } =
-    useTokenStore();
+  const { tokens, isLoading, fetchTokens, searchQuery } = useTokenStore();
 
-  const currentTokens = getCurrentTokens();
+  useEffect(() => {
+    fetchTokens();
+  }, []);
 
   if (isLoading) {
     return (
@@ -26,7 +29,7 @@ export const TokenGrid = () => {
     );
   }
 
-  if (hasSearched && filteredTokens?.length === 0) {
+  if (searchQuery && tokens.length === 0) {
     return (
       <div className="px-4 text-center text-gray-400 py-8">
         No tokens found for your search
@@ -36,16 +39,16 @@ export const TokenGrid = () => {
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-10 px-4">
-      {currentTokens.map((token: TokenType, index: number) => (
-        <Link href={`/coin/${token.address}`} key={`${token.symbol}-${index}`}>
+      {tokens.map((token: TokenType, index: number) => (
+        <Link href={`/coin/${token.address}`} key={`${index}`}>
           <div className="flex flex-col hover:shadow-lg transition-all">
-            <div className="mb-4 w-[200px] h-[200px] relative overflow-hidden flex items-center justify-center">
+            <div className="mb-4 w-[200px] h-[200px] flex items-center justify-center">
               <Image
-                src={token.imagePath}
+                src={placeHolderTokenImg.src}
                 alt={`Token ${token.creator}`}
                 width={200}
                 height={200}
-                className="object-cover w-full h-full"
+                className="object-contain" 
               />
             </div>
 
@@ -53,7 +56,7 @@ export const TokenGrid = () => {
               <div className="flex items-center gap-4">
                 <p className="text-xs font-normal">created by</p>
                 <Link
-                  href={`/profile/${token.creator}`}
+                  href={`/profile/${token.creator.username}`}
                   className="text-xs font-normal hover:underline"
                 >
                   <div className="flex items-center gap-2">
@@ -63,18 +66,20 @@ export const TokenGrid = () => {
                       width={20}
                       height={20}
                     />
-                    <p className="text-xs font-normal">{token.creator}</p>
+                    <p className="text-xs font-normal">
+                      {token.creator.username}
+                    </p>
                   </div>
                 </Link>
-                <p className="text-xs">{getTimeAgo(token.timestamp)}</p>
+                <p className="text-xs">{getTimeAgo(token.created_at)}</p>
               </div>
 
               <div className="flex justify-between">
                 <p className="text-xs font-normal text-[#79FF62]">
-                  market cap: {token.marketCap}
+                  market cap: {token.marketcap}
                 </p>
                 <p className="text-xs font-normal">
-                  replies: {token.replyCount}
+                  replies: {token.commentsStats.count}
                 </p>
               </div>
 

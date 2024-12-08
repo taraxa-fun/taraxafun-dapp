@@ -4,7 +4,6 @@ import Image from "next/image";
 import placeHodlerRounded from "../../assets/placeholderRounded.png";
 import { CoinHeld } from "@/type/coinHeld";
 import { useCoinsHeldStore } from "@/store/useCoinsHeldStore";
-import { Pagination } from "../Shared/pagination";
 import { Skeleton } from "../ui/skeleton";
 import Link from "next/link";
 
@@ -79,13 +78,14 @@ export const CoinsHeld = ({ coins }: CoinsHeldProps) => {
           </div>
         ))}
       </div>
-
+        {/** 
       <Pagination
         currentPage={currentPage}
         totalPages={getTotalPages()}
         onNextPage={goToNextPage}
         onPreviousPage={goToPreviousPage}
       />
+      */}
     </>
   );
 };

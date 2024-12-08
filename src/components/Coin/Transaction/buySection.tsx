@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getAmountTokens } from "@/hooks/usePool";
 import { buyToken } from "@/hooks/useBuy";
 import { useAccount, useWriteContract } from "wagmi";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 interface TradeDataType {
   amount: string;
@@ -43,10 +44,7 @@ export const BuySection = () => {
   const [copied, isCopied] = useState(false);
   const { writeContractAsync } = useWriteContract();
   const router = useRouter();
-  const { id: coinId } = router.query;
-  const token: TokenType | undefined = tokenData.find(
-    (t) => t.id.toString() === String(coinId)
-  );
+const { address: tokenAddress } = router.query;
   const handleInputChange = (value: string, field: InputField) => {
     const sanitizedValue = value.replace(/[^0-9.]/g, "");
     const numValue = parseFloat(sanitizedValue);
@@ -101,7 +99,7 @@ export const BuySection = () => {
         return;
       }
       const amountOut = await getAmountTokens(
-        "0x670C0728e70ac7c2E4f5E0917F9BBFcaF6Fbef61",
+        tokenAddress as `0x${string}`,
         tradeData.amount
       );
       const slippagePercent = parseFloat(tradeData.slippage);
@@ -117,7 +115,7 @@ export const BuySection = () => {
       // Appel de la fonction buyToken
       const tx = await buyToken(
         writeContractAsync,
-        "0x670C0728e70ac7c2E4f5E0917F9BBFcaF6Fbef61",
+        tokenAddress as `0x${string}`,
         minTokens,
         address,
         tradeData.amount
@@ -169,7 +167,9 @@ export const BuySection = () => {
           <DialogTrigger className="text-white underline text-sm">
             Set max. slippage (%)
           </DialogTrigger>
+
           <DialogContent>
+            <DialogTitle></DialogTitle>
             <div className="flex flex-col space-y-1">
               <label className="font-medium text-base">
                 Set max. slippage (%)

@@ -1,24 +1,44 @@
-import { Pagination } from "@/components/Shared/pagination";
+// components/Shared/Pagination.tsx
 import { useTokenStore } from "@/store/useAllTokenStore";
 
 export const TokenPagination = () => {
   const { 
     currentPage, 
-    getTotalPages, 
+    totalPages, 
     goToNextPage, 
     goToPreviousPage,
-    filteredTokens,
-    hasSearched 
+    tokens 
   } = useTokenStore();
 
+  if (tokens.length === 0) {
+    return null;
+  }
+
   return (
-    <Pagination
-      currentPage={currentPage}
-      totalPages={getTotalPages()}
-      hasFiltered={hasSearched}
-      filteredLength={filteredTokens?.length}
-      onNextPage={goToNextPage}
-      onPreviousPage={goToPreviousPage}
-    />
+    <div className="flex items-center justify-center gap-2 mt-8 pb-8">
+      <button
+        onClick={goToPreviousPage}
+        className={`${
+          currentPage === 1
+            ? "text-gray-500"
+            : "text-white hover:text-[#79FF62]"
+        }`}
+        disabled={currentPage === 1}
+      >
+        ( ← )
+      </button>
+      <span className="text-white">{currentPage} / {totalPages}</span>
+      <button
+        onClick={goToNextPage}
+        className={`${
+          currentPage === totalPages
+            ? "text-gray-500"
+            : "text-white hover:text-[#79FF62]"
+        }`}
+        disabled={currentPage === totalPages}
+      >
+        ( → )
+      </button>
+    </div>
   );
 };

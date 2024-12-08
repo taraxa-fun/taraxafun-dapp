@@ -1,92 +1,120 @@
-// store/useTokenStore.ts
-import { create } from 'zustand';
-import { TokenType } from '@/type/tokenType';
-import { tokenData } from '@/data/tokenData';
+import { servUrl } from "@/config/servUrl";
+import { TokenType } from "@/type/tokenType";
+import axios from "axios";
+import { create } from "zustand";
 
 interface TokenStore {
-  allTokens: TokenType[];
-  filteredTokens: TokenType[] | null;
+  tokens: TokenType[];
   currentPage: number;
-  tokensPerPage: number;
+  totalPages: number;
   searchQuery: string;
+  sortBy: "marketcap" | "last-comment" | "last-trade" | "created-at";
   isLoading: boolean;
+  error: string | null;
   hasSearched: boolean;
-  
+
+  fetchTokens: (params?: {
+    page?: number;
+    sortBy?: "marketcap" | "last-comment" | "last-trade" | "created-at";
+    search?: string;
+  }) => Promise<void>;
   setSearchQuery: (query: string) => void;
-  searchTokens: (query: string) => Promise<void>;
-  clearSearch: () => void;
-  goToNextPage: () => void;
-  goToPreviousPage: () => void;
-  setCurrentPage: (page: number) => void;
-  getCurrentTokens: () => TokenType[];
-  getTotalPages: () => number;
+  setSortBy: (sort: "marketcap" | "last-comment" | "last-trade" | "created-at") => void;
+  clearFilters: () => void;
+  goToNextPage: () => Promise<void>;
+  goToPreviousPage: () => Promise<void>;
 }
 
 export const useTokenStore = create<TokenStore>((set, get) => ({
-  allTokens: tokenData,
-  filteredTokens: null,
+  tokens: [],
   currentPage: 1,
-  tokensPerPage: 10,
-  searchQuery: '',
+  totalPages: 1,
+  searchQuery: "",
+  sortBy: "created-at",
   isLoading: false,
+  error: null,
   hasSearched: false,
 
-  getCurrentTokens: () => {
+  fetchTokens: async (params) => {
     const state = get();
-    const tokensToDisplay = state.filteredTokens ?? state.allTokens;
-    const indexOfLastToken = state.currentPage * state.tokensPerPage;
-    const indexOfFirstToken = indexOfLastToken - state.tokensPerPage;
-    return tokensToDisplay.slice(indexOfFirstToken, indexOfLastToken);
-  },
+    set({ isLoading: true });
 
-  getTotalPages: () => {
-    const state = get();
-    const tokensToDisplay = state.filteredTokens ?? state.allTokens;
-    return Math.ceil(tokensToDisplay.length / state.tokensPerPage);
+    try {
+      const queryParams = new URLSearchParams({
+        sortby: params?.sortBy || state.sortBy,
+        page: String(params?.page || state.currentPage),
+        limit: "10",
+      });
+
+      if (params?.search || state.searchQuery) {
+        queryParams.append("search", params?.search || state.searchQuery);
+      }
+
+      const response = await axios.get(
+        `${servUrl}/token/all?${queryParams.toString()}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      set({
+        tokens: response.data.data.tokens,
+        currentPage: response.data.data.pagination.currentPage,
+        totalPages: response.data.data.pagination.totalPages,
+        sortBy: params?.sortBy || state.sortBy,
+        isLoading: false,
+        error: null,
+        hasSearched: !!(params?.search || state.searchQuery),
+      });
+    } catch (error) {
+      console.error("Error fetching tokens:", error);
+      set({
+        isLoading: false,
+        error: "Failed to fetch tokens",
+      });
+    }
   },
 
   setSearchQuery: (query: string) => set({ searchQuery: query }),
 
-  searchTokens: async (query: string) => {
-    set({ isLoading: true });
-    try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      const searchResults = tokenData.filter(token => 
-        token.name.toLowerCase().includes(query.toLowerCase()) ||
-        token.symbol.toLowerCase().includes(query.toLowerCase())
-      );
-      set({ 
-        filteredTokens: searchResults,
-        hasSearched: true,
-        isLoading: false,
-        currentPage: 1
-      });
-    } catch (error) {
-      console.error('Error searching tokens:', error);
-      set({ filteredTokens: [], isLoading: false });
-    }
+  setSortBy: (sortBy: "marketcap" | "last-comment" | "last-trade" | "created-at") => {
+    set({ sortBy });
+    get().fetchTokens({ sortBy, page: 1 });
   },
 
-  clearSearch: () => set({ 
-    searchQuery: '',
-    filteredTokens: null,
-    hasSearched: false,
-    currentPage: 1
-  }),
+  clearFilters: () => {
+    set({
+      searchQuery: "",
+      sortBy: "created-at",
+      currentPage: 1,
+      hasSearched: false,
+    });
+    get().fetchTokens({ page: 1, sortBy: "created-at" });
+  },
 
-  goToNextPage: () => {
+  goToNextPage: async () => {
     const state = get();
-    if (state.currentPage < state.getTotalPages()) {
-      set({ currentPage: state.currentPage + 1 });
+    if (state.currentPage < state.totalPages) {
+      const nextPage = state.currentPage + 1;
+      await get().fetchTokens({
+        page: nextPage,
+        sortBy: state.sortBy,
+        search: state.searchQuery,
+      });
     }
   },
 
-  goToPreviousPage: () => {
+  goToPreviousPage: async () => {
     const state = get();
     if (state.currentPage > 1) {
-      set({ currentPage: state.currentPage - 1 });
+      const prevPage = state.currentPage - 1;
+      await get().fetchTokens({
+        page: prevPage,
+        sortBy: state.sortBy,
+        search: state.searchQuery,
+      });
     }
   },
-
-  setCurrentPage: (page: number) => set({ currentPage: page })
 }));

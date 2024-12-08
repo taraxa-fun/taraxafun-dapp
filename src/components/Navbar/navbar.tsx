@@ -9,6 +9,7 @@ import placeholderNav from "../../assets/placeholderNav.png";
 import placeholderNavRounded from "../../assets/placeholderNavRounded.png";
 import { CustomBtnApp } from "../connect-btn";
 import { HowItWorksModal } from "../HowItWorks/modalHowItWorks";
+import Link from "next/link";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -54,14 +55,14 @@ export const Navbar = () => {
       <nav className="absolute w-full lg:w-12/12 lg:mx-auto z-40 lg:top-2 top-0 px-4 backdrop-blur-[10px] rounded-none lg:rounded-full">
         <div className="grid grid-cols-12 items-center mx-auto py-2">
           <div className="col-span-3 flex items-center gap-4">
-            <a href="/" className="flex-shrink-0">
+            <Link href="/" className="flex-shrink-0">
               <Image
                 src={taraxafunlogo}
                 alt="Taraxafun Logo"
                 width={40}
                 height={40}
               />
-            </a>
+            </Link>
 
             <div className="flex flex-col lg:flex-row items-start md:items-center lg:items-center gap-2">
               <div className="flex flex-col lg:flex-row gap-2">

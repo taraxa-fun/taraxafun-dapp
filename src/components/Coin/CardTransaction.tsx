@@ -50,15 +50,14 @@ export const CardTransaction = () => {
         <div className="flex flex-col space-y-2 mt-4">
           <p className="text-sm font-normal">CA:</p>
           <div className="flex flex-col items-center w-full">
-            {token && token.address && (
+            {tokenAddress && (
               <div className="text-sm w-full">
                 <span className="text-sm font-normal text-start border rounded border-gray-300 text-gray-300 p-2.5 bg-transparent block w-full">
-                  {token.address ? token.address : ""}
+                  {tokenAddress}
                 </span>
-
                 <div className="flex justify-between mt-2 w-full">
                   <a
-                    href={`https://etherscan.io/address/${token.address}`}
+                    href={`https://etherscan.io/address/${tokenAddress}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-[#9A62FF] cursor-pointer"
@@ -67,7 +66,7 @@ export const CardTransaction = () => {
                   </a>
                   <button
                     className="hover:text-[#9A62FF] cursor-pointer"
-                    onClick={() => handleCopy(token.address, isCopied)}
+                    onClick={() => handleCopy(tokenAddress as string, isCopied)}
                   >
                     {copied ? "copied" : "copy address"}
                   </button>

@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { Pagination } from "../Shared/pagination";
 import { Skeleton } from "../ui/skeleton";
 import { useRouter } from "next/router";
 
 import { TokenType } from "@/type/tokenType";
 import { tokenData } from "@/data/tokenData";
-import { useTradesStore } from "@/store/Coin/useTradesStore";
+import { useTradesStore } from "@/store/SingleToken/useTradesStore";
 
 export const CoinTrades = () => {
   const router = useRouter();
@@ -29,12 +28,13 @@ export const CoinTrades = () => {
     goToNextPage,
     goToPreviousPage,
   } = useTradesStore();
-
+  {/**
   useEffect(() => {
     if (token.trades) {
       setTrades(token.trades);
     }
   }, [token.trades, setTrades]);
+   */}
 
   if (isLoading) {
     return (
@@ -99,13 +99,14 @@ export const CoinTrades = () => {
           </table>
         </div>
       </div>
-
+              {/** 
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
         onNextPage={goToNextPage}
         onPreviousPage={goToPreviousPage}
       />
+       */}
     </>
   );
 };

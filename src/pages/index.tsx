@@ -5,9 +5,9 @@ import { Navbar } from "@/components/Navbar/navbar";
 import { PumpEmperor } from "@/components/Dashboard/PumpEmperor";
 import { TokenSearch } from "@/components/Dashboard/TokenSection/tokenSearch";
 import { TokenGrid } from "@/components/Dashboard/TokenSection/tokenGrid";
-import { TokenPagination } from "@/components/Dashboard/TokenSection/tokenPagination";
 import { TokenCreate } from "@/components/Dashboard/TokenSection/tokenCreate";
 import { TokenFilter } from "@/components/Dashboard/TokenSection/tokenFilter";
+import { TokenPagination } from "@/components/Dashboard/TokenSection/tokenPagination";
 
 const Dashboard: NextPage = () => {
   const [mounted, setMounted] = useState(false);
