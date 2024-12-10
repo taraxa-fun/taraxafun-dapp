@@ -29,7 +29,7 @@ export const TokenGrid = () => {
     );
   }
 
-  if (searchQuery && tokens.length === 0) {
+  if ( tokens.length === 0) {
     return (
       <div className="px-4 text-center text-gray-400 py-8">
         No tokens found for your search

@@ -1,90 +1,112 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 interface TokenMessage {
   _id: string;
   address: string;
   created_at: string;
-  description: string;
-  name: string;
-  supply: string;
+  description?: string;
+  name?: string;
+  supply?: string;
   symbol: string;
-  creator: {
+  creator?: {
     _id: string;
     username: string;
   };
 }
 
-interface TradeMessage {
+interface TradeData {
   _id: string;
-  type: 'buy' | 'sell';
+  type: "buy" | "sell";
+  outAmount: string;
+  inAmount: string;
+  index: string;
+  hash: string;
   created_at: string;
+  user: {
+    _id: string;
+    wallet: string;
+  };
+  token: {
+    _id: string;
+    address: string;
+    marketcap: string;
+    symbol: string;
+  };
 }
 
 interface WebSocketStore {
   latestTokens: TokenMessage[];
-  latestTrades: TradeMessage[];
+  latestTrades: TradeData[];
   tokenWs: WebSocket | null;
   tradeWs: WebSocket | null;
   initWebSockets: () => void;
   cleanup: () => void;
 }
 
-export const useWebSocketStore = create((set, get) => ({
+// Store Implementation
+export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
   latestTokens: [],
   latestTrades: [],
   tokenWs: null,
   tradeWs: null,
 
   initWebSockets: () => {
-    // Ne pas réinitialiser si les connexions existent déjà
     const state = get();
-    
+
     // WebSocket pour les tokens
     if (!state.tokenWs) {
-      const tokenWs = new WebSocket('ws://taraxafun-server-590541650183.us-central1.run.app/ws/create-fun');
+      const tokenWs = new WebSocket(
+        "ws://taraxafun-server-590541650183.us-central1.run.app/ws/create-fun"
+      );
 
       tokenWs.onopen = () => {
-        console.log('Token WebSocket Connected');
+        console.log("Token WebSocket Connected");
       };
 
       tokenWs.onmessage = (event) => {
         const data = JSON.parse(event.data) as TokenMessage;
-        set(state => ({
-          latestTokens: [data, ...state.latestTokens].slice(0, 5)
+        set((state) => ({
+          latestTokens: [data, ...state.latestTokens],
         }));
-        console.log("latest tokens",data);
+        console.log("Latest tokens:", data);
       };
 
       tokenWs.onclose = () => {
-        console.log('Token WebSocket Disconnected');
-        set(state => ({ tokenWs: null }));
+        console.log("Token WebSocket Disconnected");
+        set((state) => ({ tokenWs: null }));
         setTimeout(() => get().initWebSockets(), 5000);
       };
 
       set({ tokenWs });
     }
 
+    // WebSocket pour les trades
     if (!state.tradeWs) {
-      const tradeWs = new WebSocket('ws://taraxafun-server-590541650183.us-central1.run.app/ws/trade-call');
+      const tradeWs = new WebSocket(
+        "ws://taraxafun-server-590541650183.us-central1.run.app/ws/trade-call"
+      );
 
       tradeWs.onopen = () => {
-        console.log('Trade WebSocket Connected');
+        console.log("Trade WebSocket Connected");
       };
 
       tradeWs.onmessage = (event) => {
-        const data = JSON.parse(event.data) as TradeMessage;
-        set(state => ({
-          latestTrades: [data, ...state.latestTrades].slice(0, 5)
-        }));
-        console.log("data from ws",data);
+        const message = JSON.parse(event.data);
+        if (message.type === "tradeCall") {
+          const tradeData = message.data as TradeData;
+          set((state) => ({
+            latestTrades: [tradeData, ...state.latestTrades],
+          }));
+          console.log("Latest trades:", tradeData);
+        }
       };
 
       tradeWs.onclose = () => {
-        console.log('Trade WebSocket Disconnected');
-        set(state => ({ tradeWs: null }));
+        console.log("Trade WebSocket Disconnected");
+        set((state) => ({ tradeWs: null }));
         setTimeout(() => get().initWebSockets(), 5000);
       };
-
+      
       set({ tradeWs });
     }
   },
@@ -98,5 +120,5 @@ export const useWebSocketStore = create((set, get) => ({
       tradeWs.close();
     }
     set({ tokenWs: null, tradeWs: null });
-  }
-})) satisfies { getState: () => WebSocketStore };
+  },
+}));

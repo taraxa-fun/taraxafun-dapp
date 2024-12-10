@@ -23,7 +23,6 @@ export const Navbar = () => {
       document.body.classList.remove("overflow-hidden");
     }
   }, [isOpen]);
-
   const handleClickOutside = (event: any) => {
     if (
       event.target.closest("#navbar-sticky") ||
@@ -46,12 +45,11 @@ export const Navbar = () => {
     };
   }, [isOpen]);
 
+  const { showAnimation } = useAnimationStore();
+
   useEffect(() => {
     console.log(latestTrades);
   }, [latestTrades]);
-
-  const { showAnimation } = useAnimationStore();
-
   return (
     <>
       {/* Desktop Navbar */}
@@ -109,15 +107,26 @@ export const Navbar = () => {
                   target="_blank"
                   className="flex items-center gap-2 px-2 py-2 rounded bg-[#79FF62] text-black font-normal text-sm"
                 >
-                  <Image src={placeholderNav} alt="Placeholder Nav" />
-                  <span>1Ly231 bought 5.2k TARA of $MEME</span>
-                  <Image src={placeholderNavRounded} alt="Placeholder Nav" />
+                  {latestTrades && latestTrades.length > 0 ? (
+                    <span>
+                      {latestTrades[latestTrades.length - 1].user.wallet} bought{" "}
+                      {BigInt(
+                        latestTrades[latestTrades.length - 1].outAmount
+                      ).toString()}{" "}
+                      TARA of $
+                      {latestTrades[latestTrades.length - 1].token.symbol}
+                    </span>
+                  ) : (
+                    <span>1Ly231 bought 5.2k TARA of $MEME</span>
+                  )}
                 </a>
               </li>
+
               <li
                 className={`hidden md:block lg:block ${
                   showAnimation ? "shake-animation " : ""
-                }`}>
+                }`}
+              >
                 <a
                   href=""
                   target="_blank"

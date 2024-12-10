@@ -39,30 +39,11 @@ export const TokenDetails = () => {
             height={200}
           />
         </div>
-        <div className="flex flex-col space-y-1 justify-center">
-          <div className="flex items-center lg:gap-4 gap-1">
-            <p className="text-xs font-normal">created by</p>
-            <div className="flex items-center gap-1">
-              <Image
-                src={placeHodlerRounded}
-                alt="creator avatar"
-                width={20}
-                height={20}
-              />
-              <p className="text-xs font-normal">{tokenData.creator.username}</p>
-
-              <p className="text-xs">{getTimeAgo(tokenData.created_at)}</p>
-            </div>
-          </div>
-          <div className="flex justify-between">
-            <p className="text-xs font-normal text-[#79FF62]">
-              market cap: {tokenData.marketcap}
-            </p>
-            <p className="text-xs font-normal">replies: {tokenData.commentsStats.count}</p>
-          </div>
-          <p className="text-gray-300 font-normal text-xs">
-            {tokenData.symbol}: {tokenData.description}
+        <div className="flex flex-col w-full space-y-1 justify-start">
+          <p className="text-white font-normal text-sm">
+          <strong>{tokenData.name.toLocaleUpperCase()} ({tokenData.symbol})</strong>
           </p>
+          <p className="text-xs text-gray-300">"{tokenData.description}"</p>
         </div>
       </div>
       <div className="flex flex-col space-y-2">

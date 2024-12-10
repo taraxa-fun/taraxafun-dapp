@@ -10,7 +10,10 @@ interface Creator {
  interface Trade {
   _id: string;
   type: 'buy' | 'sell';
+  username: string;
+  amount: number;
   created_at: string;
+  transactionNumber: string;
  }
  
  interface Comment {

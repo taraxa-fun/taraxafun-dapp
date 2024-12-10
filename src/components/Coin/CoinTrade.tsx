@@ -4,36 +4,14 @@ import { useRouter } from "next/router";
 
 import { TokenType } from "@/type/tokenType";
 import { useTradesStore } from "@/store/SingleToken/useTradesStore";
+import { useSingleTokenStore } from "@/store/SingleToken/useSingleTokenStore";
+import { formatDate } from "@/utils/formatDate";
 
 export const CoinTrades = () => {
   const router = useRouter();
-  const { address: tokenAddress } = router.query;
-  return null
+  const { tokenData, singleTokenisLoading } = useSingleTokenStore();
 
-{/** 
-  if (!token) {
-    return <div className="text-red-500">Token not found</div>;
-  }
-
-  const {
-    setTrades,
-    getCurrentPageTrades,
-    trades,
-    currentPage,
-    totalPages,
-    isLoading,
-    goToNextPage,
-    goToPreviousPage,
-  } = useTradesStore();
-  {/**
-  useEffect(() => {
-    if (token.trades) {
-      setTrades(token.trades);
-    }
-  }, [token.trades, setTrades]);
-
-
-  if (isLoading) {
+  if (singleTokenisLoading) {
     return (
       <div className="mt-8 space-y-4">
         {[...Array(5)].map((_, i) => (
@@ -47,12 +25,9 @@ export const CoinTrades = () => {
     );
   }
 
-  if (trades.length === 0) {
+  if (tokenData?.trades.length === 0) {
     return <div className="mt-8 text-center text-white">No trades yet</div>;
   }
-
-  const currentTrades = getCurrentPageTrades();
-
   return (
     <>
       <div className="mt-8">
@@ -68,7 +43,7 @@ export const CoinTrades = () => {
               </tr>
             </thead>
             <tbody>
-              {currentTrades.map((trade, index) => (
+              {tokenData?.trades.map((trade, index) => (
                 <tr
                   key={index}
                   className={`${
@@ -88,7 +63,7 @@ export const CoinTrades = () => {
                     </span>
                   </td>
                   <td className="py-2 px-4">{trade.amount}</td>
-                  <td className="py-2 px-4">{trade.date}</td>
+                  <td className="py-2 px-4">{formatDate(trade.created_at)}</td>
                   <td className="py-2 px-4">{trade.transactionNumber}</td>
                 </tr>
               ))}
@@ -96,15 +71,6 @@ export const CoinTrades = () => {
           </table>
         </div>
       </div>
-
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onNextPage={goToNextPage}
-        onPreviousPage={goToPreviousPage}
-      />
-
     </>
   );
-  */}
 };

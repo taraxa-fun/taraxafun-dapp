@@ -47,7 +47,7 @@ export const CoinHeader = () => {
           </Link>
           <p className="text-sm">{getTimeAgo(tokenData.created_at)}</p>
           <p className="text-[#79FF62] text-xs font-normal">
-            market cap: {tokenData.marketcap}
+            market cap: ${tokenData.marketcap}
           </p>
           <p className="text-xs font-normal">
             replies: {tokenData.commentsStats.count}

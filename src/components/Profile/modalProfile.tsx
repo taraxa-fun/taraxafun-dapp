@@ -28,6 +28,8 @@ export const ModalProfile: React.FC<ModalProfileProps> = ({ trigger }) => {
   const [username, setUsername] = useState(userMe?.user.username || "");
   const [filedChanged, setFieldChanged] = useState(false);
 
+  {
+    /** 
   const handleBioChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const text = event.target.value;
     setBioText(text);
@@ -38,18 +40,18 @@ export const ModalProfile: React.FC<ModalProfileProps> = ({ trigger }) => {
       setFieldChanged(false);
     }
   };
-  
+  */
+  }
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const text = event.target.value;
     setUsername(text);
-  
+
     if (text !== userMe?.user.username) {
       setFieldChanged(true);
     } else {
       setFieldChanged(false);
     }
   };
-  
 
   const handleModalClose = () => {
     setProfileImage(null);
@@ -75,20 +77,18 @@ export const ModalProfile: React.FC<ModalProfileProps> = ({ trigger }) => {
     setError(null);
   };
 
-
   const bioCharacterLimit = 255;
   const bioCharactersRemaining = bioCharacterLimit - bioText.length;
 
   const handleSubmit = async () => {
     if (!jwt) return;
-    if (!profileImage && !bioText && username === userMe?.user.username) {
+    if (!profileImage  && username === userMe?.user.username) {
       setError("Please update your profile or upload an image");
       return;
     }
     try {
       const updatedUserData = {
         username,
-        bio: bioText,
       };
       if (profileImage && filedChanged) {
         setUploading(true);
@@ -109,8 +109,7 @@ export const ModalProfile: React.FC<ModalProfileProps> = ({ trigger }) => {
           description: "Your profile has been updated",
           className: "bg-[#201F23] border border-green-500",
         });
-        const updatedUsername = res.data.user.username; 
-        router.push(`/profile/${updatedUsername}`);
+        const updatedUsername = res.data.user.username;
       }
     } catch (err) {
       setError((err as Error).message);
@@ -192,6 +191,7 @@ export const ModalProfile: React.FC<ModalProfileProps> = ({ trigger }) => {
               onChange={handleUsernameChange}
             />
           </div>
+          {/** 
           <div className="flex flex-col">
             <div className="flex items-center justify-between mb-1">
               <label className="text-sm font-normal">Bio (optional)</label>
@@ -206,7 +206,9 @@ export const ModalProfile: React.FC<ModalProfileProps> = ({ trigger }) => {
               onChange={handleBioChange}
             />
           </div>
+            */}
         </div>
+
         <button
           className="p-2 rounded w-full bg-[#5600AA] text-base font-normal"
           onClick={handleSubmit}

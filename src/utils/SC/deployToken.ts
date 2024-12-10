@@ -38,7 +38,7 @@ export const deployToken = async (
     });
 
     console.log("Transaction Result:", result);
-
+    
     if (result.status === "success") {
       const tokenAddress = result.logs[0]?.address;
       if (!tokenAddress) {

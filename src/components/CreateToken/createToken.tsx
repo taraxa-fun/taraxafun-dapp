@@ -184,7 +184,7 @@ export const CreateToken = () => {
           description: "Transaction confirmed",
           txHash: transactionResult.hash,
         });
-        router.push(`/token/${transactionResult.tokenAddress}`);
+        //router.push(`/token/${transactionResult.tokenAddress}`);
         resetForm();
       } else {
         showErrorToast("Transaction failed.");

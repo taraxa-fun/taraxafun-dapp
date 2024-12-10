@@ -15,7 +15,7 @@ import { Replies } from "@/components/Profile/replies";
 import { handleCopy } from "@/utils/copy";
 
 const ProfilePage: NextPage = () => {
-  const { userMe, fetchUserProfile, logout, isProfileUpdating } =
+  const { userMe, fetchUserProfile, logout, isProfileUpdating, loading } =
     useAuthStore();
   const { disconnect } = useDisconnect();
   const router = useRouter();
@@ -23,20 +23,18 @@ const ProfilePage: NextPage = () => {
   const [copied, isCopied] = useState(false);
   const [profileData, setProfileData] = useState(userMe || null);
   const [activeTab, setActiveTab] = useState<ProfileTab>("coins-held");
-  const [loading, setLoading] = useState(false);
+  const [loadingPage, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       if (!username || typeof username !== "string") return;
       setLoading(true);
-  
       if (userMe && userMe.user.username === username) {
         console.log(`Affichage de userMe pour ${username}`);
         setProfileData(userMe);
         setLoading(false);
         return;
       }
-
       try {
         const userProfile = await fetchUserProfile(username);
         if (userProfile) {
@@ -52,10 +50,9 @@ const ProfilePage: NextPage = () => {
         setLoading(false);
       }
     };
-  
+
     fetchData();
   }, [username, userMe, fetchUserProfile, isProfileUpdating]);
-  
 
   if (!username || loading) {
     return (
@@ -108,10 +105,12 @@ const ProfilePage: NextPage = () => {
         )}
       </div>
       <div className="space-y-2 text-center">
-        <h3 className="font-bold text-xl">@{profileData.user.username}</h3>
+        <h3 className="font-bold text-xl">@{profileData.user.username}</h3> 
+        {/** 
         <p className="text-gray-300 font-normal text-sm max-w-md mx-auto">
           {userMe?.user.description || "No description"}
         </p>
+        */}
 
         {userMe?.user.username === username && (
           <>
@@ -128,7 +127,9 @@ const ProfilePage: NextPage = () => {
             </button>
           </>
         )}
-        <p className="text-lg font-medium mb-4">{userMe?.user.likes} ??? likes received | </p>
+        <p className="text-lg font-medium mb-4">
+          {userMe?.user.likes} ??? likes received |{" "}
+        </p>
         <div className="flex flex-col gap-2 max-w-fit mx-auto">
           <span className="text-sm font-normal border rounded border-gray-300 text-gray-300 p-2.5 bg-transparent text-center max-w-fit">
             {userMe?.user.wallet ? userMe?.user.wallet : ""}
