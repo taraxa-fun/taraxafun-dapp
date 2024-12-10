@@ -1,5 +1,3 @@
-import { tokenData } from "@/data/tokenData";
-import { TokenType } from "@/type/tokenType";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -10,12 +8,12 @@ import {
   DialogContent,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { handleCopy } from "@/utils/copy";
 import { useToast } from "@/hooks/use-toast";
-import { getAmountTokens } from "@/hooks/usePool";
-import { buyToken } from "@/hooks/useBuy";
 import { useAccount, useWriteContract } from "wagmi";
 import { DialogTitle } from "@radix-ui/react-dialog";
+import { getAmountTokens } from "@/utils/SC/getAmount";
+import { buyToken } from "@/utils/SC/buyTokenSc";
+import { showErrorToast, showSuccessToastTx } from "@/utils/toast/showToasts";
 
 interface TradeDataType {
   amount: string;
@@ -44,7 +42,7 @@ export const BuySection = () => {
   const [copied, isCopied] = useState(false);
   const { writeContractAsync } = useWriteContract();
   const router = useRouter();
-const { address: tokenAddress } = router.query;
+  const { address: tokenAddress } = router.query;
   const handleInputChange = (value: string, field: InputField) => {
     const sanitizedValue = value.replace(/[^0-9.]/g, "");
     const numValue = parseFloat(sanitizedValue);
@@ -80,21 +78,11 @@ const { address: tokenAddress } = router.query;
   };
 
   const handleSubmitBuy = async () => {
-    if (!address)
-      return toast({
-        title: "Error",
-        description: "Please connect your wallet",
-        variant: "destructive",
-      });
-
+    if (!address) return showErrorToast("Please connect your wallet");
     setLoading(true); // Début du chargement
     try {
       if (!tradeData.amount) {
-        toast({
-          title: "Error",
-          description: "Please enter an amount and select a token",
-          variant: "destructive",
-        });
+        showErrorToast("Please enter an amount and select a token");
         setLoading(false); // Fin du chargement en cas d'erreur
         return;
       }
@@ -122,32 +110,15 @@ const { address: tokenAddress } = router.query;
       );
 
       if (tx) {
-        toast({
-          title: "Transaction confirmed",
-          description: (
-            <div className="flex items-center justify-between gap-4 min-w-[300px]">
-              <p className="text-base font-normal">Transaction confirmed</p>
-              <a
-                href={`https://etherscan.io/tx/${tx}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-[#9A62FF] text-white px-4 py-2 rounded text-sm hover:bg-[#8100FB] transition-colors whitespace-nowrap"
-              >
-                View Transaction
-              </a>
-            </div>
-          ),
-          className: "bg-[#201F23] border border-green-500",
+        showSuccessToastTx({
+          description: "Transaction confirmed",
+          txHash: tx,
         });
         resetForm();
       }
     } catch (error) {
       console.error("Error during buy:", error);
-      toast({
-        title: "Error",
-        description: "Failed to complete the purchase. Please try again.",
-        variant: "destructive",
-      });
+      showErrorToast("Failed to complete the purchase. Please try again.");
     } finally {
       setLoading(false); // Fin du chargement, que la transaction réussisse ou échoue
     }

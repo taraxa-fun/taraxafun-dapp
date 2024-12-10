@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import Image from "next/image";
 import placeHodlerRounded from "../../assets/placeholderRounded.png";
 import { CoinHeld } from "@/type/coinHeld";
-import { useCoinsHeldStore } from "@/store/useCoinsHeldStore";
 import { Skeleton } from "../ui/skeleton";
 import Link from "next/link";
 
@@ -12,16 +11,11 @@ interface CoinsHeldProps {
 }
 
 export const CoinsHeld = ({ coins }: CoinsHeldProps) => {
-  const {
-    setCoins,
-    getCurrentPageCoins,
-    currentPage,
-    getTotalPages,
-    goToNextPage,
-    goToPreviousPage,
-    isLoading,
-  } = useCoinsHeldStore();
+  
 
+  coins = []
+  return null
+    {/** 
   useEffect(() => {
     setCoins(coins);
   }, [coins, setCoins]);
@@ -78,14 +72,14 @@ export const CoinsHeld = ({ coins }: CoinsHeldProps) => {
           </div>
         ))}
       </div>
-        {/** 
+
       <Pagination
         currentPage={currentPage}
         totalPages={getTotalPages()}
         onNextPage={goToNextPage}
         onPreviousPage={goToPreviousPage}
       />
-      */}
+
     </>
-  );
+    */}
 };

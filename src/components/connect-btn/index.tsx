@@ -13,21 +13,8 @@ export const CustomBtnApp: React.FC<{ className?: string }> = ({
 }) => {
   const { address } = useAccount();
   const { signMessageAsync } = useSignMessage();
-  const { initAuth, jwt, userMe, fetchUserMe } = useAuthStore();
+  const {  userMe } = useAuthStore();
 
-  useEffect(() => {
-    if (jwt && !userMe) {
-      console.log(jwt);
-      fetchUserMe();
-
-    }
-  }, [jwt, userMe, fetchUserMe]);
-
-  useEffect(() => {
-    if (address && !jwt && signMessageAsync) {
-      initAuth(address, signMessageAsync);
-    }
-  }, [address, jwt, signMessageAsync, initAuth]);
   return (
     <ConnectButton.Custom>
       {({

@@ -50,13 +50,15 @@ export const CoinsCreated = ({ coins, isLoading }: CoinsCreatedProps) => {
             className="flex md:gap-3 gap-1 mx-auto lg:px-4 px-1 w-full"
           >
             <div className="flex-shrink-0">
-              <Image
-                src={placeHodlerRounded} // Remplacez par un vrai logo de token si disponible
-                alt={`Token ${token.name}`}
-                width={50}
-                height={50}
-                className="rounded-full"
-              />
+              {token.image && (
+                <Image
+                  src={token.image}
+                  alt={`Token ${token.name}`}
+                  width={50}
+                  height={50}
+                  className="rounded-full"
+                />
+              )}
             </div>
 
             <div className="flex flex-col space-y-1 justify-center">

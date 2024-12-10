@@ -6,7 +6,6 @@ const MAX_FILE_SIZE = 500 * 1024; // 500KB
 const ALLOWED_FILE_TYPES = [".png", ".jpg", ".jpeg", ".gif"];
 
 export const uploadImage = async (image: File, jwt: string, url: string) => {
-  // Vérification de la taille
   if (image.size > MAX_FILE_SIZE) {
     return {
       success: false,

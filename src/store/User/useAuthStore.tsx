@@ -3,19 +3,30 @@ import { persist } from "zustand/middleware";
 import axios from "axios";
 import { servUrl } from "@/config/servUrl";
 import { UserProfile } from "@/type/user";
+import { jwtDecode, JwtPayload } from "jwt-decode";
 
 interface AuthStore {
   jwt: string | null;
   address: string | null;
   userMe: UserProfile | null;
   loading: boolean;
+  isProfileUpdating: boolean; // Nouveau boolean
 
   initAuth: (
     address: string,
     signMessage: (params: { message: string }) => Promise<string>
   ) => Promise<void>;
+  verifyJwt: () => boolean;
   fetchUserMe: () => Promise<void>;
   fetchUserProfile: (username: string) => Promise<UserProfile | null>;
+  updateUserMe: (updates: {
+    username?: string;
+    description?: string;
+  }) => Promise<{
+    success: boolean;
+    data?: any;
+    error?: any;
+  }>;
   logout: () => void;
 }
 
@@ -26,9 +37,37 @@ export const useAuthStore = create<AuthStore>()(
       address: null,
       userMe: null,
       loading: false,
+      isProfileUpdating: false,
+
+      verifyJwt: (): boolean => {
+        const { jwt } = get();
+        if (!jwt) return false;
+
+        try {
+          const decoded = jwtDecode<JwtPayload>(jwt);
+          const currentTime = Date.now() / 1000;
+
+          if (decoded.exp && decoded.exp < currentTime) {
+            set({ jwt: null });
+            return false;
+          }
+
+          return true;
+        } catch (error) {
+          console.error("JWT verification failed:", error);
+          set({ jwt: null });
+          return false;
+        }
+      },
 
       initAuth: async (address, signMessage) => {
         set({ loading: true });
+        const isValid = get().verifyJwt();
+        if (isValid) {
+          set({ address, loading: false });
+          await get().fetchUserMe();
+          return;
+        }
         try {
           const { data: nonceResponse } = await axios.get(
             `${servUrl}/auth/nonce/${address}`,
@@ -36,7 +75,7 @@ export const useAuthStore = create<AuthStore>()(
           );
 
           if (!nonceResponse.nonce) {
-            throw new Error("Nonce not found in response.");
+            console.error("Nonce not found in response.");
           }
 
           const signature = await signMessage({ message: nonceResponse.nonce });
@@ -53,7 +92,7 @@ export const useAuthStore = create<AuthStore>()(
             set({ jwt: token, address, loading: false });
             await get().fetchUserMe();
           } else {
-            throw new Error("JWT not found in response.");
+            console.error("JWT not found in response.");
           }
         } catch (error) {
           console.error("Auth error:", error);
@@ -73,7 +112,7 @@ export const useAuthStore = create<AuthStore>()(
               "x-auth-token": jwt,
             },
           });
-          console.log("appelé user Me", response);
+
           set({ userMe: response.data, loading: false });
         } catch (error) {
           console.error("Error fetching userMe data:", error);
@@ -93,6 +132,41 @@ export const useAuthStore = create<AuthStore>()(
         }
       },
 
+      updateUserMe: async (updates, callback?: () => void) => {
+        const { jwt } = get();
+        if (!jwt) {
+          return { success: false, error: "User is not authenticated." };
+        }
+      
+        set({ isProfileUpdating: true });
+      
+        try {
+          const response = await axios.put(`${servUrl}/user/me`, updates, {
+            headers: {
+              "Content-Type": "application/json",
+              "x-auth-token": jwt,
+            },
+          });
+      
+          const updatedUser = response.data;
+      
+          set({
+            userMe: updatedUser,
+            isProfileUpdating: false,
+          });
+      
+          if (callback) {
+            callback();
+          }
+      
+          return { success: true, data: updatedUser };
+        } catch (error) {
+          console.error("Error updating user:", error);
+          set({ isProfileUpdating: false });
+          return { success: false, error };
+        }
+      },
+
       logout: () => {
         set(() => ({
           jwt: null,
@@ -106,8 +180,6 @@ export const useAuthStore = create<AuthStore>()(
       name: "auth-storage",
       partialize: (state) => ({
         jwt: state.jwt,
-        address: state.address,
-        userMe: state.userMe,
       }),
     }
   )

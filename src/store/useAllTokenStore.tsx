@@ -57,8 +57,8 @@ export const useTokenStore = create<TokenStore>((set, get) => ({
             "Content-Type": "application/json",
           },
         }
-      );
-
+      );  
+      console.log(response.data);
       set({
         tokens: response.data.data.tokens,
         currentPage: response.data.data.pagination.currentPage,

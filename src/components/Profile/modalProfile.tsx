@@ -9,8 +9,9 @@ import logoPlaceHolder from "../../assets/logo/taraxafunLogo.png";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/User/useAuthStore";
-import { uploadImage } from "@/utils/uploadImage";
+import { uploadImage } from "@/utils/uploadImageUser";
 import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/router";
 
 interface ModalProfileProps {
   trigger: React.ReactNode;
@@ -21,15 +22,35 @@ export const ModalProfile: React.FC<ModalProfileProps> = ({ trigger }) => {
   const [bioText, setBioText] = useState("");
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { jwt, userMe } = useAuthStore();
+  const { jwt, userMe, updateUserMe } = useAuthStore();
   const { toast } = useToast();
+  const router = useRouter();
   const [username, setUsername] = useState(userMe?.user.username || "");
+  const [filedChanged, setFieldChanged] = useState(false);
 
-  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(event.target.value);
+  const handleBioChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const text = event.target.value;
+    setBioText(text);
+  
+    if (text !== userMe?.user.description) {
+      setFieldChanged(true);
+    } else {
+      setFieldChanged(false);
+    }
   };
+  
+  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const text = event.target.value;
+    setUsername(text);
+  
+    if (text !== userMe?.user.username) {
+      setFieldChanged(true);
+    } else {
+      setFieldChanged(false);
+    }
+  };
+  
 
-  // Réinitialise l'image sélectionnée si l'utilisateur ferme la modal
   const handleModalClose = () => {
     setProfileImage(null);
     setError(null);
@@ -49,47 +70,58 @@ export const ModalProfile: React.FC<ModalProfileProps> = ({ trigger }) => {
       setError("File must be an image");
       return;
     }
-
+    setFieldChanged(true);
     setProfileImage(file);
     setError(null);
   };
 
-  const handleBioChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const text = event.target.value;
-    setBioText(text);
-  };
 
   const bioCharacterLimit = 255;
   const bioCharactersRemaining = bioCharacterLimit - bioText.length;
 
   const handleSubmit = async () => {
     if (!jwt) return;
-    if (!profileImage) {
-      setError("Please select an image");
+    if (!profileImage && !bioText && username === userMe?.user.username) {
+      setError("Please update your profile or upload an image");
       return;
     }
-
-    setUploading(true);
-    setError(null);
-
-    const result = await uploadImage(profileImage, jwt, "/user/upload-avatar");
-
-    if (result.success) {
-      toast({
-        title: "Success",
-        description: result.message,
-        className: "bg-[#201F23] border border-green-500",
-      });
-    } else {
-      setError(result.message);
+    try {
+      const updatedUserData = {
+        username,
+        bio: bioText,
+      };
+      if (profileImage && filedChanged) {
+        setUploading(true);
+        setError(null);
+        const result = await uploadImage(
+          profileImage,
+          jwt,
+          "/user/upload-avatar"
+        );
+        if (!result.success) {
+          console.error("Image upload failed");
+        }
+      }
+      const res = await updateUserMe(updatedUserData);
+      if (res.success) {
+        toast({
+          title: "Success",
+          description: "Your profile has been updated",
+          className: "bg-[#201F23] border border-green-500",
+        });
+        const updatedUsername = res.data.user.username; 
+        router.push(`/profile/${updatedUsername}`);
+      }
+    } catch (err) {
+      setError((err as Error).message);
       toast({
         title: "Error",
-        description: result.message,
+        description: (err as Error).message,
         variant: "destructive",
       });
+    } finally {
+      setUploading(false);
     }
-
-    setUploading(false);
   };
 
   return (

@@ -9,13 +9,15 @@ import "react-toastify/dist/ReactToastify.css";
 import { Toaster } from "@/components/ui/toaster";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { InitAuth } from "@/components/Auth/InitAuth";
+import { useWebSocketStore } from "@/store/WS/useWebSocketStore";
 
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-
+  const { initWebSockets, cleanup } = useWebSocketStore();
   useEffect(() => {
     const handleStart = () => setLoading(true);
     const handleComplete = () => setLoading(false);
@@ -31,6 +33,10 @@ function MyApp({ Component, pageProps }: AppProps) {
     };
   }, [router]);
 
+  useEffect(() => {
+    initWebSockets();
+    return () => cleanup();
+  }, []);
   return (
     <WagmiProvider config={web3Config}>
       <QueryClientProvider client={queryClient}>
@@ -39,7 +45,9 @@ function MyApp({ Component, pageProps }: AppProps) {
           {loading && (
             <div className="fixed top-0 left-0 w-full h-1 bg-gradient-to-r from-[#5600AA] to-[#9A62FF] animate-pulse z-50" />
           )}
+
           <Component {...pageProps} />
+          <InitAuth />
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

@@ -42,14 +42,16 @@ export const TokenGrid = () => {
       {tokens.map((token: TokenType, index: number) => (
         <Link href={`/coin/${token.address}`} key={`${index}`}>
           <div className="flex flex-col hover:shadow-lg transition-all">
-            <div className="mb-4 w-[200px] h-[200px] flex items-center justify-center">
-              <Image
-                src={placeHolderTokenImg.src}
-                alt={`Token ${token.creator}`}
-                width={200}
-                height={200}
-                className="object-contain" 
-              />
+            <div className="mb-4 w-full flex items-center justify-center">
+              {token.image && (
+                <Image
+                  src={token.image}
+                  alt={`Token image`}
+                  width={200}
+                  height={200}
+                  className="object-contain"
+                />
+              )}
             </div>
 
             <div className="flex flex-col space-y-1 justify-center">
@@ -60,12 +62,16 @@ export const TokenGrid = () => {
                   className="text-xs font-normal hover:underline"
                 >
                   <div className="flex items-center gap-2">
-                    <Image
-                      src={placeHodlerRounded}
-                      alt="creator avatar"
-                      width={20}
-                      height={20}
-                    />
+                    {/** 
+                    {token.creator && (
+                      <Image
+                        src=""
+                        alt="creator avatar"
+                        width={20}
+                        height={20}
+                      />
+                    )}
+*/}
                     <p className="text-xs font-normal">
                       {token.creator.username}
                     </p>

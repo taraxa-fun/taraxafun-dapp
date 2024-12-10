@@ -33,7 +33,7 @@ export const TokenDetails = () => {
       <div className="flex md:gap-3 gap-1">
         <div className="flex-shrink-0">
           <Image
-            src=""
+            src={tokenData.image}
             alt=""
             width={200}
             height={200}

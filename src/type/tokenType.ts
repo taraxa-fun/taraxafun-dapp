@@ -12,6 +12,7 @@ export interface TokenType {
   _id: string;
   name?: string;
   symbol?: string;
+  image?: string;
   description?: string;
   twitter?: string;
   telegram?: string;

@@ -1,9 +1,6 @@
-import { tokenData } from "@/data/tokenData";
 import { toast } from "@/hooks/use-toast";
-import { TokenType } from "@/type/tokenType";
-import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAccount, useWriteContract } from "wagmi";
 import {
   Dialog,
@@ -11,11 +8,14 @@ import {
   DialogContent,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { getAmountOutETH, getBalance } from "@/hooks/usePool";
-import { approveSell, sellToken } from "@/hooks/useSell";
 import { formatEther, parseEther } from "viem";
 import { useBalanceAllowanceOfUser } from "@/hooks/useBalanceAllowanceOfUser";
 import { DialogTitle } from "@radix-ui/react-dialog";
+import { useSingleTokenStore } from "@/store/SingleToken/useSingleTokenStore";
+import { approveSell } from "@/utils/SC/useApprove";
+import { getAmountOutETH } from "@/utils/SC/getAmount";
+import { sellToken } from "@/utils/SC/sellTokens";
+import { showErrorToast, showSuccessToastTx } from "@/utils/toast/showToasts";
 
 export const SellSection = () => {
   const [amount, setAmount] = useState("");
@@ -27,16 +27,13 @@ export const SellSection = () => {
   const { address: tokenAddress } = router.query;
   const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
-  const tokenUrl = tokenData.find(
-    (token: TokenType) => token.address === tokenAddress
-  );
+  const { tokenData } = useSingleTokenStore();
 
   const { balanceOfUser, allowanceOfUser } = useBalanceAllowanceOfUser(
     tokenAddress as `0x${string}`,
     address as `0x${string}`,
     update
   );
-
   const handleInputChange = (
     value: string,
     inputField: "amount" | "slippage"
@@ -64,21 +61,13 @@ export const SellSection = () => {
 
   const handleSubmitSell = async () => {
     if (!address) {
-      return toast({
-        title: "Error",
-        description: "Please connect your wallet",
-        variant: "destructive",
-      });
+      return showErrorToast("Please connect your wallet");
     }
 
     setLoading(true);
     try {
       if (!amount) {
-        toast({
-          title: "Error",
-          description: "Please enter an amount and select a token",
-          variant: "destructive",
-        });
+        showErrorToast("Please enter an amount and select a token");
         setLoading(false);
         return;
       }
@@ -87,16 +76,12 @@ export const SellSection = () => {
         balanceOfUser &&
         parseFloat(amount) > parseFloat(formatEther(balanceOfUser))
       ) {
-        toast({
-          title: "Error",
-          description: "Insufficient balance",
-          variant: "destructive",
-        });
+        showErrorToast("Insufficient balance");
         setLoading(false);
         return;
       }
 
-      if (allowanceOfUser && parseEther(amount) > allowanceOfUser) {
+      if (!allowanceOfUser || parseEther(amount) > allowanceOfUser) {
         const approveTx = await approveSell(
           writeContractAsync,
           amount,
@@ -104,11 +89,7 @@ export const SellSection = () => {
         );
 
         if (!approveTx) {
-          toast({
-            title: "Error",
-            description: "Approval failed. Please try again.",
-            variant: "destructive",
-          });
+          showErrorToast("Approval failed. Please try again.");
           setLoading(false);
           return;
         }
@@ -135,34 +116,16 @@ export const SellSection = () => {
       );
 
       if (tx) {
-        toast({
-          title: "Transaction confirmed",
-          description: (
-            <div className="flex items-center justify-between gap-4 min-w-[300px]">
-              <p className="text-base font-normal">Transaction confirmed</p>
-              <a
-                href={`https://etherscan.io/tx/${tx}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-[#9A62FF] text-white px-4 py-2 rounded text-sm hover:bg-[#8100FB] transition-colors whitespace-nowrap"
-              >
-                View Transaction
-              </a>
-            </div>
-          ),
-          className: "bg-[#201F23] border border-green-500",
+        showSuccessToastTx({
+          description: "Transaction confirmed",
+          txHash: tx,
         });
         setAmount("");
         setSlippage(1);
         setUpdate(update + 1);
       }
     } catch (error) {
-      console.error("Error during sell:", error);
-      toast({
-        title: "Error",
-        description: "Failed to complete the transaction. Please try again.",
-        variant: "destructive",
-      });
+      showErrorToast("Failed to complete the transaction. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -217,19 +180,21 @@ export const SellSection = () => {
           type="text"
           placeholder="Enter amount"
         />
-        {tokenUrl && (
+        {tokenData && (
           <div className="flex items-center gap-1 p-4">
             <div className="flex items-center gap-1">
               <div className="w-8 h-8 rounded-full overflow-hidden">
+                {/** 
                 <Image
-                  src={tokenUrl?.imagePath || ""}
+                  src={tokenData. || ""}
                   alt={tokenUrl?.name || ""}
                   width={32}
                   height={32}
                   className="w-full h-full object-cover"
                 />
+                */}
               </div>
-              <span>{tokenUrl?.symbol}</span>
+              <span>{tokenData.symbol}</span>
             </div>
           </div>
         )}

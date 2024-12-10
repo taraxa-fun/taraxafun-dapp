@@ -15,7 +15,8 @@ import { Replies } from "@/components/Profile/replies";
 import { handleCopy } from "@/utils/copy";
 
 const ProfilePage: NextPage = () => {
-  const { userMe, fetchUserProfile,logout } = useAuthStore();
+  const { userMe, fetchUserProfile, logout, isProfileUpdating } =
+    useAuthStore();
   const { disconnect } = useDisconnect();
   const router = useRouter();
   const { username } = router.query;
@@ -27,19 +28,36 @@ const ProfilePage: NextPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!username || typeof username !== "string") return;
+      setLoading(true);
+  
       if (userMe && userMe.user.username === username) {
+        console.log(`Affichage de userMe pour ${username}`);
         setProfileData(userMe);
-      } else {
-        setLoading(true);
+        setLoading(false);
+        return;
+      }
+
+      try {
         const userProfile = await fetchUserProfile(username);
-        setProfileData(userProfile);
+        if (userProfile) {
+          console.log(`Affichage de userProfile pour ${username}`);
+          setProfileData(userProfile);
+        } else {
+          setProfileData(null);
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+        setProfileData(null);
+      } finally {
         setLoading(false);
       }
     };
+  
     fetchData();
-  }, [username, userMe, fetchUserProfile]);
+  }, [username, userMe, fetchUserProfile, isProfileUpdating]);
+  
 
-  if (loading) {
+  if (!username || loading) {
     return (
       <section className="min-h-screen flex items-center justify-center">
         <p>Loading...</p>
@@ -60,10 +78,8 @@ const ProfilePage: NextPage = () => {
         return (
           <CoinsCreated coins={profileData.tokens || []} isLoading={loading} />
         );
-      case "replies": 
-      return (
-        <Replies replies={profileData.comments || []} />
-      )
+      case "replies":
+        return <Replies replies={profileData.comments || []} />;
       default:
         return (
           <CoinsCreated coins={profileData.tokens || []} isLoading={loading} />
@@ -72,9 +88,9 @@ const ProfilePage: NextPage = () => {
   };
 
   const handleDisconnect = () => {
-    disconnect(); 
-    logout(); 
-    router.push("/")
+    disconnect();
+    logout();
+    router.push("/");
   };
 
   return (
@@ -94,7 +110,7 @@ const ProfilePage: NextPage = () => {
       <div className="space-y-2 text-center">
         <h3 className="font-bold text-xl">@{profileData.user.username}</h3>
         <p className="text-gray-300 font-normal text-sm max-w-md mx-auto">
-          description
+          {userMe?.user.description || "No description"}
         </p>
 
         {userMe?.user.username === username && (
@@ -110,21 +126,18 @@ const ProfilePage: NextPage = () => {
             >
               (--- disconnect wallet ---)
             </button>
-            
           </>
         )}
-             <p className="text-lg font-medium mb-4">
-        ??? likes received |{" "}
-        </p>
+        <p className="text-lg font-medium mb-4">{userMe?.user.likes} ??? likes received | </p>
         <div className="flex flex-col gap-2 max-w-fit mx-auto">
           <span className="text-sm font-normal border rounded border-gray-300 text-gray-300 p-2.5 bg-transparent text-center max-w-fit">
             {userMe?.user.wallet ? userMe?.user.wallet : ""}
           </span>
           <div className="flex justify-between w-full">
-            { userMe?.user.wallet && (
+            {userMe?.user.wallet && (
               <>
                 <a
-                  href={`https://etherscan.io/address/${ userMe?.user.wallet}`}
+                  href={`https://etherscan.io/address/${userMe?.user.wallet}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs font-normal hover:text-[#9A62FF] cursor-pointer"
@@ -133,7 +146,7 @@ const ProfilePage: NextPage = () => {
                 </a>
                 <p
                   className="text-xs font-normal hover:text-[#9A62FF] cursor-pointer"
-                  onClick={() => handleCopy( userMe?.user.wallet, isCopied)}
+                  onClick={() => handleCopy(userMe?.user.wallet, isCopied)}
                 >
                   {copied ? "copied" : "copy address"}
                 </p>

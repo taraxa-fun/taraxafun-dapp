@@ -45,7 +45,7 @@ export const Replies = ({ replies }: RepliesProps) => {
             <div className="flex justify-between items-center mb-4">
               <div className="flex items-center gap-4">
                 <span className="bg-[#FFE862] px-2 py-1 rounded text-black text-sm">
-                  @ AUTHOR A AJOUTER USERNAME
+                  @{reply.user}
                 </span>
                 <span className="text-xs text-gray-300">
                   {getTimeAgo(reply.created_at)}

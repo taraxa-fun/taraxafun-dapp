@@ -10,14 +10,12 @@ import placeholderNavRounded from "../../assets/placeholderNavRounded.png";
 import { CustomBtnApp } from "../connect-btn";
 import { HowItWorksModal } from "../HowItWorks/modalHowItWorks";
 import Link from "next/link";
+import { useWebSocketStore } from "@/store/WS/useWebSocketStore";
+import { useAnimationStore } from "@/store/useAnimationStore";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
-
+  const { latestTrades } = useWebSocketStore();
   useEffect(() => {
     if (isOpen) {
       document.body.classList.add("overflow-hidden");
@@ -48,9 +46,14 @@ export const Navbar = () => {
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    console.log(latestTrades);
+  }, [latestTrades]);
+
+  const { showAnimation } = useAnimationStore();
+
   return (
     <>
-
       {/* Desktop Navbar */}
       <nav className="absolute w-full lg:w-12/12 lg:mx-auto z-40 lg:top-2 top-0 px-4 backdrop-blur-[10px] rounded-none lg:rounded-full">
         <div className="grid grid-cols-12 items-center mx-auto py-2">
@@ -96,7 +99,11 @@ export const Navbar = () => {
 
           <div className="sm:col-span-6 flex justify-center items-center space-x-4">
             <ul className="flex gap-4">
-              <li className="hidden md:block lg:block">
+              <li
+                className={`hidden md:block lg:block ${
+                  showAnimation ? "shake-animation " : ""
+                }`}
+              >
                 <a
                   href=""
                   target="_blank"
@@ -107,7 +114,10 @@ export const Navbar = () => {
                   <Image src={placeholderNavRounded} alt="Placeholder Nav" />
                 </a>
               </li>
-              <li className="hidden md:hidden lg:block">
+              <li
+                className={`hidden md:block lg:block ${
+                  showAnimation ? "shake-animation " : ""
+                }`}>
                 <a
                   href=""
                   target="_blank"

@@ -34,6 +34,7 @@ export const useRepliesTokenIdStore = create<ReplyState>((set, get) => ({
           "Content-Type": "application/json",
         },
       });
+      console.log(response.data);
       set({ replies: response.data, repliesIsLoading: false });
     } catch (error) {
       console.error("Error fetching replies:", error);

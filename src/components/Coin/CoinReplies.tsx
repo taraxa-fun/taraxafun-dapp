@@ -2,6 +2,7 @@ import { Skeleton } from "../ui/skeleton";
 import { useRepliesTokenIdStore } from "@/store/SingleToken/useRepliesTokenIdStore";
 import Link from "next/link";
 import { getTimeAgo } from "@/utils/calculeTime";
+import { formatDate } from "@/utils/formatDate";
 
 export const CoinReplies = () => {
   const { replies, repliesIsLoading } = useRepliesTokenIdStore();
@@ -36,7 +37,7 @@ export const CoinReplies = () => {
 
   return (
     <div className="mt-8 space-y-4">
-      {replies.map((reply) => (
+      {replies.map((reply, index) => (
         <div key={reply._id} className="bg-[#2D0060] p-4 rounded-lg">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-4">
@@ -46,7 +47,10 @@ export const CoinReplies = () => {
                 </span>
               </Link>
               <span className="text-xs text-gray-300">
-                {getTimeAgo(reply.created_at)}
+                {formatDate(reply.created_at)}
+              </span>
+              <span className="text-xs text-gray-300">
+                #{index + 1}
               </span>
             </div>
           </div>

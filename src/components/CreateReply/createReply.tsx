@@ -10,6 +10,7 @@ import { useAuthStore } from "@/store/User/useAuthStore";
 import { useSingleTokenStore } from "@/store/SingleToken/useSingleTokenStore";
 import { useRepliesTokenIdStore } from "@/store/SingleToken/useRepliesTokenIdStore";
 import { useToast } from "@/hooks/use-toast";
+import { showErrorToast } from "@/utils/toast/showToasts";
 
 export const CreateReply = () => {
   const [comment, setComment] = useState("");
@@ -21,7 +22,7 @@ export const CreateReply = () => {
   const { jwt } = useAuthStore();
   const { tokenData } = useSingleTokenStore();
   const { createReply } = useRepliesTokenIdStore();
-  const {toast} = useToast()
+  const { toast } = useToast();
 
   const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (e.target.value.length <= maxCharacters) {
@@ -31,25 +32,20 @@ export const CreateReply = () => {
 
   const handleSubmit = async () => {
     if (comment.trim().length === 0) {
-      console.log("Cannot post an empty comment.");
+      showErrorToast("Please enter a comment");
       return;
     }
 
     if (!jwt || !tokenData?.address) {
-      toast({
-        title: "Error",
-        description: "please connect to post a comment",
-        variant: "destructive",
-      });
+      showErrorToast("please connect to post a comment");
       return;
     }
 
     setIsSubmitting(true);
     const success = await createReply(jwt, tokenData.address, comment.trim());
-
     if (success) {
       setComment("");
-      setIsOpen(false); 
+      setIsOpen(false);
     } else {
       console.error("Failed to post comment.");
     }

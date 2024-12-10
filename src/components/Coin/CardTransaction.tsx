@@ -1,4 +1,3 @@
-import { tokenData } from "@/data/tokenData";
 import { TokenType } from "@/type/tokenType";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -13,9 +12,6 @@ export const CardTransaction = () => {
   const [copied, isCopied] = useState(false);
   const router = useRouter();
   const { address: tokenAddress } = router.query;
-  const token: TokenType | undefined = tokenData.find(
-    (t) => t.address.toString() === tokenAddress
-  );
   const handleTypeSelect = (type: "buy" | "sell") => {
     setSelectedTransactionType(type);
   };

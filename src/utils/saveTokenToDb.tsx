@@ -6,7 +6,7 @@ export const saveTokenToDatabase = async (
   tokenAddress: string,
   twitter?: string,
   telegram?: string,
-  website?: string
+  website?: string,
 ) => {
   try {
     if (!jwt) {
@@ -16,7 +16,7 @@ export const saveTokenToDatabase = async (
     await axios.post(
       `${servUrl}/token/create`,
       {
-        address: tokenAddress,
+        address: tokenAddress.toLocaleLowerCase(),
         twitter: twitter || "", 
         telegram: telegram || "", 
         website: website || "", 
@@ -28,7 +28,6 @@ export const saveTokenToDatabase = async (
         },
       }
     );
-
     return true;
   } catch (error) {
     console.error("Error saving token to database:", error);

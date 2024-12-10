@@ -32,6 +32,7 @@ interface Creator {
   address: `0x${string}`;
   created_at: string;
   description: string;
+  image: string;
   name: string;
   supply: string;
   symbol: string;
@@ -58,13 +59,14 @@ interface Creator {
   fetchTokenData: async (address: string) => {
     set({ singleTokenisLoading: true, error: null });
     try {
-      const response = await axios.get<TokenData[]>(`${servUrl}/token/${address}`, {
+      const response = await axios.get<TokenData>(`${servUrl}/token/${address}`, {
         headers: {
           "Content-Type": "application/json",
         },
       });
+      console.log(response.data);
       set({ 
-        tokenData: response.data[0],
+        tokenData: response.data,
         singleTokenisLoading: false 
       });
     } catch (error) {

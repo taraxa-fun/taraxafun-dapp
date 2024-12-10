@@ -27,15 +27,15 @@ export const CoinHeader = () => {
 
   return (
     <div className="col-span-12 lg:col-span-8 space-y-8">
-      <p className="">
-        {tokenData.name} ({tokenData.symbol})
-      </p>
-      <div>
+      <div className="flex justify-between items-center">
+        <p className="font-bold text-lg">
+          {tokenData.name} ({tokenData.symbol})
+        </p>
         <div className="flex items-center gap-2">
           <p className="text-xs font-normal">created by</p>
           <Image
             src={placeHodlerRounded}
-            alt="placholder"
+            alt="placeholder"
             width={12}
             height={12}
           />
@@ -46,8 +46,12 @@ export const CoinHeader = () => {
             {tokenData.creator.username}
           </Link>
           <p className="text-sm">{getTimeAgo(tokenData.created_at)}</p>
-          <p className="text-[#79FF62] text-xs font-normal">market cap: {tokenData.marketcap}</p>
-          <p className="text-xs font-normal">replies : {tokenData.commentsStats.count}</p>
+          <p className="text-[#79FF62] text-xs font-normal">
+            market cap: {tokenData.marketcap}
+          </p>
+          <p className="text-xs font-normal">
+            replies: {tokenData.commentsStats.count}
+          </p>
         </div>
       </div>
     </div>

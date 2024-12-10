@@ -3,17 +3,14 @@ import { Skeleton } from "../ui/skeleton";
 import { useRouter } from "next/router";
 
 import { TokenType } from "@/type/tokenType";
-import { tokenData } from "@/data/tokenData";
 import { useTradesStore } from "@/store/SingleToken/useTradesStore";
 
 export const CoinTrades = () => {
   const router = useRouter();
   const { address: tokenAddress } = router.query;
+  return null
 
-  const token: TokenType | undefined = tokenData.find(
-    (t) => t.address.toString() === tokenAddress
-  );
-
+{/** 
   if (!token) {
     return <div className="text-red-500">Token not found</div>;
   }
@@ -34,7 +31,7 @@ export const CoinTrades = () => {
       setTrades(token.trades);
     }
   }, [token.trades, setTrades]);
-   */}
+
 
   if (isLoading) {
     return (
@@ -99,14 +96,15 @@ export const CoinTrades = () => {
           </table>
         </div>
       </div>
-              {/** 
+
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
         onNextPage={goToNextPage}
         onPreviousPage={goToPreviousPage}
       />
-       */}
+
     </>
   );
+  */}
 };

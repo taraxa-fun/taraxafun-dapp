@@ -12,12 +12,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { TokenData } from "@/type/tokenDataCreate";
-import { deployToken, useSupply } from "@/hooks/useDeploy";
+import { useSupply } from "@/hooks/useSupply";
 import { useAccount, useWriteContract } from "wagmi";
 import { useAuthStore } from "@/store/User/useAuthStore";
 import { saveTokenToDatabase } from "@/utils/saveTokenToDb";
 import { useRouter } from "next/router";
-import { uploadImage } from "@/utils/uploadImage";
+import { uploadImage } from "@/utils/uploadImageUser";
+import { deployToken } from "@/utils/SC/deployToken";
+import { uploadImageToken } from "@/utils/uploadImgeToken";
+import { showErrorToast, showSuccessToastTx } from "@/utils/toast/showToasts";
 
 export const CreateToken = () => {
   const { toast } = useToast();
@@ -118,8 +121,25 @@ export const CreateToken = () => {
 
   // sends the data to the contract
   const handleSubmit = async () => {
-    if (!jwt || !address) return; // if no address or jwt return
+    if (!jwt || !address) return;
 
+    if (tokenData.image) {
+      const MAX_FILE_SIZE = 500 * 1024;
+      const ALLOWED_FILE_TYPES = [".png", ".jpg", ".jpeg", ".gif"];
+
+      if (tokenData.image.size > MAX_FILE_SIZE) {
+        showErrorToast("Image size must be less than 500KB");
+        return;
+      }
+
+      const fileExtension = tokenData.image.name
+        .toLowerCase()
+        .substring(tokenData.image.name.lastIndexOf("."));
+      if (!ALLOWED_FILE_TYPES.includes(fileExtension)) {
+        showErrorToast("Image must be in PNG, JPG, JPEG or GIF format");
+        return;
+      }
+    }
     setLoading(true);
     try {
       const isAntiSnipeEnabled =
@@ -129,7 +149,7 @@ export const CreateToken = () => {
           ? suplyValue.toString()
           : tokenData._totalSupply;
 
-      const transactionResult = await deployToken( // deploy token on SC
+      const transactionResult = await deployToken(
         writeContractAsync,
         tokenData._name,
         tokenData._symbol,
@@ -139,58 +159,38 @@ export const CreateToken = () => {
         isAntiSnipeEnabled,
         tokenData._amountAntiSnipe || "0",
         showMaxBuy ? tokenData._maxBuyPerWallet || "0" : "0"
-      ); 
+      );
 
       if (transactionResult) {
-        console.log(
-          "Transaction Result Address:",
-          transactionResult.tokenAddress
-        );
-        const res = await saveTokenToDatabase( // save token to database
+        const res = await saveTokenToDatabase(
           jwt,
           transactionResult.tokenAddress,
           tokenData.socialLinks.twitter,
           tokenData.socialLinks.telegram,
           tokenData.socialLinks.website
         );
-        if (res === true && tokenData.image) {
-          const result = await uploadImage( // upload image to server
+        if (res && tokenData.image) {
+          await uploadImageToken(
             tokenData.image,
             jwt,
-            `/token/upload-image/${transactionResult.tokenAddress}`
+            transactionResult.tokenAddress.toLowerCase()
+
           );
-          router.push(`/coin/${transactionResult.tokenAddress}`);
         } else {
           console.error("Error saving token to database:", res);
         }
-        toast({
+        showSuccessToastTx({
           title: `Coin "${tokenData._name}" [${tokenData._symbol}] created successfully!`,
-          description: (
-            <div className="flex items-center justify-between gap-4 min-w-[300px]">
-              <p className="text-base font-normal">Transaction confirmed</p>
-              <a
-                href={`https://etherscan.io/tx/${transactionResult.hash}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-[#9A62FF] text-white px-4 py-2 rounded text-sm hover:bg-[#8100FB] transition-colors whitespace-nowrap"
-              >
-                View Transaction
-              </a>
-            </div>
-          ),
-          className: "w-full border border-[#79FF62]",
+          description: "Transaction confirmed",
+          txHash: transactionResult.hash,
         });
-
+        router.push(`/token/${transactionResult.tokenAddress}`);
         resetForm();
       } else {
-        toast({
-          title: "Error",
-          description: "Transaction failed.",
-          variant: "destructive",
-        });
+        showErrorToast("Transaction failed.");
       }
     } catch (error) {
-      console.error("Error during handleSubmit:", error);
+      showErrorToast("Failed to create token. Please try again.");
     } finally {
       setLoading(false);
     }

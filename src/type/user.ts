@@ -10,6 +10,7 @@ export interface UserToken {
     telegram?: string;
     twitter?: string;
     website?: string;
+    image?: string;
   }
   
   export interface UserComment {
@@ -30,12 +31,10 @@ export interface UserToken {
       created_at: string;
       updated_at: string;
       avatar?: string;
+      likes: number;
+      description ?:string;
     };
     comments: UserComment[];
     tokens: UserToken[];
     trades: any[];
-    commentsStats: {
-      count: string
-      likes: string
-    }
   }

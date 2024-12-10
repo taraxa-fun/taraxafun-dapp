@@ -15,7 +15,6 @@ export const deployToken = async (
   maxBuyPerWallet: string
 ): Promise<{ hash: string; tokenAddress: string } | false> => {
   try {
-    // Envoyer la transaction pour déployer le token
     const tx = await writeContractAsync({
       ...deployerContract,
       functionName: "CreateFun",
@@ -24,7 +23,7 @@ export const deployToken = async (
         ticker,
         description,
         totalSupply,
-        0, 
+        0,
         antiSnipe,
         parseEther(amountAntiSnipe),
         parseEther(maxBuyPerWallet),
@@ -41,7 +40,7 @@ export const deployToken = async (
     console.log("Transaction Result:", result);
 
     if (result.status === "success") {
-      const tokenAddress = result.logs[0]?.address; 
+      const tokenAddress = result.logs[0]?.address;
       if (!tokenAddress) {
         console.error("Token address not found in transaction logs.");
       }
@@ -52,34 +51,4 @@ export const deployToken = async (
     console.error("Error deploying token:", e);
     return false;
   }
-};
-
-
-export const useSupply = (
-  account: `0x${string}`,
-  refresh: any,
-  update: any
-) => {
-  const [data, setData] = useState({
-    suplyValue: BigInt(0),
-  });
-
-  useEffect(() => {
-    const fetch = async () => {
-      const res = await multicall(web3Config, {
-        contracts: [
-          {
-            ...deployerContract,
-            functionName: "supplyValue",
-            args: [],
-          },
-        ],
-      });
-      setData({
-        suplyValue: res[0].result as bigint,
-      });
-    };
-    if (account) fetch();
-  }, [account, refresh, update]);
-  return data;
 };
