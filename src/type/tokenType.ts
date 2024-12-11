@@ -22,7 +22,7 @@ export interface TokenType {
   created_at: string;
   marketcap?: string;
   commentsStats: CommentsStats;
-  creator: Creator;
+  user: Creator;
 }
 
 

@@ -13,17 +13,46 @@ import Link from "next/link";
 import { useWebSocketStore } from "@/store/WS/useWebSocketStore";
 import { useAnimationStore } from "@/store/useAnimationStore";
 import { formatEther } from "viem";
+import { useLastTrades } from "@/hooks/useLastTrade";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { latestTrades } = useWebSocketStore();
+  const { trades } = useLastTrades();
+  const [currentTradeIndex, setCurrentTradeIndex] = useState(0);
+  const [displayedTrade, setDisplayedTrade] = useState<any>(null);
+  const [isShaking, setIsShaking] = useState(false);
+
   useEffect(() => {
-    if (isOpen) {
-      document.body.classList.add("overflow-hidden");
-    } else {
-      document.body.classList.remove("overflow-hidden");
+    if (!latestTrades && !trades) return;
+
+    const tradesToDisplay =
+      latestTrades && latestTrades.length > 0 ? latestTrades : trades;
+
+    const interval = setInterval(() => {
+      if (tradesToDisplay.length > 0) {
+        setCurrentTradeIndex(
+          (prevIndex) => (prevIndex + 1) % tradesToDisplay.length
+        );
+      }
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [latestTrades, trades]);
+
+  useEffect(() => {
+    if (!latestTrades && !trades) return;
+
+    const tradesToDisplay =
+      latestTrades && latestTrades.length > 0 ? latestTrades : trades;
+
+    if (tradesToDisplay.length > 0) {
+      setDisplayedTrade(tradesToDisplay[currentTradeIndex]);
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 200); 
     }
-  }, [isOpen]);
+  }, [currentTradeIndex]);
+
   const handleClickOutside = (event: any) => {
     if (
       event.target.closest("#navbar-sticky") ||
@@ -98,37 +127,40 @@ export const Navbar = () => {
 
           <div className="sm:col-span-6 flex justify-center items-center space-x-4">
             <ul className="flex gap-4">
-              <li
-                className={`hidden md:block lg:block ${
-                  showAnimation ? "shake-animation " : ""
-                }`}
-              >
+            <li
+        className={`hidden md:block lg:block ${
+          isShaking ? "shake-animation" : ""
+        }`}
+      >
+
                 <a
-                  href=""
+                  href={`https://etherscan.io/tx/${
+                    displayedTrade?.hash || "#"
+                  }`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 px-2 py-2 rounded bg-[#79FF62] text-black font-normal text-sm"
                 >
-                  {latestTrades && latestTrades.length > 0 ? (
-                    latestTrades[0].type === "buy" ? (
+                  {displayedTrade ? (
+                    displayedTrade.type === "buy" ? (
                       <span>
-                        {latestTrades[0].user.wallet} bought{" "}
+                        {displayedTrade.user.username} bought{" "}
                         {Number(
-                          formatEther(BigInt(latestTrades[0].outAmount))
+                          formatEther(BigInt(displayedTrade.outAmount))
                         ).toFixed(4)}{" "}
-                        TARA of ${latestTrades[0].token.symbol}
+                        TARA of ${displayedTrade.token.symbol}
                       </span>
                     ) : (
                       <span>
-                        {latestTrades[0].user.wallet} sold{" "}
+                        {displayedTrade.user.username} sold{" "}
                         {Number(
-                          formatEther(BigInt(latestTrades[0].outAmount))
+                          formatEther(BigInt(displayedTrade.outAmount))
                         ).toFixed(4)}{" "}
-                        ${latestTrades[0].token.symbol}
+                        ${displayedTrade.token.symbol}
                       </span>
                     )
                   ) : (
-                    <span>1Ly231 bought 5.2k TARA of $MEME</span>
+                    <span>No trades to display</span>
                   )}
                 </a>
               </li>

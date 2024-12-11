@@ -23,7 +23,7 @@ const ProfilePage: NextPage = () => {
   const { username } = router.query;
   const [copied, isCopied] = useState(false);
   const [profileData, setProfileData] = useState(userMe || null);
-  const [activeTab, setActiveTab] = useState<ProfileTab>("coins-held");
+  const [activeTab, setActiveTab] = useState<ProfileTab>("coins-created");
   const [loadingPage, setLoading] = useState(false);
 
   useEffect(() => {

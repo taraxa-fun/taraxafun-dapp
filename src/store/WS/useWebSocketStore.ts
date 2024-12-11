@@ -26,6 +26,7 @@ interface TradeData {
     username: string;
     _id: string;
     wallet: `0x${string}` ;
+    avatar: string;
   };
   token: {
     _id: string;
@@ -35,7 +36,6 @@ interface TradeData {
   };
   __v: number;
 }
-
 
 interface WebSocketStore {
   latestTokens: TokenMessage[];
@@ -73,7 +73,7 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
         }));
         console.log("Latest tokens:", data);
       };
-      
+
       tokenWs.onclose = () => {
         console.log("Token WebSocket Disconnected");
         set((state) => ({ tokenWs: null }));
@@ -100,7 +100,7 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
           set((state) => ({
             latestTrades: [tradeData, ...state.latestTrades],
           }));
-          console.log("Latest trades:", tradeData);
+          console.log("Latest trades WS:", tradeData);
         }
       };
 

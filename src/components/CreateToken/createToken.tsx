@@ -17,7 +17,6 @@ import { useAccount, useWriteContract } from "wagmi";
 import { useAuthStore } from "@/store/User/useAuthStore";
 import { saveTokenToDatabase } from "@/utils/saveTokenToDb";
 import { useRouter } from "next/router";
-import { uploadImage } from "@/utils/uploadImageUser";
 import { deployToken } from "@/utils/SC/deployToken";
 import { uploadImageToken } from "@/utils/uploadImgeToken";
 import { showErrorToast, showSuccessToastTx } from "@/utils/toast/showToasts";
@@ -169,6 +168,7 @@ export const CreateToken = () => {
           tokenData.socialLinks.telegram,
           tokenData.socialLinks.website
         );
+        console.log("address passé a upload image token  ",transactionResult.tokenAddress.toLowerCase());
         if (res && tokenData.image) {
           await uploadImageToken(
             tokenData.image,

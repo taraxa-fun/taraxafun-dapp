@@ -11,7 +11,7 @@ export const CoinHeader = () => {
   const { tokenData, singleTokenisLoading } = useSingleTokenStore();
   const { latestTrades } = useWebSocketStore();
   const [marketCap, setMarketCap] = useState<string | null>(null);
-  console.log(tokenData);
+
 
   useEffect(() => {
     if (latestTrades && tokenData?.address) {
@@ -56,10 +56,10 @@ export const CoinHeader = () => {
             height={12}
           />
           <Link
-            href={`/profile/${tokenData.creator.username}`}
+            href={`/profile/${tokenData.user.username}`}
             className="text-xs font-normal"
           >
-            {tokenData.creator.username}
+            {tokenData.user.username}
           </Link>
           <p className="text-sm">{getTimeAgo(tokenData.created_at)}</p>
           <p className="text-[#79FF62] text-xs font-normal">

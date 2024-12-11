@@ -33,7 +33,7 @@ interface Creator {
   supply: string;
   symbol: string;
   marketcap?: string;
-  creator: Creator;
+  user: Creator;
   comments: Comment[];
   trades: TradeData[];
   commentsStats: CommentsStats;

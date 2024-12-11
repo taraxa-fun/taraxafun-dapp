@@ -229,7 +229,7 @@ export const SellSection = () => {
         </button>
         <button
           className="bg-[#5600AA] p-2 rounded text-sm font-normal flex-1"
-          onClick={() => handleSetPercentage(100)} // 100% de la balance
+          onClick={() => handleSetPercentage(99)} // 100% de la balance
         >
           100%
         </button>

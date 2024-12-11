@@ -6,6 +6,7 @@ import { useSingleTokenStore } from "@/store/SingleToken/useSingleTokenStore";
 import { useWebSocketStore } from "@/store/WS/useWebSocketStore";
 import { formatDate } from "@/utils/formatDate";
 import { formatEther } from "viem";
+import Link from "next/link";
 
 export const CoinTrades = () => {
   const router = useRouter();
@@ -15,7 +16,6 @@ export const CoinTrades = () => {
     tokenData?.trades || []
   );
 
-  // Combine les trades WebSocket avec ceux existants
   useEffect(() => {
     if (latestTrades && tokenData?.address) {
       const newTrades = latestTrades.filter(
@@ -33,8 +33,7 @@ export const CoinTrades = () => {
       }
     }
   }, [latestTrades, tokenData?.address]);
-
-  // Trier les trades existants au premier rendu
+  
   useEffect(() => {
     if (tokenData?.trades) {
       setDisplayedTrades(
@@ -86,7 +85,7 @@ export const CoinTrades = () => {
                     index % 2 === 0 ? "bg-[#330066]" : "bg-[#2D0060]"
                   }`}
                 >
-                  <td className="py-2 px-4"></td>
+                  <td className="py-2 px-4"><Link href={`/profile/${trade.user.username}`}>{trade.user.username ? trade.user.username : ""}</Link></td>
                   <td className="py-2 px-4">
                     <span
                       className={`inline-block py-1 px-2 rounded ${

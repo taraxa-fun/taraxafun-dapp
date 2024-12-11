@@ -79,10 +79,10 @@ export const useAuthStore = create<AuthStore>()(
           }
 
           const signature = await signMessage({ message: nonceResponse.nonce });
-
+          const addressLower = address.toLowerCase();
           const response = await axios.post(
             `${servUrl}/auth/sign-in`,
-            { wallet: address, signature },
+            { wallet: addressLower, signature },
             { headers: { "Content-Type": "application/json" } }
           );
 

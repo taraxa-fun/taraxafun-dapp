@@ -29,7 +29,7 @@ export const TokenGrid = () => {
     );
   }
 
-  if ( tokens.length === 0) {
+  if (tokens.length === 0) {
     return (
       <div className="px-4 text-center text-gray-400 py-8">
         No tokens found for your search
@@ -39,66 +39,55 @@ export const TokenGrid = () => {
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-10 px-4">
-      {tokens.map((token: TokenType, index: number) => (
-        <Link href={`/coin/${token.address}`} key={`${index}`}>
-          <div className="flex flex-col hover:shadow-lg transition-all">
-            <div className="mb-4 w-full flex items-center justify-center">
-              {token.image && (
-                <Image
-                  src={token.image}
-                  alt={`Token image`}
-                  width={200}
-                  height={200}
-                  className="object-contain"
-                />
-              )}
+    {tokens.map((token: TokenType, index: number) => (
+      <Link href={`/coin/${token.address}`} key={`${index}`}>
+        <div className="flex flex-col hover:shadow-lg transition-all h-[354px]">
+          <div className="mb-4 w-full flex items-center justify-center">
+            {token.image && (
+              <Image
+                src={token.image}
+                alt={`Token image`}
+                width={200}
+                height={200}
+                className="object-contain"
+              />
+            )}
+          </div>
+  
+          <div className="flex flex-col space-y-1 justify-center">
+            <div className="flex items-center gap-4">
+              <p className="text-xs font-normal">created by</p>
+              <Link
+                href={`/profile/${token.user.username}`}
+                className="text-xs font-normal hover:underline"
+              >
+                <div className="flex items-center gap-2">
+                  <p className="text-xs font-normal">{token.user.username}</p>
+                </div>
+              </Link>
+              <p className="text-xs">{getTimeAgo(token.created_at)}</p>
             </div>
-
-            <div className="flex flex-col space-y-1 justify-center">
-              <div className="flex items-center gap-4">
-                <p className="text-xs font-normal">created by</p>
-                <Link
-                  href={`/profile/${token.creator.username}`}
-                  className="text-xs font-normal hover:underline"
-                >
-                  <div className="flex items-center gap-2">
-                    {/** 
-                    {token.creator && (
-                      <Image
-                        src=""
-                        alt="creator avatar"
-                        width={20}
-                        height={20}
-                      />
-                    )}
-*/}
-                    <p className="text-xs font-normal">
-                      {token.creator.username}
-                    </p>
-                  </div>
-                </Link>
-                <p className="text-xs">{getTimeAgo(token.created_at)}</p>
-              </div>
-
-              <div className="flex justify-between">
-                <p className="text-xs font-normal text-[#79FF62]">
-                  market cap: {token.marketcap}
-                </p>
-                <p className="text-xs font-normal">
-                  replies: {token.commentsStats.count}
-                </p>
-              </div>
-
-              <p className="text-gray-300 font-normal text-xs">
-                <span className="text-white font-bold">
-                  {token.name} ({token.symbol}):
-                </span>{" "}
-                {token.description}
+  
+            <div className="flex justify-between">
+              <p className="text-xs font-normal text-[#79FF62]">
+                market cap: {token.marketcap}
+              </p>
+              <p className="text-xs font-normal">
+                replies: {token.commentsStats.count}
               </p>
             </div>
+  
+            <p className="text-gray-300 font-normal text-xs line-clamp-3">
+              <span className="text-white font-bold">
+                {token.name} ({token.symbol}):
+              </span>{" "}
+              {token.description}
+            </p>
           </div>
-        </Link>
-      ))}
-    </div>
+        </div>
+      </Link>
+    ))}
+  </div>
+  
   );
 };

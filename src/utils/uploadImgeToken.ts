@@ -28,8 +28,7 @@ export const uploadImageToken = async (
 
   const formData = new FormData();
   formData.append("image", image);
-  formData.append("address", tokenAddress.toLowerCase());
-
+  formData.append("address", tokenAddress);
   try {
     await axios.post(`${servUrl}/token/upload-image`, formData, {
       headers: {

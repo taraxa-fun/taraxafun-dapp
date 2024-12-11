@@ -2,6 +2,7 @@ export interface TradeUser {
     _id: string;
     wallet: `0x${string}`;
     username: string;
+    avatar: string;
   }
   
   export interface TradeToken {

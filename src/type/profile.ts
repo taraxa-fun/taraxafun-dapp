@@ -1,2 +1,2 @@
 // types/profile.ts
-export type ProfileTab = 'coins-held' | 'coins-created' | 'replies';
+export type ProfileTab =  'coins-created' | 'replies';

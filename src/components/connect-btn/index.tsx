@@ -11,11 +11,8 @@ import { bscTestnet } from "viem/chains";
 export const CustomBtnApp: React.FC<{ className?: string }> = ({
   className,
 }) => {
-  const { address } = useAccount();
-  const { signMessageAsync } = useSignMessage();
   const {  userMe } = useAuthStore();
-
-  return (
+  return (  
     <ConnectButton.Custom>
       {({
         account,
