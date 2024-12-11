@@ -1,21 +1,14 @@
 import { create } from "zustand";
 import axios from "axios";
 import { servUrl } from "@/config/servUrl";
+import { TradeData } from "@/type/WS/TradeMessage";
 
 interface Creator {
   _id: string;
   username: string;
  }
  
- interface Trade {
-  _id: string;
-  type: 'buy' | 'sell';
-  username: string;
-  amount: number;
-  created_at: string;
-  transactionNumber: string;
- }
- 
+
  interface Comment {
   _id: string;
   content: string;
@@ -42,7 +35,7 @@ interface Creator {
   marketcap?: string;
   creator: Creator;
   comments: Comment[];
-  trades: Trade[];
+  trades: TradeData[];
   commentsStats: CommentsStats;
  }
  

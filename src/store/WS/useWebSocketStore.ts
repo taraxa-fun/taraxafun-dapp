@@ -20,19 +20,22 @@ interface TradeData {
   outAmount: string;
   inAmount: string;
   index: string;
-  hash: string;
+  hash: `0x${string}`;
   created_at: string;
   user: {
+    username: string;
     _id: string;
-    wallet: string;
+    wallet: `0x${string}` ;
   };
   token: {
     _id: string;
-    address: string;
+    address: `0x${string}`;
     marketcap: string;
     symbol: string;
   };
+  __v: number;
 }
+
 
 interface WebSocketStore {
   latestTokens: TokenMessage[];
@@ -70,7 +73,7 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
         }));
         console.log("Latest tokens:", data);
       };
-
+      
       tokenWs.onclose = () => {
         console.log("Token WebSocket Disconnected");
         set((state) => ({ tokenWs: null }));

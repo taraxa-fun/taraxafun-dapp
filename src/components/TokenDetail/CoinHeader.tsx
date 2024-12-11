@@ -4,10 +4,26 @@ import { Skeleton } from "../ui/skeleton";
 import { getTimeAgo } from "@/utils/calculeTime";
 import Link from "next/link";
 import { useSingleTokenStore } from "@/store/SingleToken/useSingleTokenStore";
+import { useWebSocketStore } from "@/store/WS/useWebSocketStore";
+import { useEffect, useState } from "react";
 
 export const CoinHeader = () => {
   const { tokenData, singleTokenisLoading } = useSingleTokenStore();
+  const { latestTrades } = useWebSocketStore();
+  const [marketCap, setMarketCap] = useState<string | null>(null);
   console.log(tokenData);
+
+  useEffect(() => {
+    if (latestTrades && tokenData?.address) {
+      const matchingTrade = latestTrades.find(
+        (trade) => trade.token.address === tokenData.address
+      );
+
+      if (matchingTrade) {
+        setMarketCap(matchingTrade.token.marketcap);
+      }
+    }
+  }, [latestTrades, tokenData?.address]);
   if (!tokenData || singleTokenisLoading) {
     return (
       <div className="col-span-12 lg:col-span-8 space-y-8">
@@ -47,8 +63,9 @@ export const CoinHeader = () => {
           </Link>
           <p className="text-sm">{getTimeAgo(tokenData.created_at)}</p>
           <p className="text-[#79FF62] text-xs font-normal">
-            market cap: ${tokenData.marketcap}
+            market cap: ${marketCap ? marketCap : tokenData.marketcap}
           </p>
+
           <p className="text-xs font-normal">
             replies: {tokenData.commentsStats.count}
           </p>

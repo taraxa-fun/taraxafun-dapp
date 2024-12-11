@@ -13,6 +13,7 @@ import { useDisconnect } from "wagmi";
 import { useAuthStore } from "@/store/User/useAuthStore";
 import { Replies } from "@/components/Profile/replies";
 import { handleCopy } from "@/utils/copy";
+import Link from "next/link";
 
 const ProfilePage: NextPage = () => {
   const { userMe, fetchUserProfile, logout, isProfileUpdating, loading } =
@@ -93,6 +94,9 @@ const ProfilePage: NextPage = () => {
   return (
     <section className="pt-32 lg:w-6/12 w-12/12 md:w-8/12 flex flex-col items-center justify-center mx-auto">
       <Navbar />
+      <div className="mb-4 text-start items-start d-flex px-4">
+        <Link href="/">(go back)</Link>
+      </div>
       <div className="pb-6">
         {userMe?.user.avatar && (
           <Image

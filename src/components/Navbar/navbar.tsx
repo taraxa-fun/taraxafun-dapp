@@ -12,6 +12,7 @@ import { HowItWorksModal } from "../HowItWorks/modalHowItWorks";
 import Link from "next/link";
 import { useWebSocketStore } from "@/store/WS/useWebSocketStore";
 import { useAnimationStore } from "@/store/useAnimationStore";
+import { formatEther } from "viem";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -105,17 +106,27 @@ export const Navbar = () => {
                 <a
                   href=""
                   target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center gap-2 px-2 py-2 rounded bg-[#79FF62] text-black font-normal text-sm"
                 >
                   {latestTrades && latestTrades.length > 0 ? (
-                    <span>
-                      {latestTrades[latestTrades.length - 1].user.wallet} bought{" "}
-                      {BigInt(
-                        latestTrades[latestTrades.length - 1].outAmount
-                      ).toString()}{" "}
-                      TARA of $
-                      {latestTrades[latestTrades.length - 1].token.symbol}
-                    </span>
+                    latestTrades[0].type === "buy" ? (
+                      <span>
+                        {latestTrades[0].user.wallet} bought{" "}
+                        {Number(
+                          formatEther(BigInt(latestTrades[0].outAmount))
+                        ).toFixed(4)}{" "}
+                        TARA of ${latestTrades[0].token.symbol}
+                      </span>
+                    ) : (
+                      <span>
+                        {latestTrades[0].user.wallet} sold{" "}
+                        {Number(
+                          formatEther(BigInt(latestTrades[0].outAmount))
+                        ).toFixed(4)}{" "}
+                        ${latestTrades[0].token.symbol}
+                      </span>
+                    )
                   ) : (
                     <span>1Ly231 bought 5.2k TARA of $MEME</span>
                   )}
