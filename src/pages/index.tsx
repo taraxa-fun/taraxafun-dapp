@@ -22,7 +22,6 @@ const Dashboard: NextPage = () => {
 
   return (
     <div className="relative min-h-screen">
-      <Navbar />
       <PumpEmperor />
       <TokenSearch />
       <TokenCreate />

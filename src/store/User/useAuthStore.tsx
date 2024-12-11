@@ -122,7 +122,7 @@ export const useAuthStore = create<AuthStore>()(
 
       fetchUserProfile: async (username: string) => {
         try {
-          const response = await axios.get(`${servUrl}/user/${username}`, {
+          const response = await axios.get(`${servUrl}/user/username/${username}`, {
             headers: { "Content-Type": "application/json" },
           });
           return response.data;

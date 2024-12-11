@@ -44,7 +44,7 @@ export const CoinTrades = () => {
       );
     }
   }, [tokenData?.trades]);
-
+  console.log("COIN TRADES",displayedTrades);
   if (singleTokenisLoading) {
     return (
       <div className="mt-8 space-y-4">
@@ -85,7 +85,7 @@ export const CoinTrades = () => {
                     index % 2 === 0 ? "bg-[#330066]" : "bg-[#2D0060]"
                   }`}
                 >
-                  <td className="py-2 px-4"><Link href={`/profile/${trade.user.username}`}>{trade.user.username ? trade.user.username : ""}</Link></td>
+                  <td className="py-2 px-4"><Link href={`/profile/${trade.user.username ? trade.user.username : ""}`}>{trade.user.username ? trade.user.username : ""}</Link></td>
                   <td className="py-2 px-4">
                     <span
                       className={`inline-block py-1 px-2 rounded ${

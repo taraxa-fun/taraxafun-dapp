@@ -26,7 +26,7 @@ export const CoinReplies = () => {
       </div>
     );
   }
-
+  console.log(replies);
   if (!replies || replies.length === 0) {
     return (
       <div className="mt-8 bg-[#2D0060] p-8 rounded-lg text-center">
@@ -41,9 +41,9 @@ export const CoinReplies = () => {
         <div key={reply._id} className="bg-[#2D0060] p-4 rounded-lg">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-4">
-              <Link href={`/profile/${reply.user}`}>
+              <Link href={`/profile/${reply.user.username}`}>
                 <span className="bg-[#FFE862] px-2 py-1 rounded text-black text-sm">
-                  @{reply.user}
+                  @{reply.user.username ? reply.user.username : ""}
                 </span>
               </Link>
               <span className="text-xs text-gray-300">

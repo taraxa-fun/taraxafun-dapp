@@ -3,18 +3,18 @@ import { create } from "zustand";
 interface TokenMessage {
   _id: string;
   address: string;
-  created_at: string;
-  description?: string;
-  name?: string;
-  supply?: string;
+  description: string;
+  marketcap: string;
+  name: string;
+  supply: string;
   symbol: string;
-  creator?: {
-    _id: string;
+  user: {
+    wallet: string;
     username: string;
   };
 }
 
-interface TradeData {
+export interface TradeData {
   _id: string;
   type: "buy" | "sell";
   outAmount: string;
@@ -38,7 +38,7 @@ interface TradeData {
 }
 
 interface WebSocketStore {
-  latestTokens: TokenMessage[];
+  latestTokens: TokenMessage | null;
   latestTrades: TradeData[];
   tokenWs: WebSocket | null;
   tradeWs: WebSocket | null;
@@ -48,7 +48,7 @@ interface WebSocketStore {
 
 // Store Implementation
 export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
-  latestTokens: [],
+  latestTokens: null,
   latestTrades: [],
   tokenWs: null,
   tradeWs: null,
@@ -62,20 +62,16 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
         "ws://taraxafun-server-590541650183.us-central1.run.app/ws/create-fun"
       );
 
-      tokenWs.onopen = () => {
-        console.log("Token WebSocket Connected");
-      };
-
       tokenWs.onmessage = (event) => {
-        const data = JSON.parse(event.data) as TokenMessage;
-        set((state) => ({
-          latestTokens: [data, ...state.latestTokens],
-        }));
-        console.log("Latest tokens:", data);
+        const message = JSON.parse(event.data);
+        if (message.type === "funCreated") {
+          const tokenData = message.data as TokenMessage;
+          set({ latestTokens: tokenData });
+        }
       };
+      
 
       tokenWs.onclose = () => {
-        console.log("Token WebSocket Disconnected");
         set((state) => ({ tokenWs: null }));
         setTimeout(() => get().initWebSockets(), 5000);
       };
@@ -89,10 +85,6 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
         "ws://taraxafun-server-590541650183.us-central1.run.app/ws/trade-call"
       );
 
-      tradeWs.onopen = () => {
-        console.log("Trade WebSocket Connected");
-      };
-
       tradeWs.onmessage = (event) => {
         const message = JSON.parse(event.data);
         if (message.type === "tradeCall") {
@@ -100,12 +92,11 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
           set((state) => ({
             latestTrades: [tradeData, ...state.latestTrades],
           }));
-          console.log("Latest trades WS:", tradeData);
+          console.log("trade data WS ", tradeData);
         }
       };
 
       tradeWs.onclose = () => {
-        console.log("Trade WebSocket Disconnected");
         set((state) => ({ tradeWs: null }));
         setTimeout(() => get().initWebSockets(), 5000);
       };

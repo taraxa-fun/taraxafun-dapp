@@ -94,7 +94,7 @@ export const SellSection = () => {
           return;
         }
       } else {
-        console.log("Approval not required, sufficient allowance available.");
+        showErrorToast("Approval not required, sufficient allowance available.");
       }
 
       const amountOut = await getAmountOutETH(

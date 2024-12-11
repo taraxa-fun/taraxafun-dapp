@@ -98,7 +98,7 @@ export const BuySection = () => {
         (amountOut * slippageRatio) /
         BigInt(10000)
       ).toString(); // Calcul après slippage
-      console.log("Min Tokens:", minTokens);
+
 
       // Appel de la fonction buyToken
       const tx = await buyToken(

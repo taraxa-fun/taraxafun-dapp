@@ -34,7 +34,6 @@ const CoinPage: NextPage = () => {
   
   return (
     <div className="min-h-screen ">
-      <Navbar />
       <div className="mb-4 pt-32 px-4">
         <Link href="/">(go back)</Link>
       </div>

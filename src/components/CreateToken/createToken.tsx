@@ -168,7 +168,6 @@ export const CreateToken = () => {
           tokenData.socialLinks.telegram,
           tokenData.socialLinks.website
         );
-        console.log("address passé a upload image token  ",transactionResult.tokenAddress.toLowerCase());
         if (res && tokenData.image) {
           await uploadImageToken(
             tokenData.image,
@@ -184,7 +183,7 @@ export const CreateToken = () => {
           description: "Transaction confirmed",
           txHash: transactionResult.hash,
         });
-        //router.push(`/token/${transactionResult.tokenAddress}`);
+        router.push(`/coin/${transactionResult.tokenAddress}`);
         resetForm();
       } else {
         showErrorToast("Transaction failed.");

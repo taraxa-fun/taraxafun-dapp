@@ -58,7 +58,6 @@ export const useTokenStore = create<TokenStore>((set, get) => ({
           },
         }
       );  
-      console.log(response.data);
       set({
         tokens: response.data.data.tokens,
         currentPage: response.data.data.pagination.currentPage,

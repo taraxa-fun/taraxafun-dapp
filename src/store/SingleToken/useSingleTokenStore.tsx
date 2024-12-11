@@ -60,7 +60,6 @@ interface Creator {
           "Content-Type": "application/json",
         },
       });
-      console.log(response.data);
       set({ 
         tokenData: response.data,
         singleTokenisLoading: false 

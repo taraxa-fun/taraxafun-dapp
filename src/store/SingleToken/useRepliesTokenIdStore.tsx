@@ -6,10 +6,17 @@ interface Reply {
   _id: string;
   content: string;
   likes: number;
-  user: string;
+  user: UserForReply;
   token: string;
   created_at: string;
   __v: number;
+}
+
+interface UserForReply {
+  _id: string;
+  username: string;
+  wallet: string;
+  avatar: string;
 }
 
 interface ReplyState {
@@ -34,7 +41,6 @@ export const useRepliesTokenIdStore = create<ReplyState>((set, get) => ({
           "Content-Type": "application/json",
         },
       });
-      console.log(response.data);
       set({ replies: response.data, repliesIsLoading: false });
     } catch (error) {
       console.error("Error fetching replies:", error);
@@ -45,8 +51,8 @@ export const useRepliesTokenIdStore = create<ReplyState>((set, get) => ({
     }
   },
 
-  createReply: async (jwt: string, tokenAddress: string, content: string): Promise<boolean> => {
-    if (!jwt || !tokenAddress || !content.trim()) {
+  createReply: async (jwt: string, address: string, content: string): Promise<boolean> => {
+    if (!jwt || !address || !content.trim()) {
       console.error("Missing required parameters for creating a reply.");
       return false;
     }
@@ -54,7 +60,7 @@ export const useRepliesTokenIdStore = create<ReplyState>((set, get) => ({
     try {
       await axios.post(
         `${servUrl}/comment/create`,
-        { content, tokenAddress },
+        { content: content, address : address },
         {
           headers: {
             "Content-Type": "application/json",
@@ -64,7 +70,7 @@ export const useRepliesTokenIdStore = create<ReplyState>((set, get) => ({
       );
       
       const fetchReplies = get().fetchReplies;
-      await fetchReplies(tokenAddress);
+      await fetchReplies(address);
       return true;
     } catch (error) {
       console.error("Error creating reply:", error);

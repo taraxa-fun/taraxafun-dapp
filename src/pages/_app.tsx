@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { InitAuth } from "@/components/Auth/InitAuth";
 import { useWebSocketStore } from "@/store/WS/useWebSocketStore";
+import { Navbar } from "@/components/Navbar/navbar";
 
 const queryClient = new QueryClient();
 
@@ -42,10 +43,10 @@ function MyApp({ Component, pageProps }: AppProps) {
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
           <Toaster />
+          <Navbar />
           {loading && (
             <div className="fixed top-0 left-0 w-full h-1 bg-gradient-to-r from-[#5600AA] to-[#9A62FF] animate-pulse z-50" />
           )}
-
           <Component {...pageProps} />
           <InitAuth />
         </RainbowKitProvider>

@@ -5,12 +5,14 @@ import { Skeleton } from "../ui/skeleton";
 import { Reply } from "@/type/reply";
 import { UserComment } from "@/type/user";
 import { getTimeAgo } from "@/utils/calculeTime";
+import Link from "next/link";
 
 interface RepliesProps {
   replies: UserComment[];
+  username: string;
 }
 
-export const Replies = ({ replies }: RepliesProps) => {
+export const Replies = ({ replies, username }: RepliesProps) => {
   const isLoading = false;
 
   if (isLoading) {
@@ -45,19 +47,19 @@ export const Replies = ({ replies }: RepliesProps) => {
             <div className="flex justify-between items-center mb-4">
               <div className="flex items-center gap-4">
                 <span className="bg-[#FFE862] px-2 py-1 rounded text-black text-sm">
-                  @{reply.user}
+                  @{username}
                 </span>
                 <span className="text-xs text-gray-300">
                   {getTimeAgo(reply.created_at)}
                 </span>
               </div>
-              {/** 
-              {reply.coinId && (
-                <button className="text-xs hover:text-[#9A62FF]">
+
+              {reply.token_address && (
+                <Link href={`/coin/${reply.token_address}`} className="text-xs hover:text-[#9A62FF]">
                   (view coin)
-                </button>
+                </Link>
               )}
-                */}
+     
             </div>
             {/** 
             {reply.imagePath && (

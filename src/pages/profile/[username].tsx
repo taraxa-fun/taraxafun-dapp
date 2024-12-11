@@ -14,48 +14,44 @@ import { useAuthStore } from "@/store/User/useAuthStore";
 import { Replies } from "@/components/Profile/replies";
 import { handleCopy } from "@/utils/copy";
 import Link from "next/link";
+import { UserProfile } from "@/type/user";
 
 const ProfilePage: NextPage = () => {
-  const { userMe, fetchUserProfile, logout, isProfileUpdating, loading } =
-    useAuthStore();
+  const { userMe, fetchUserProfile, logout } = useAuthStore();
   const { disconnect } = useDisconnect();
   const router = useRouter();
   const { username } = router.query;
-  const [copied, isCopied] = useState(false);
-  const [profileData, setProfileData] = useState(userMe || null);
+
+  const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [activeTab, setActiveTab] = useState<ProfileTab>("coins-created");
-  const [loadingPage, setLoading] = useState(false);
+  const [loadingPage, setLoadingPage] = useState(true);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       if (!username || typeof username !== "string") return;
-      setLoading(true);
-      if (userMe && userMe.user.username === username) {
-        console.log(`Affichage de userMe pour ${username}`);
-        setProfileData(userMe);
-        setLoading(false);
-        return;
-      }
+
+      setLoadingPage(true);
+
       try {
-        const userProfile = await fetchUserProfile(username);
-        if (userProfile) {
-          console.log(`Affichage de userProfile pour ${username}`);
-          setProfileData(userProfile);
-        } else {
-          setProfileData(null);
-        }
+        const userProfile =
+          userMe && userMe.user.username === username
+            ? userMe
+            : await fetchUserProfile(username);
+
+        setProfileData(userProfile || null);
       } catch (error) {
         console.error("Error fetching user profile:", error);
         setProfileData(null);
       } finally {
-        setLoading(false);
+        setLoadingPage(false);
       }
     };
 
     fetchData();
-  }, [username, userMe, fetchUserProfile, isProfileUpdating]);
+  }, [username, userMe, fetchUserProfile]);
 
-  if (!username || loading) {
+  if (loadingPage) {
     return (
       <section className="min-h-screen flex items-center justify-center">
         <p>Loading...</p>
@@ -70,17 +66,33 @@ const ProfilePage: NextPage = () => {
       </section>
     );
   }
+
+  const isOwnProfile = userMe?.user.username === profileData.user.username;
+
   const renderTabContent = () => {
     switch (activeTab) {
       case "coins-created":
         return (
-          <CoinsCreated coins={profileData.tokens || []} isLoading={loading} />
+          <CoinsCreated
+            coins={profileData.tokens || []}
+            username={profileData.user.username}
+            isLoading={loadingPage}
+          />
         );
       case "replies":
-        return <Replies replies={profileData.comments || []} />;
+        return (
+          <Replies
+            replies={profileData.comments || []}
+            username={profileData.user.username}
+          />
+        );
       default:
         return (
-          <CoinsCreated coins={profileData.tokens || []} isLoading={loading} />
+          <CoinsCreated
+            coins={profileData.tokens || []}
+            username={profileData.user.username}
+            isLoading={loadingPage}
+          />
         );
     }
   };
@@ -93,14 +105,13 @@ const ProfilePage: NextPage = () => {
 
   return (
     <section className="pt-32 lg:w-6/12 w-12/12 md:w-8/12 flex flex-col items-center justify-center mx-auto">
-      <Navbar />
       <div className="mb-4 text-start items-start d-flex px-4">
         <Link href="/">(go back)</Link>
       </div>
       <div className="pb-6">
-        {userMe?.user.avatar && (
+        {profileData.user.avatar && (
           <Image
-            src={userMe.user.avatar}
+            src={profileData.user.avatar}
             alt="User Avatar"
             width={100}
             height={100}
@@ -109,14 +120,12 @@ const ProfilePage: NextPage = () => {
         )}
       </div>
       <div className="space-y-2 text-center">
-        <h3 className="font-bold text-xl">@{profileData.user.username}</h3> 
-        {/** 
+        <h3 className="font-bold text-xl">@{profileData.user.username}</h3>
         <p className="text-gray-300 font-normal text-sm max-w-md mx-auto">
-          {userMe?.user.description || "No description"}
+          {profileData.user.description || "No description"}
         </p>
-        */}
 
-        {userMe?.user.username === username && (
+        {isOwnProfile && (
           <>
             <ModalProfile
               trigger={
@@ -131,32 +140,29 @@ const ProfilePage: NextPage = () => {
             </button>
           </>
         )}
+
         <p className="text-lg font-medium mb-4">
-          {userMe?.user.likes} ??? likes received |{" "}
+          {profileData.user.likes || 0} likes received
         </p>
         <div className="flex flex-col gap-2 max-w-fit mx-auto">
           <span className="text-sm font-normal border rounded border-gray-300 text-gray-300 p-2.5 bg-transparent text-center max-w-fit">
-            {userMe?.user.wallet ? userMe?.user.wallet : ""}
+            {profileData.user.wallet}
           </span>
           <div className="flex justify-between w-full">
-            {userMe?.user.wallet && (
-              <>
-                <a
-                  href={`https://etherscan.io/address/${userMe?.user.wallet}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs font-normal hover:text-[#9A62FF] cursor-pointer"
-                >
-                  view on etherscan
-                </a>
-                <p
-                  className="text-xs font-normal hover:text-[#9A62FF] cursor-pointer"
-                  onClick={() => handleCopy(userMe?.user.wallet, isCopied)}
-                >
-                  {copied ? "copied" : "copy address"}
-                </p>
-              </>
-            )}
+            <a
+              href={`https://etherscan.io/address/${profileData.user.wallet}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-normal hover:text-[#9A62FF] cursor-pointer"
+            >
+              view on etherscan
+            </a>
+            <p
+              className="text-xs font-normal hover:text-[#9A62FF] cursor-pointer"
+              onClick={() => handleCopy(profileData.user.wallet, setCopied)}
+            >
+              {copied ? "copied" : "copy address"}
+            </p>
           </div>
         </div>
         <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />

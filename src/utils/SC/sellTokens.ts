@@ -9,7 +9,6 @@ export const sellToken = async (
   minETH: BigInt,
   _affiliate: string
 ) => {
-  console.log(parseEther(tokenAmount), minETH);
   try {
     const tx = await writeContractAsync({
       ...poolContract,
@@ -24,7 +23,6 @@ export const sellToken = async (
     }
     return false;
   } catch (e) {
-    console.log(e);
     return false;
   }
 };

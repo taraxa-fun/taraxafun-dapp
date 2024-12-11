@@ -9,10 +9,15 @@ import { UserToken } from "@/type/user";
 
 interface CoinsCreatedProps {
   coins: UserToken[];
+  username: string;
   isLoading: boolean;
 }
 
-export const CoinsCreated = ({ coins, isLoading }: CoinsCreatedProps) => {
+export const CoinsCreated = ({
+  coins,
+  isLoading,
+  username,
+}: CoinsCreatedProps) => {
   if (isLoading) {
     return (
       <div className="mt-8 grid grid-cols-1 gap-4">
@@ -40,7 +45,6 @@ export const CoinsCreated = ({ coins, isLoading }: CoinsCreatedProps) => {
   if (coins.length === 0) {
     return <div className="mt-8 text-center text-white">No coins created</div>;
   }
-
   return (
     <div className="mt-8 grid grid-cols-1 gap-4">
       {coins.map((token, index) => (
@@ -65,8 +69,8 @@ export const CoinsCreated = ({ coins, isLoading }: CoinsCreatedProps) => {
               <div className="flex items-center lg:gap-4 gap-1">
                 <p className="text-xs font-normal">Created by</p>
                 <p className="text-xs font-normal">
-                  {token.user || "Unknown"}{" "}
-                  {/* Remplacez par le nom de l'utilisateur si disponible */}
+                  {username || "Unknown"}{" "}
+                  {/* Remplacez par le nom de l'utilisateur si disponible                */}
                 </p>
                 <p className="text-xs">{getTimeAgo(token.created_at)}</p>
               </div>

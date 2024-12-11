@@ -1,4 +1,5 @@
 export interface UserToken {
+    user: UserProfile;
     _id: string;
     address: string;
     created_at: string;
@@ -6,7 +7,6 @@ export interface UserToken {
     name: string;
     supply: string;
     symbol: string;
-    user: string;
     telegram?: string;
     twitter?: string;
     website?: string;
@@ -17,9 +17,8 @@ export interface UserToken {
     _id: string;
     content: string;
     likes: number;
-    user: string;
-    author: string;
     created_at: string;
+    token_address: `0x${string}`;
   }
   
   export interface UserProfile {
