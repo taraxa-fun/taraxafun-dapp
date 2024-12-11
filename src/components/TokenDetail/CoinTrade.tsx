@@ -44,7 +44,6 @@ export const CoinTrades = () => {
       );
     }
   }, [tokenData?.trades]);
-  console.log("COIN TRADES",displayedTrades);
   if (singleTokenisLoading) {
     return (
       <div className="mt-8 space-y-4">

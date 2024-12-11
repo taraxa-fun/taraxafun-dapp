@@ -26,7 +26,6 @@ export const CoinReplies = () => {
       </div>
     );
   }
-  console.log(replies);
   if (!replies || replies.length === 0) {
     return (
       <div className="mt-8 bg-[#2D0060] p-8 rounded-lg text-center">

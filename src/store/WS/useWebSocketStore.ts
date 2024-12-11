@@ -92,7 +92,6 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
           set((state) => ({
             latestTrades: [tradeData, ...state.latestTrades],
           }));
-          console.log("trade data WS ", tradeData);
         }
       };
 
