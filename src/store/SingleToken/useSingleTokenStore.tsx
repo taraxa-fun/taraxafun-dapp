@@ -40,7 +40,7 @@ interface Creator {
   user: Creator;
   comments: Comment[];
   trades: TradeData[];
-  commentsStats: CommentsStats;
+  replies_count?: number; 
  }
  
  interface TokenState {

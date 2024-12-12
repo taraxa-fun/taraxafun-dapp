@@ -69,7 +69,7 @@ export const CoinHeader = () => {
           </p>
 
           <p className="text-xs font-normal">
-            replies: {tokenData.commentsStats.count}
+            replies: {tokenData.replies_count ? tokenData.replies_count : "0"}
           </p>
         </div>
       </div>

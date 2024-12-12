@@ -8,10 +8,14 @@ interface TokenMessage {
   name: string;
   supply: string;
   symbol: string;
+  replies_count: number;
+  image: string;
   user: {
+    avatar?: string;
     wallet: string;
     username: string;
   };
+  created_at: string;
 }
 
 export interface TradeData {
@@ -33,11 +37,15 @@ export interface TradeData {
     address: `0x${string}`;
     marketcap: string;
     symbol: string;
+    image: string;
+    replies_count?: number;
+    description?: string;
   };
   __v: number;
 }
 
 interface WebSocketStore {
+  hasNewToken: boolean;
   latestTokens: TokenMessage | null;
   latestTrades: TradeData[];
   tokenWs: WebSocket | null;
@@ -47,6 +55,7 @@ interface WebSocketStore {
 }
 
 export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
+  hasNewToken: false,
   latestTokens: null,
   latestTrades: [],
   tokenWs: null,
@@ -65,7 +74,15 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
         const message = JSON.parse(event.data);
         if (message.type === "funCreated") {
           const tokenData = message.data as TokenMessage;
-          set({ latestTokens: tokenData });
+          set({ 
+            latestTokens: tokenData,
+            hasNewToken: true  // Met le flag à true quand un nouveau token arrive
+          });
+          
+          // Remet le flag à false après un court délai
+          setTimeout(() => {
+            set({ hasNewToken: false });
+          }, 100);
         }
       };
       

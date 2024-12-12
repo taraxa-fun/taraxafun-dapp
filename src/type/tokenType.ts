@@ -3,10 +3,7 @@ interface Creator {
   username: string;
 }
 
-interface CommentsStats {
-  count: number;
-  likes: number;
-}
+
 
 export interface TokenType {
   _id: string;
@@ -21,7 +18,7 @@ export interface TokenType {
   address: `0x${string}`;
   created_at: string;
   marketcap?: string;
-  commentsStats: CommentsStats;
+  replies_count?: number;
   user: Creator;
 }
 
