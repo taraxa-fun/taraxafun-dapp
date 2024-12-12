@@ -16,6 +16,7 @@ import { approveSell } from "@/utils/SC/useApprove";
 import { getAmountOutETH } from "@/utils/SC/getAmount";
 import { sellToken } from "@/utils/SC/sellTokens";
 import { showErrorToast, showSuccessToastTx } from "@/utils/toast/showToasts";
+import Image from "next/image";
 
 export const SellSection = () => {
   const [amount, setAmount] = useState("");
@@ -94,7 +95,9 @@ export const SellSection = () => {
           return;
         }
       } else {
-        showErrorToast("Approval not required, sufficient allowance available.");
+        showErrorToast(
+          "Approval not required, sufficient allowance available."
+        );
       }
 
       const amountOut = await getAmountOutETH(
@@ -184,17 +187,19 @@ export const SellSection = () => {
           <div className="flex items-center gap-1 p-4">
             <div className="flex items-center gap-1">
               <div className="w-8 h-8 rounded-full overflow-hidden">
-                {/** 
-                <Image
-                  src={tokenData. || ""}
-                  alt={tokenUrl?.name || ""}
-                  width={32}
-                  height={32}
-                  className="w-full h-full object-cover"
-                />
-                */}
+                {tokenData && tokenData.image && (
+                  <Image
+                    src={tokenData.image}
+                    alt={""}
+                    width={32}
+                    height={32}
+                    className="w-full h-full object-cover"
+                  />
+                )}
               </div>
-              <span>{tokenData.symbol}</span>
+              <span>
+                {tokenData && tokenData.symbol ? tokenData.symbol : ""}
+              </span>
             </div>
           </div>
         )}

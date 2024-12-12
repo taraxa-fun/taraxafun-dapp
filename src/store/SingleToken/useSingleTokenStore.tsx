@@ -30,6 +30,9 @@ interface Creator {
   created_at: string;
   description: string;
   image: string;
+  telegram ?: string;
+  twitter ?: string;
+  website ?: string
   name: string;
   supply: string;
   symbol: string;

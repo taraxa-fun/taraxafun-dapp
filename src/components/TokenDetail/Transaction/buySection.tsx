@@ -99,7 +99,6 @@ export const BuySection = () => {
         BigInt(10000)
       ).toString(); // Calcul après slippage
 
-
       // Appel de la fonction buyToken
       const tx = await buyToken(
         writeContractAsync,

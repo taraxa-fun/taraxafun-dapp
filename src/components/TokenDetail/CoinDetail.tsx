@@ -4,6 +4,9 @@ import { Skeleton } from "../ui/skeleton";
 import { getTimeAgo } from "@/utils/calculeTime";
 import { useSingleTokenStore } from "@/store/SingleToken/useSingleTokenStore";
 import { Progress } from "../ui/progress";
+import Twitterlogo from "../../assets/logo/xLogo.png";
+import Telegramlogo from "../../assets/logo/telegramLogo.png";
+import WebsiteLogo from "../../assets/logo/websiteLogo.png";
 
 export const TokenDetails = () => {
   const { tokenData, singleTokenisLoading } = useSingleTokenStore();
@@ -27,30 +30,81 @@ export const TokenDetails = () => {
       </div>
     );
   }
-
+  console.log(tokenData);
   return (
     <div className="flex flex-col gap-4 mx-auto w-full mt-4">
       <div className="flex md:gap-3 gap-1">
         <div className="flex-shrink-0">
-          <Image
-            src={tokenData.image}
-            alt=""
-            width={200}
-            height={200}
-          />
+          <Image src={tokenData.image} alt="" width={200} height={200} />
         </div>
         <div className="flex flex-col w-full space-y-1 justify-start">
           <p className="text-white font-normal text-sm">
-          <strong>{tokenData.name.toLocaleUpperCase()} ({tokenData.symbol})</strong>
+            <strong>
+              {tokenData.name.toLocaleUpperCase()} ({tokenData.symbol})
+            </strong>
           </p>
           <p className="text-xs text-gray-300">"{tokenData.description}"</p>
         </div>
       </div>
+      <div className="flex flex-col gap-3">
+  {tokenData.website && (
+    <a 
+      href={tokenData.website} 
+      target="_blank" 
+      rel="noreferrer"
+      className="flex items-center gap-2 underline"
+    >
+      <Image
+        src={WebsiteLogo}
+        alt="wesbite logo"
+        width={20}
+        height={20}
+      />
+      <p className="text-md text-white font-medium">
+        {tokenData.website}
+      </p>
+    </a>
+  )}
+  {tokenData.twitter && (
+    <a 
+      href={tokenData.twitter} 
+      target="_blank" 
+      rel="noreferrer"
+      className="flex items-center gap-2 underline"
+    >
+      <Image 
+        src={Twitterlogo} 
+        alt="x Logo" 
+        width={20} 
+        height={20} 
+      />
+      <p className="text-md text-white font-medium">
+        {tokenData.twitter}
+      </p>
+    </a>
+  )}
+  {tokenData.telegram && (
+    <a 
+      href={tokenData.telegram} 
+      target="_blank" 
+      rel="noreferrer"
+      className="flex items-center gap-2 underline"
+    >
+      <Image
+        src={Telegramlogo}
+        alt="telegram logo"
+        width={20}
+        height={20}
+      />
+      <p className="text-md text-white font-medium">
+        {tokenData.telegram}
+      </p>
+    </a>
+  )}
+</div>
       <div className="flex flex-col space-y-2">
         <div className="flex justify-between">
-          <p className="font-medium text-base">
-            Bonding curve progress: ??%
-          </p>
+          <p className="font-medium text-base">Bonding curve progress: ??%</p>
           <p className="font-medium text-base">type: linear</p>
         </div>
 
@@ -65,9 +119,7 @@ export const TokenDetails = () => {
         </p>
       </div>
       <div className="flex flex-col space-y-2">
-        <p className="font-medium text-base">
-          Pump emperor progress  %
-        </p>
+        <p className="font-medium text-base">Pump emperor progress %</p>
 
         <Progress
           value={80}
