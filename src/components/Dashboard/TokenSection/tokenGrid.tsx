@@ -40,7 +40,7 @@ export const TokenGrid = () => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-10 px-4">
     {tokens.map((token: TokenType, index: number) => (
-      <Link href={`/coin/${token.address}`} key={`${index}`}>
+      <Link href={`/coin/${token.address ? token.address : ""}`} key={`${index}`}>
         <div className="flex flex-col hover:shadow-lg transition-all h-[354px]">
           <div className="mb-4 w-full flex items-center justify-center">
             {token.image && (
@@ -58,19 +58,19 @@ export const TokenGrid = () => {
             <div className="flex items-center gap-4">
               <p className="text-xs font-normal">created by</p>
               <Link
-                href={`/profile/${token.user.username}`}
+                href={`/profile/${token.user.username ? token.user.username : ""}`}
                 className="text-xs font-normal hover:underline"
               >
                 <div className="flex items-center gap-2">
-                  <p className="text-xs font-normal">{token.user.username}</p>
+                  <p className="text-xs font-normal">{token.user.username ? token.user.username : ""}</p>
                 </div>
               </Link>
-              <p className="text-xs">{getTimeAgo(token.created_at)}</p>
+              <p className="text-xs">{getTimeAgo(token.created_at ? token.created_at : "")}</p>
             </div>
   
             <div className="flex justify-between">
               <p className="text-xs font-normal text-[#79FF62]">
-                market cap: {token.marketcap}
+                market cap: ${token.marketcap ? token.marketcap : "0"}
               </p>
               <p className="text-xs font-normal">
                 replies: {token.commentsStats.count}
@@ -79,7 +79,7 @@ export const TokenGrid = () => {
   
             <p className="text-gray-300 font-normal text-xs line-clamp-3">
               <span className="text-white font-bold">
-                {token.name} ({token.symbol}):
+                {token.name ? token.name : ""} ({token.symbol ? token.symbol : ""}):
               </span>{" "}
               {token.description}
             </p>

@@ -46,7 +46,6 @@ interface WebSocketStore {
   cleanup: () => void;
 }
 
-// Store Implementation
 export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
   latestTokens: null,
   latestTrades: [],
@@ -59,7 +58,7 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
     // WebSocket pour les tokens
     if (!state.tokenWs) {
       const tokenWs = new WebSocket(
-        "ws://taraxafun-server-590541650183.us-central1.run.app/ws/create-fun"
+        "wss://taraxafun-server-590541650183.us-central1.run.app/ws/create-fun"
       );
 
       tokenWs.onmessage = (event) => {
@@ -82,7 +81,7 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
     // WebSocket pour les trades
     if (!state.tradeWs) {
       const tradeWs = new WebSocket(
-        "ws://taraxafun-server-590541650183.us-central1.run.app/ws/trade-call"
+        "wss://taraxafun-server-590541650183.us-central1.run.app/ws/trade-call"
       );
 
       tradeWs.onmessage = (event) => {
@@ -92,8 +91,17 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
           set((state) => ({
             latestTrades: [tradeData, ...state.latestTrades],
           }));
+          console.log(tradeData)
         }
       };
+
+      tradeWs.onerror = (event) => {
+        console.error("Trade WS error", event);
+      }
+
+      tradeWs.onopen = () => {
+        console.log("Trade WS connected");
+      }
 
       tradeWs.onclose = () => {
         set((state) => ({ tradeWs: null }));

@@ -12,7 +12,6 @@ export const CoinHeader = () => {
   const { latestTrades } = useWebSocketStore();
   const [marketCap, setMarketCap] = useState<string | null>(null);
 
-
   useEffect(() => {
     if (latestTrades && tokenData?.address) {
       const matchingTrade = latestTrades.find(
@@ -49,12 +48,15 @@ export const CoinHeader = () => {
         </p>
         <div className="flex items-center gap-2">
           <p className="text-xs font-normal">created by</p>
-          <Image
-            src={placeHodlerRounded}
-            alt="placeholder"
-            width={12}
-            height={12}
-          />
+          {tokenData && tokenData.user.avatar && (
+            <Image
+              src={tokenData.user.avatar}
+              alt="placeholder"
+              width={12}
+              height={12}
+            />
+          )}
+
           <Link
             href={`/profile/${tokenData.user.username}`}
             className="text-xs font-normal"

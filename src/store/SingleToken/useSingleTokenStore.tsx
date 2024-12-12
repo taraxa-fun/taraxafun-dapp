@@ -6,6 +6,7 @@ import { TradeData } from "@/type/WS/TradeMessage";
 interface Creator {
   _id: string;
   username: string;
+  avatar: string;
  }
  
 

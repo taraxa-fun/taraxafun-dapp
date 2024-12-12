@@ -30,7 +30,7 @@ export const Navbar = () => {
   const [isTokenShaking, setIsTokenShaking] = useState(false);
 
   useEffect(() => {
-    if(tokens.length === 0){
+    if (tokens.length === 0) {
       fetchTokens();
     }
   }, []);
@@ -42,7 +42,9 @@ export const Navbar = () => {
 
     if (tradesToDisplay.length > 0) {
       const tradeInterval = setInterval(() => {
-        setCurrentTradeIndex((prevIndex) => (prevIndex + 1) % tradesToDisplay.length);
+        setCurrentTradeIndex(
+          (prevIndex) => (prevIndex + 1) % tradesToDisplay.length
+        );
       }, 2000);
 
       return () => clearInterval(tradeInterval);
@@ -67,7 +69,9 @@ export const Navbar = () => {
 
     if (tokensToDisplay.length > 0) {
       const tokenInterval = setInterval(() => {
-        setCurrentTokenIndex((prevIndex) => (prevIndex + 1) % tokensToDisplay.length);
+        setCurrentTokenIndex(
+          (prevIndex) => (prevIndex + 1) % tokensToDisplay.length
+        );
       }, 2000);
 
       return () => clearInterval(tokenInterval);
@@ -105,8 +109,6 @@ export const Navbar = () => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, [isOpen]);
-
-
   return (
     <>
       <nav className="absolute w-full lg:w-12/12 lg:mx-auto z-40 lg:top-2 top-0 px-4 backdrop-blur-[10px] rounded-none lg:rounded-full">
@@ -128,9 +130,24 @@ export const Navbar = () => {
               </div>
               <div className="flex items-center gap-1">
                 <Image src={xLogo} alt="X Logo" width={18} height={18} />
-                <Image src={telegramLogo} alt="Telegram Logo" width={18} height={18} />
-                <Image src={instagramLogo} alt="Instagram Logo" width={18} height={18} />
-                <Image src={tiktokLogo} alt="Tiktok Logo" width={18} height={18} />
+                <Image
+                  src={telegramLogo}
+                  alt="Telegram Logo"
+                  width={18}
+                  height={18}
+                />
+                <Image
+                  src={instagramLogo}
+                  alt="Instagram Logo"
+                  width={18}
+                  height={18}
+                />
+                <Image
+                  src={tiktokLogo}
+                  alt="Tiktok Logo"
+                  width={18}
+                  height={18}
+                />
               </div>
             </div>
           </div>
@@ -145,27 +162,51 @@ export const Navbar = () => {
                 }`}
               >
                 <a
-                  href={`https://etherscan.io/tx/${displayedTrade?.hash || "#"}`}
+                  href={`https://etherscan.io/tx/${
+                    displayedTrade?.hash || "#"
+                  }`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 px-2 py-2 rounded bg-[#79FF62] text-black font-normal text-sm"
                 >
+                  {displayedTrade && displayedTrade.user?.avatar && (
+                    <Image
+                      src={displayedTrade.user?.avatar}
+                      alt="User Avatar"
+                      width={20}
+                      height={20}
+                    />
+                  )}
                   {displayedTrade ? (
                     displayedTrade.type === "buy" ? (
                       <span>
                         {displayedTrade.user.username} bought{" "}
-                        {Number(formatEther(BigInt(displayedTrade.outAmount))).toFixed(4)}{" "}
+                        {Number(
+                          formatEther(BigInt(displayedTrade.outAmount))
+                        ).toFixed(4)}{" "}
                         TARA of ${displayedTrade.token.symbol}
                       </span>
                     ) : (
-                      <span>
-                        {displayedTrade.user.username} sold{" "}
-                        {Number(formatEther(BigInt(displayedTrade.outAmount))).toFixed(4)}{" "}
-                        ${displayedTrade.token.symbol}
-                      </span>
+                      <>
+                        <span>
+                          {displayedTrade.user.username} sold{" "}
+                          {Number(
+                            formatEther(BigInt(displayedTrade.outAmount))
+                          ).toFixed(4)}{" "}
+                          ${displayedTrade.token.symbol}
+                        </span>
+                      </>
                     )
                   ) : (
                     <span>No trades to display</span>
+                  )}
+                  {displayedTrade && displayedTrade.token.image && (
+                    <Image
+                      src={displayedTrade.token?.image}
+                      alt="User Avatar"
+                      width={20}
+                      height={20}
+                    />
                   )}
                 </a>
               </li>
@@ -181,15 +222,31 @@ export const Navbar = () => {
                   target="_blank"
                   className="flex items-center gap-2 px-2 py-2 rounded bg-[#FFE862] text-black font-normal text-sm"
                 >
-                  <Image src={placeholderNav} alt="Placeholder Nav" />
+                  {displayedToken && displayedToken.user.avatar && (
+                    <Image
+                      src={displayedToken.user.avatar}
+                      width={20}
+                      height={20}
+                      alt="Placeholder Nav"
+                    />
+                  )}
+
                   {displayedToken ? (
                     <span>
-                      {displayedToken.user?.username} created ${displayedToken.symbol}
+                      {displayedToken.user?.username} created $
+                      {displayedToken.symbol}
                     </span>
                   ) : (
                     <span>No tokens to display</span>
                   )}
-                  <Image src={placeholderNavRounded} alt="Placeholder Nav" />
+                  {displayedToken && displayedToken.image && (
+                    <Image
+                      src={displayedToken.image}
+                      alt="User Avatar"
+                      width={20}
+                      height={20}
+                    />
+                  )}
                 </a>
               </li>
             </ul>
