@@ -6,6 +6,7 @@ import { Skeleton } from "../ui/skeleton";
 import { getTimeAgo } from "@/utils/calculeTime";
 import Link from "next/link";
 import { UserToken } from "@/type/user";
+import { formatNumber } from "@/utils/formatNumber";
 
 interface CoinsCreatedProps {
   coins: UserToken[];
@@ -77,7 +78,7 @@ export const CoinsCreated = ({
 
               <div className="flex justify-between">
                 <p className="text-xs font-normal text-[#79FF62]">
-                  Supply: {parseFloat(token.supply).toLocaleString()}{" "}
+                  Supply: {formatNumber(parseFloat(token.supply))}{" "}
                   {/* Formatage */}
                 </p>
               </div>

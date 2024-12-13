@@ -18,6 +18,25 @@ interface TokenMessage {
   created_at: string;
 }
 
+interface CommentMessage {
+  _id: string;
+  address: string;
+  created_at: string;
+  description: string;
+  marketcap: string;
+  name: string;
+  supply: string;
+  symbol: string;
+  telegram: string;
+  twitter: string;
+  website: string;
+  image: string;
+  user: {
+    username: string;
+    wallet: string;
+  };
+}
+
 export interface TradeData {
   _id: string;
   type: "buy" | "sell";
@@ -48,8 +67,10 @@ interface WebSocketStore {
   hasNewToken: boolean;
   latestTokens: TokenMessage | null;
   latestTrades: TradeData[];
+  latestComment: CommentMessage | null;
   tokenWs: WebSocket | null;
   tradeWs: WebSocket | null;
+  commentWs: WebSocket | null;
   initWebSockets: () => void;
   cleanup: () => void;
 }
@@ -60,7 +81,9 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
   latestTrades: [],
   tokenWs: null,
   tradeWs: null,
-
+  latestComment: null,
+  commentWs: null,
+  
   initWebSockets: () => {
     const state = get();
 

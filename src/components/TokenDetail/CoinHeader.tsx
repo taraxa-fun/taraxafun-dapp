@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useSingleTokenStore } from "@/store/SingleToken/useSingleTokenStore";
 import { useWebSocketStore } from "@/store/WS/useWebSocketStore";
 import { useEffect, useState } from "react";
+import { formatUnits } from "viem";
+import { formatMarketCap } from "@/utils/formatMarketCap";
 
 export const CoinHeader = () => {
   const { tokenData, singleTokenisLoading } = useSingleTokenStore();
@@ -64,10 +66,12 @@ export const CoinHeader = () => {
             {tokenData.user.username}
           </Link>
           <p className="text-sm">{getTimeAgo(tokenData.created_at)}</p>
-          <p className="text-[#79FF62] text-xs font-normal">
-            market cap: ${marketCap ? marketCap : tokenData.marketcap}
+          <p className="text-xs font-normal text-[#79FF62]">
+            market cap: $
+            {marketCap
+              ? marketCap
+              : formatMarketCap(tokenData.marketcap ?? "0")}
           </p>
-
           <p className="text-xs font-normal">
             replies: {tokenData.replies_count ? tokenData.replies_count : "0"}
           </p>

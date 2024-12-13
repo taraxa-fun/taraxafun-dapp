@@ -7,11 +7,16 @@ import { TokenType } from "@/type/tokenType";
 import Link from "next/link";
 import { useAnimationStore } from "@/store/useAnimationStore";
 import { useWebSocketStore } from "@/store/WS/useWebSocketStore";
+import { formatNumber } from "@/utils/formatNumber";
+import { formatMarketCap } from "@/utils/formatMarketCap";
+import { useRepliesTokenIdStore } from "@/store/SingleToken/useRepliesTokenIdStore";
+import { useCommentWebSocketStore } from "@/store/WS/useWebSocketRepliesStore";
 
 export const TokenGrid = () => {
   const { tokens, isLoading, fetchTokens, currentPage } = useTokenStore();
   const { sortBy } = useTokenStore();
   const { latestTrades, latestTokens, hasNewToken } = useWebSocketStore();
+  const {initCommentWebSocket, cleanupCommentWebSocket, latestComments} = useCommentWebSocketStore()
   const { showAnimation } = useAnimationStore();
   const [displayedTokens, setDisplayedTokens] = useState<any[]>([]);
   const [isShaking, setIsShaking] = useState(false);
@@ -19,6 +24,18 @@ export const TokenGrid = () => {
   useEffect(() => {
     fetchTokens();
   }, []);
+
+  useEffect(() => {
+    if (sortBy === "last-comment" && showAnimation && currentPage === 1) {
+      initCommentWebSocket();
+    } else {
+      cleanupCommentWebSocket();
+    }
+    return () => {
+      cleanupCommentWebSocket();
+    };
+  }, [sortBy, showAnimation, currentPage]);
+
 
   useEffect(() => {
     setDisplayedTokens(tokens);
@@ -32,13 +49,12 @@ export const TokenGrid = () => {
       currentPage === 1
     ) {
       const lastTrade = latestTrades[0];
-
-      // Trouve le token existant
+  
       const existingToken = tokens.find(
         (token) =>
           token.address.toLowerCase() === lastTrade.token.address.toLowerCase()
       );
-
+  
       const mappedTrade = {
         _id: lastTrade.token._id,
         name: lastTrade.token.symbol,
@@ -50,7 +66,6 @@ export const TokenGrid = () => {
         website: "",
         supply: "",
         address: lastTrade.token.address.toLowerCase(),
-        // Utilise le created_at existant ou celui du lastTrade si le token n'existe pas encore
         created_at: existingToken
           ? existingToken.created_at
           : lastTrade.created_at,
@@ -63,20 +78,60 @@ export const TokenGrid = () => {
           _id: lastTrade.user._id,
         },
       };
-
+  
       const filteredTokens = tokens.filter(
         (token) => token.address.toLowerCase() !== mappedTrade.address
       );
-
+  
       const updatedTokens = [mappedTrade, ...filteredTokens];
+  
+      setDisplayedTokens(updatedTokens);
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 200);
+    } else if (
+      sortBy === "last-comment" &&
+      latestComments &&
+      latestComments.length > 0 &&
+      showAnimation &&
+      currentPage === 1
+    ) {
+      const lastReply = latestComments[0];
+  
+      const existingToken = tokens.find(
+        (token) => token.address.toLowerCase() === lastReply.address.toLowerCase()
+      );
+  
+      const mappedReply = {
+        _id: lastReply._id,
+        name: lastReply.name,
+        symbol: lastReply.symbol,
+        image: lastReply.image,
+        description: lastReply.description,
+        twitter: lastReply.twitter,
+        telegram: lastReply.telegram,
+        website: lastReply.website,
+        supply: lastReply.supply,
+        address: lastReply.address.toLowerCase(),
+        created_at: existingToken ? existingToken.created_at : lastReply.created_at,
+        marketcap: lastReply.marketcap,
+        user: {
+          username: lastReply.user.username,
+          wallet: lastReply.user.wallet,
+        },
+      };
+  
+      const filteredTokens = tokens.filter(
+        (token) => token.address.toLowerCase() !== mappedReply.address
+      );
+  
+      const updatedTokens = [mappedReply, ...filteredTokens];
+      console.log("mapped reply", mappedReply);
 
       setDisplayedTokens(updatedTokens);
-
-      console.log("Updated Tokens:", updatedTokens);
       setIsShaking(true);
       setTimeout(() => setIsShaking(false), 200);
     }
-  }, [tokens, latestTrades, sortBy, showAnimation, currentPage]);
+  }, [tokens, latestTrades, latestComments, sortBy, showAnimation, currentPage]);
 
   useEffect(() => {
     if (
@@ -90,7 +145,6 @@ export const TokenGrid = () => {
         setDisplayedTokens(tokens);
         setIsShaking(true);
         setTimeout(() => setIsShaking(false), 200);
-        console.log(tokens);
       }, 10000);
     }
   }, [hasNewToken, sortBy, currentPage]);
@@ -162,7 +216,8 @@ export const TokenGrid = () => {
 
               <div className="flex justify-between">
                 <p className="text-xs font-normal text-[#79FF62]">
-                  market cap: ${token.marketcap ? token.marketcap : "0"}
+                  market cap: $
+                  {token.marketcap ? formatMarketCap(token.marketcap) : "0"}
                 </p>
                 <p className="text-xs font-normal">
                   replies: {token.replies_count ? token.replies_count : "0"}
