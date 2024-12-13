@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TaraxaLogoChain from "../../assets/logo/TARALogoChain.png";
 import {
   Dialog,
@@ -20,6 +20,10 @@ import { useRouter } from "next/router";
 import { deployToken } from "@/utils/SC/deployToken";
 import { uploadImageToken } from "@/utils/uploadImgeToken";
 import { showErrorToast, showSuccessToastTx } from "@/utils/toast/showToasts";
+import { getPercentageAntiSniperBeforeBuy } from "@/utils/SC/antiSniper";
+import { useDeployer } from "@/hooks/useDeployer";
+import { formatEther, parseEther } from "viem";
+import { formatNumber } from "@/utils/formatNumber";
 
 export const CreateToken = () => {
   const { toast } = useToast();
@@ -40,6 +44,7 @@ export const CreateToken = () => {
   const resetForm = () => {
     setTokenData(initialTokenData);
   };
+  const { initialReserveETH, antiSniperPercentage } = useDeployer();
   const router = useRouter();
   const { jwt } = useAuthStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -49,10 +54,13 @@ export const CreateToken = () => {
   const [showSocial, setShowSocial] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<string | null>(null);
+  const [priceStartInEth, setPriceStartInEth] = useState<number | null>(null);
   const { address } = useAccount();
   const { suplyValue } = useSupply(address as any, false, false);
   type TokenKey = keyof typeof tokenData;
   type SocialKey = keyof typeof tokenData.socialLinks;
+  const [percentageAntiSniperRequired, setPercentageAntiSniperRequired] =
+    useState("");
 
   // check if all fields are correctly filled and check if the wallet is connected
   const validateForm = () => {
@@ -139,6 +147,22 @@ export const CreateToken = () => {
         return;
       }
     }
+    if (priceStartInEth) {
+      const tokensReceived =
+        Number(tokenData._amountAntiSnipe) / priceStartInEth;
+      const totalSupply = Number(formatEther(suplyValue));
+      const maxAllowedTokens =
+        (totalSupply * Number(antiSniperPercentage)) / 100;
+
+    if (tokensReceived > maxAllowedTokens) {
+      showErrorToast(
+        `You cannot receive more than ${antiSniperPercentage}% (${formatNumber(
+          maxAllowedTokens
+        )} tokens) of total supply`
+      );
+      return;
+    }
+  }
     setLoading(true);
     try {
       const isAntiSnipeEnabled =
@@ -173,7 +197,6 @@ export const CreateToken = () => {
             tokenData.image,
             jwt,
             transactionResult.tokenAddress.toLowerCase()
-
           );
         } else {
           console.error("Error saving token to database:", res);
@@ -195,6 +218,14 @@ export const CreateToken = () => {
     }
   };
 
+  useEffect(() => {
+    if (initialReserveETH && suplyValue) {
+      const reserveInEth = Number(formatEther(initialReserveETH));
+      const supplyInTokens = Number(formatEther(suplyValue));
+      const price = reserveInEth / supplyInTokens;
+      setPriceStartInEth(price);
+    }
+  }, [initialReserveETH, suplyValue]);
   return (
     <section className="pt-32 pb-20 lg:w-6/12 w-12/12 md:w-8/12 mx-auto max-w-lg px-4">
       <div className="relative w-full mb-8">
@@ -605,7 +636,13 @@ export const CreateToken = () => {
                 </div>
               </div>
               <p className="text-base font-normal text-[#A9A8AD]">
-                you receive 1000000 MIMI
+                you receive{" "}
+                {priceStartInEth && tokenData._amountAntiSnipe
+                  ? formatNumber(
+                      Number(tokenData._amountAntiSnipe) / priceStartInEth
+                    )
+                  : "0"}{" "}
+                {tokenData._symbol || "tokens"}
               </p>
             </div>
             <button

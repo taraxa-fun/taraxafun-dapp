@@ -7,6 +7,7 @@ import { getTimeAgo } from "@/utils/calculeTime";
 import Link from "next/link";
 import { UserToken } from "@/type/user";
 import { formatNumber } from "@/utils/formatNumber";
+import { formatEther, parseEther } from "viem";
 
 interface CoinsCreatedProps {
   coins: UserToken[];
@@ -78,8 +79,12 @@ export const CoinsCreated = ({
 
               <div className="flex justify-between">
                 <p className="text-xs font-normal text-[#79FF62]">
-                  Supply: {formatNumber(parseFloat(token.supply))}{" "}
-                  {/* Formatage */}
+                  Supply:{" "}
+                  {token.supply
+                    ? formatNumber(
+                        parseFloat(formatEther(BigInt(token.supply)))
+                      )
+                    : "0"}
                 </p>
               </div>
 

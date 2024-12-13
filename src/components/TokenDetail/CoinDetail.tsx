@@ -7,10 +7,46 @@ import { Progress } from "../ui/progress";
 import Twitterlogo from "../../assets/logo/xLogo.png";
 import Telegramlogo from "../../assets/logo/telegramLogo.png";
 import WebsiteLogo from "../../assets/logo/websiteLogo.png";
+import { usePool } from "@/hooks/usePool";
+import { formatEther, formatUnits } from "viem";
+import { useEffect, useState } from "react";
 
 export const TokenDetails = () => {
   const { tokenData, singleTokenisLoading } = useSingleTokenStore();
+  const { poolData, isLoading, error } = usePool(
+    tokenData?.address as `0x${string}`
+  );
+  const [percentageBondingCurve, setPercentageBondingCurve] = useState<string>("")
+  console.log("pool data", poolData);
 
+  useEffect(() => {
+    const calculateProgress = () => {
+      try {
+        if (!poolData?.pool?.listThreshold || !tokenData?.marketcap) {
+          setPercentageBondingCurve("0");
+          return 0;
+        }
+  
+        const threshold = Number(poolData.pool.listThreshold);
+        const currentMarketCap = Number(formatUnits(BigInt(tokenData.marketcap), 6));
+        
+        console.log("Formatted threshold:", threshold);
+        console.log("Formatted marketcap:", currentMarketCap);
+    
+        const percentage = (currentMarketCap / threshold) * 100;
+        const percentageFinal = Math.min(Math.max(percentage, 0), 100);
+        setPercentageBondingCurve(percentageFinal.toFixed(2));
+        return percentageFinal;
+      } catch (error) {
+        console.error("Error calculating bonding curve progress:", error);
+        setPercentageBondingCurve("0");
+        return 0;
+      }
+    };
+  
+    calculateProgress();
+  }, [poolData?.pool?.listThreshold, tokenData?.marketcap]);
+  
   if (singleTokenisLoading || !tokenData) {
     return (
       <div className="flex flex-col mt-4">
@@ -47,69 +83,64 @@ export const TokenDetails = () => {
         </div>
       </div>
       <div className="flex flex-col gap-3">
-  {tokenData.website && (
-    <a 
-      href={tokenData.website} 
-      target="_blank" 
-      rel="noreferrer"
-      className="flex items-center gap-2 underline"
-    >
-      <Image
-        src={WebsiteLogo}
-        alt="wesbite logo"
-        width={20}
-        height={20}
-      />
-      <p className="text-md text-white font-medium">
-        {tokenData.website}
-      </p>
-    </a>
-  )}
-  {tokenData.twitter && (
-    <a 
-      href={tokenData.twitter} 
-      target="_blank" 
-      rel="noreferrer"
-      className="flex items-center gap-2 underline"
-    >
-      <Image 
-        src={Twitterlogo} 
-        alt="x Logo" 
-        width={20} 
-        height={20} 
-      />
-      <p className="text-md text-white font-medium">
-        {tokenData.twitter}
-      </p>
-    </a>
-  )}
-  {tokenData.telegram && (
-    <a 
-      href={tokenData.telegram} 
-      target="_blank" 
-      rel="noreferrer"
-      className="flex items-center gap-2 underline"
-    >
-      <Image
-        src={Telegramlogo}
-        alt="telegram logo"
-        width={20}
-        height={20}
-      />
-      <p className="text-md text-white font-medium">
-        {tokenData.telegram}
-      </p>
-    </a>
-  )}
-</div>
+        {tokenData.website && (
+          <a
+            href={tokenData.website}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 underline"
+          >
+            <Image
+              src={WebsiteLogo}
+              alt="wesbite logo"
+              width={20}
+              height={20}
+            />
+            <p className="text-md text-white font-medium">
+              {tokenData.website}
+            </p>
+          </a>
+        )}
+        {tokenData.twitter && (
+          <a
+            href={tokenData.twitter}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 underline"
+          >
+            <Image src={Twitterlogo} alt="x Logo" width={20} height={20} />
+            <p className="text-md text-white font-medium">
+              {tokenData.twitter}
+            </p>
+          </a>
+        )}
+        {tokenData.telegram && (
+          <a
+            href={tokenData.telegram}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 underline"
+          >
+            <Image
+              src={Telegramlogo}
+              alt="telegram logo"
+              width={20}
+              height={20}
+            />
+            <p className="text-md text-white font-medium">
+              {tokenData.telegram}
+            </p>
+          </a>
+        )}
+      </div>
       <div className="flex flex-col space-y-2">
         <div className="flex justify-between">
-          <p className="font-medium text-base">Bonding curve progress: ??%</p>
+          <p className="font-medium text-base">Bonding curve progress: {percentageBondingCurve ? percentageBondingCurve : "0"}%</p>
           <p className="font-medium text-base">type: linear</p>
         </div>
 
         <Progress
-          value={50}
+          value={Number(percentageBondingCurve)}
           fillColor="bg-[#79FF62]"
           backgroundColor="bg-[#458343]"
         />
