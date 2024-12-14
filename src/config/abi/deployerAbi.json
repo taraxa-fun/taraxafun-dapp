@@ -1,981 +1,787 @@
 [
     {
+        "type": "constructor",
         "inputs": [
             {
-                "internalType": "address",
                 "name": "_funPool",
-                "type": "address"
+                "type": "address",
+                "internalType": "address"
             },
             {
-                "internalType": "address",
-                "name": "_creationFeeContract",
-                "type": "address"
+                "name": "_feeWallet",
+                "type": "address",
+                "internalType": "address"
             },
             {
-                "internalType": "address",
                 "name": "_funStorage",
-                "type": "address"
+                "type": "address",
+                "internalType": "address"
             },
             {
-                "internalType": "address",
                 "name": "_eventTracker",
-                "type": "address"
+                "type": "address",
+                "internalType": "address"
             }
         ],
-        "stateMutability": "nonpayable",
-        "type": "constructor"
+        "stateMutability": "nonpayable"
     },
     {
+        "type": "function",
+        "name": "CreateFun",
         "inputs": [
             {
-                "internalType": "address",
-                "name": "owner",
-                "type": "address"
-            }
-        ],
-        "type": "error",
-        "name": "OwnableInvalidOwner"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            }
-        ],
-        "type": "error",
-        "name": "OwnableUnauthorizedAccount"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "previousOwner",
-                "type": "address",
-                "indexed": true
-            },
-            {
-                "internalType": "address",
-                "name": "newOwner",
-                "type": "address",
-                "indexed": true
-            }
-        ],
-        "type": "event",
-        "name": "OwnershipTransferred",
-        "anonymous": false
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "creator",
-                "type": "address",
-                "indexed": true
-            },
-            {
-                "internalType": "address",
-                "name": "funContract",
-                "type": "address",
-                "indexed": true
-            },
-            {
-                "internalType": "address",
-                "name": "tokenAddress",
-                "type": "address",
-                "indexed": true
-            },
-            {
-                "internalType": "string",
-                "name": "name",
-                "type": "string",
-                "indexed": false
-            },
-            {
-                "internalType": "string",
-                "name": "symbol",
-                "type": "string",
-                "indexed": false
-            },
-            {
-                "internalType": "string",
-                "name": "data",
-                "type": "string",
-                "indexed": false
-            },
-            {
-                "internalType": "uint256",
-                "name": "totalSupply",
-                "type": "uint256",
-                "indexed": false
-            },
-            {
-                "internalType": "uint256",
-                "name": "initialReserve",
-                "type": "uint256",
-                "indexed": false
-            },
-            {
-                "internalType": "uint256",
-                "name": "timestamp",
-                "type": "uint256",
-                "indexed": false
-            }
-        ],
-        "type": "event",
-        "name": "funCreated",
-        "anonymous": false
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "funContract",
-                "type": "address",
-                "indexed": true
-            },
-            {
-                "internalType": "address",
-                "name": "tokenAddress",
-                "type": "address",
-                "indexed": true
-            },
-            {
-                "internalType": "address",
-                "name": "router",
-                "type": "address",
-                "indexed": true
-            },
-            {
-                "internalType": "address",
-                "name": "baseAddress",
-                "type": "address",
-                "indexed": false
-            },
-            {
-                "internalType": "uint256",
-                "name": "liquidityAmount",
-                "type": "uint256",
-                "indexed": false
-            },
-            {
-                "internalType": "uint256",
-                "name": "tokenAmount",
-                "type": "uint256",
-                "indexed": false
-            },
-            {
-                "internalType": "uint256",
-                "name": "_time",
-                "type": "uint256",
-                "indexed": false
-            },
-            {
-                "internalType": "uint256",
-                "name": "totalVolume",
-                "type": "uint256",
-                "indexed": false
-            }
-        ],
-        "type": "event",
-        "name": "royal",
-        "anonymous": false
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "string",
                 "name": "_name",
-                "type": "string"
+                "type": "string",
+                "internalType": "string"
             },
             {
-                "internalType": "string",
                 "name": "_symbol",
-                "type": "string"
+                "type": "string",
+                "internalType": "string"
             },
             {
-                "internalType": "string",
                 "name": "_data",
-                "type": "string"
+                "type": "string",
+                "internalType": "string"
             },
             {
-                "internalType": "uint256",
                 "name": "_totalSupply",
-                "type": "uint256"
+                "type": "uint256",
+                "internalType": "uint256"
             },
             {
-                "internalType": "uint256",
                 "name": "_liquidityETHAmount",
-                "type": "uint256"
+                "type": "uint256",
+                "internalType": "uint256"
             },
             {
-                "internalType": "bool",
                 "name": "_antiSnipe",
-                "type": "bool"
+                "type": "bool",
+                "internalType": "bool"
             },
             {
-                "internalType": "uint256",
                 "name": "_amountAntiSnipe",
-                "type": "uint256"
+                "type": "uint256",
+                "internalType": "uint256"
             },
             {
-                "internalType": "uint256",
                 "name": "_maxBuyPerWallet",
-                "type": "uint256"
+                "type": "uint256",
+                "internalType": "uint256"
             }
         ],
-        "stateMutability": "payable",
-        "type": "function",
-        "name": "CreateFun"
+        "outputs": [],
+        "stateMutability": "payable"
     },
     {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_baseTokenAddress",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "nonpayable",
         "type": "function",
-        "name": "addBaseToken"
-    },
-    {
+        "name": "addRouter",
         "inputs": [
             {
-                "internalType": "address",
                 "name": "_routerAddress",
-                "type": "address"
+                "type": "address",
+                "internalType": "address"
             }
         ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "addRouter"
+        "outputs": [],
+        "stateMutability": "nonpayable"
     },
     {
-        "inputs": [],
-        "stateMutability": "view",
         "type": "function",
         "name": "affiliatePer",
+        "inputs": [],
         "outputs": [
             {
-                "internalType": "uint256",
                 "name": "",
-                "type": "uint256"
-            }
-        ]
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
+                "type": "uint256",
+                "internalType": "uint256"
             }
         ],
-        "stateMutability": "view",
+        "stateMutability": "view"
+    },
+    {
         "type": "function",
         "name": "affiliateSpecial",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ]
-    },
-    {
         "inputs": [
             {
-                "internalType": "address",
                 "name": "",
-                "type": "address"
+                "type": "address",
+                "internalType": "address"
             }
         ],
-        "stateMutability": "view",
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool",
+                "internalType": "bool"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
         "type": "function",
         "name": "affiliateSpecialPer",
+        "inputs": [
+            {
+                "name": "",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
         "outputs": [
             {
-                "internalType": "uint256",
                 "name": "",
-                "type": "uint256"
+                "type": "uint256",
+                "internalType": "uint256"
             }
-        ]
+        ],
+        "stateMutability": "view"
     },
     {
-        "inputs": [],
-        "stateMutability": "view",
         "type": "function",
         "name": "antiSnipePer",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ]
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function",
-        "name": "baseAdded",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ]
-    },
-    {
         "inputs": [],
-        "stateMutability": "view",
-        "type": "function",
-        "name": "baseCount",
         "outputs": [
             {
-                "internalType": "uint256",
                 "name": "",
-                "type": "uint256"
-            }
-        ]
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
+                "type": "uint256",
+                "internalType": "uint256"
             }
         ],
-        "stateMutability": "view",
-        "type": "function",
-        "name": "baseStorage",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ]
+        "stateMutability": "view"
     },
     {
+        "type": "function",
+        "name": "disableRouter",
         "inputs": [
             {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function",
-        "name": "baseValid",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ]
-    },
-    {
-        "inputs": [],
-        "stateMutability": "view",
-        "type": "function",
-        "name": "creationFeeDistributionContract",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ]
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_baseTokenAddress",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "disableBaseToken"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
                 "name": "_routerAddress",
-                "type": "address"
+                "type": "address",
+                "internalType": "address"
             }
         ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "disableRouter"
+        "outputs": [],
+        "stateMutability": "nonpayable"
     },
     {
+        "type": "function",
+        "name": "emergencyWithdraw",
         "inputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "emergencyWithdraw"
+        "outputs": [],
+        "stateMutability": "nonpayable"
     },
     {
+        "type": "function",
+        "name": "emitRoyal",
         "inputs": [
             {
-                "internalType": "address",
-                "name": "funContract",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
                 "name": "tokenAddress",
-                "type": "address"
+                "type": "address",
+                "internalType": "address"
             },
             {
-                "internalType": "address",
-                "name": "router",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "baseAddress",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
                 "name": "liquidityAmount",
-                "type": "uint256"
+                "type": "uint256",
+                "internalType": "uint256"
             },
             {
-                "internalType": "uint256",
                 "name": "tokenAmount",
-                "type": "uint256"
+                "type": "uint256",
+                "internalType": "uint256"
             },
             {
-                "internalType": "uint256",
-                "name": "_time",
-                "type": "uint256"
+                "name": "time",
+                "type": "uint256",
+                "internalType": "uint256"
             },
             {
-                "internalType": "uint256",
                 "name": "totalVolume",
-                "type": "uint256"
+                "type": "uint256",
+                "internalType": "uint256"
             }
         ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "emitRoyal"
+        "outputs": [],
+        "stateMutability": "nonpayable"
     },
     {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_baseTokenAddress",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "nonpayable",
         "type": "function",
-        "name": "enableBasetoken"
-    },
-    {
+        "name": "enableRouter",
         "inputs": [
             {
-                "internalType": "address",
                 "name": "_routerAddress",
-                "type": "address"
+                "type": "address",
+                "internalType": "address"
             }
         ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "enableRouter"
+        "outputs": [],
+        "stateMutability": "nonpayable"
     },
     {
-        "inputs": [],
-        "stateMutability": "view",
         "type": "function",
         "name": "eventTracker",
+        "inputs": [],
         "outputs": [
             {
-                "internalType": "address",
                 "name": "",
-                "type": "address"
+                "type": "address",
+                "internalType": "address"
             }
-        ]
+        ],
+        "stateMutability": "view"
     },
     {
+        "type": "function",
+        "name": "feeWallet",
         "inputs": [],
-        "stateMutability": "view",
+        "outputs": [
+            {
+                "name": "",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
         "type": "function",
         "name": "funPool",
+        "inputs": [],
         "outputs": [
             {
-                "internalType": "address",
                 "name": "",
-                "type": "address"
+                "type": "address",
+                "internalType": "address"
             }
-        ]
+        ],
+        "stateMutability": "view"
     },
     {
-        "inputs": [],
-        "stateMutability": "view",
         "type": "function",
         "name": "funStorage",
+        "inputs": [],
         "outputs": [
             {
-                "internalType": "address",
                 "name": "",
-                "type": "address"
-            }
-        ]
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_affiliateAddrs",
-                "type": "address"
+                "type": "address",
+                "internalType": "address"
             }
         ],
-        "stateMutability": "view",
+        "stateMutability": "view"
+    },
+    {
         "type": "function",
         "name": "getAffiliatePer",
+        "inputs": [
+            {
+                "name": "_affiliateAddrs",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
         "outputs": [
             {
-                "internalType": "uint256",
                 "name": "",
-                "type": "uint256"
+                "type": "uint256",
+                "internalType": "uint256"
             }
-        ]
+        ],
+        "stateMutability": "view"
     },
     {
-        "inputs": [],
-        "stateMutability": "view",
         "type": "function",
         "name": "getOwnerPer",
+        "inputs": [],
         "outputs": [
             {
-                "internalType": "uint256",
                 "name": "",
-                "type": "uint256"
-            }
-        ]
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_affiliateAddrs",
-                "type": "address"
+                "type": "uint256",
+                "internalType": "uint256"
             }
         ],
-        "stateMutability": "view",
+        "stateMutability": "view"
+    },
+    {
         "type": "function",
         "name": "getSpecialAffiliateValidity",
+        "inputs": [
+            {
+                "name": "_affiliateAddrs",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
         "outputs": [
             {
-                "internalType": "bool",
                 "name": "",
-                "type": "bool"
+                "type": "bool",
+                "internalType": "bool"
             }
-        ]
+        ],
+        "stateMutability": "view"
     },
     {
-        "inputs": [],
-        "stateMutability": "view",
         "type": "function",
-        "name": "initialReserveEth",
+        "name": "initialReserveTARA",
+        "inputs": [],
         "outputs": [
             {
-                "internalType": "uint256",
                 "name": "",
-                "type": "uint256"
+                "type": "uint256",
+                "internalType": "uint256"
             }
-        ]
+        ],
+        "stateMutability": "view"
     },
     {
-        "inputs": [],
-        "stateMutability": "view",
         "type": "function",
         "name": "listThreshold",
+        "inputs": [],
         "outputs": [
             {
-                "internalType": "uint256",
                 "name": "",
-                "type": "uint256"
+                "type": "uint256",
+                "internalType": "uint256"
             }
-        ]
+        ],
+        "stateMutability": "view"
     },
     {
-        "inputs": [],
-        "stateMutability": "view",
         "type": "function",
         "name": "owner",
+        "inputs": [],
         "outputs": [
             {
-                "internalType": "address",
                 "name": "",
-                "type": "address"
+                "type": "address",
+                "internalType": "address"
             }
-        ]
+        ],
+        "stateMutability": "view"
     },
     {
-        "inputs": [],
-        "stateMutability": "view",
         "type": "function",
         "name": "ownerFeePer",
+        "inputs": [],
         "outputs": [
             {
-                "internalType": "uint256",
                 "name": "",
-                "type": "uint256"
-            }
-        ]
-    },
-    {
-        "inputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "renounceOwnership"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
+                "type": "uint256",
+                "internalType": "uint256"
             }
         ],
-        "stateMutability": "view",
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "renounceOwnership",
+        "inputs": [],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
         "type": "function",
         "name": "routerAdded",
+        "inputs": [
+            {
+                "name": "",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
         "outputs": [
             {
-                "internalType": "bool",
                 "name": "",
-                "type": "bool"
+                "type": "bool",
+                "internalType": "bool"
             }
-        ]
+        ],
+        "stateMutability": "view"
     },
     {
-        "inputs": [],
-        "stateMutability": "view",
         "type": "function",
         "name": "routerCount",
+        "inputs": [],
         "outputs": [
             {
-                "internalType": "uint256",
                 "name": "",
-                "type": "uint256"
-            }
-        ]
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
+                "type": "uint256",
+                "internalType": "uint256"
             }
         ],
-        "stateMutability": "view",
+        "stateMutability": "view"
+    },
+    {
         "type": "function",
         "name": "routerStorage",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ]
-    },
-    {
         "inputs": [
             {
-                "internalType": "address",
                 "name": "",
-                "type": "address"
+                "type": "uint256",
+                "internalType": "uint256"
             }
         ],
-        "stateMutability": "view",
+        "outputs": [
+            {
+                "name": "",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
         "type": "function",
         "name": "routerValid",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ]
-    },
-    {
         "inputs": [
             {
-                "internalType": "bool",
-                "name": "_lockState",
-                "type": "bool"
+                "name": "",
+                "type": "address",
+                "internalType": "address"
             }
         ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "stateChangeSupplyLock"
-    },
-    {
-        "inputs": [],
-        "stateMutability": "view",
-        "type": "function",
-        "name": "supplyLock",
         "outputs": [
             {
-                "internalType": "bool",
                 "name": "",
-                "type": "bool"
+                "type": "bool",
+                "internalType": "bool"
             }
-        ]
+        ],
+        "stateMutability": "view"
     },
     {
-        "inputs": [],
-        "stateMutability": "view",
         "type": "function",
-        "name": "supplyValue",
-        "outputs": [
+        "name": "setAffiliatePerBaseTenK",
+        "inputs": [
             {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
+                "name": "_newAffPer",
+                "type": "uint256",
+                "internalType": "uint256"
             }
-        ]
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
     },
     {
-        "inputs": [],
-        "stateMutability": "view",
+        "type": "function",
+        "name": "setAntiSnipePer",
+        "inputs": [
+            {
+                "name": "_newAntiSnipePer",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "setEventContract",
+        "inputs": [
+            {
+                "name": "_newEventContract",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "setFeeWallet",
+        "inputs": [
+            {
+                "name": "_newFeeWallet",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "setFunData",
+        "inputs": [
+            {
+                "name": "_ownerFunCount",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "_newData",
+                "type": "string",
+                "internalType": "string"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "setFunPool",
+        "inputs": [
+            {
+                "name": "_newfunPool",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "setInitReserveTARA",
+        "inputs": [
+            {
+                "name": "_newVal",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "setListThreshold",
+        "inputs": [
+            {
+                "name": "_newListThreshold",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "setSpecialAffiliateData",
+        "inputs": [
+            {
+                "name": "_affiliateAddrs",
+                "type": "address",
+                "internalType": "address"
+            },
+            {
+                "name": "_status",
+                "type": "bool",
+                "internalType": "bool"
+            },
+            {
+                "name": "_specialPer",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "setStorageContract",
+        "inputs": [
+            {
+                "name": "_newStorageContract",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "setTeamFee",
+        "inputs": [
+            {
+                "name": "_newTeamFee",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "setownerFee",
+        "inputs": [
+            {
+                "name": "_newOwnerFee",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
         "type": "function",
         "name": "teamFee",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ]
-    },
-    {
         "inputs": [],
-        "stateMutability": "view",
-        "type": "function",
-        "name": "teamFeePer",
         "outputs": [
             {
-                "internalType": "uint256",
                 "name": "",
-                "type": "uint256"
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "transferOwnership",
+        "inputs": [
+            {
+                "name": "newOwner",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "event",
+        "name": "OwnershipTransferred",
+        "inputs": [
+            {
+                "name": "previousOwner",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
+            },
+            {
+                "name": "newOwner",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
+            }
+        ],
+        "anonymous": false
+    },
+    {
+        "type": "event",
+        "name": "funCreated",
+        "inputs": [
+            {
+                "name": "creator",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
+            },
+            {
+                "name": "funContract",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
+            },
+            {
+                "name": "tokenAddress",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
+            },
+            {
+                "name": "name",
+                "type": "string",
+                "indexed": false,
+                "internalType": "string"
+            },
+            {
+                "name": "symbol",
+                "type": "string",
+                "indexed": false,
+                "internalType": "string"
+            },
+            {
+                "name": "data",
+                "type": "string",
+                "indexed": false,
+                "internalType": "string"
+            },
+            {
+                "name": "totalSupply",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            },
+            {
+                "name": "initialReserve",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            },
+            {
+                "name": "timestamp",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            }
+        ],
+        "anonymous": false
+    },
+    {
+        "type": "event",
+        "name": "royal",
+        "inputs": [
+            {
+                "name": "tokenAddress",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
+            },
+            {
+                "name": "liquidityAmount",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            },
+            {
+                "name": "tokenAmount",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            },
+            {
+                "name": "time",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            },
+            {
+                "name": "totalVolume",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            }
+        ],
+        "anonymous": false
+    },
+    {
+        "type": "error",
+        "name": "OwnableInvalidOwner",
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "address",
+                "internalType": "address"
             }
         ]
     },
     {
+        "type": "error",
+        "name": "OwnableUnauthorizedAccount",
         "inputs": [
             {
-                "internalType": "address",
-                "name": "newOwner",
-                "type": "address"
+                "name": "account",
+                "type": "address",
+                "internalType": "address"
             }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "transferOwnership"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_newAffPer",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "updateAffiliatePerBaseTenK"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_newAntiSnipePer",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "updateAntiSnipePer"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_newCreationFeeContract",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "updateCreationFeeContract"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_newEventContract",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "updateEventContract"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_ownerFunCount",
-                "type": "uint256"
-            },
-            {
-                "internalType": "string",
-                "name": "_newData",
-                "type": "string"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "updateFunData"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_newfunPool",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "updateFunPool"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_newVal",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "updateInitResEthVal"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_newListThreshold",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "updateListThreshold"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_affiliateAddrs",
-                "type": "address"
-            },
-            {
-                "internalType": "bool",
-                "name": "_status",
-                "type": "bool"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_specialPer",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "updateSpecialAffiliateData"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_newStorageContract",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "updateStorageContract"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_newSupplyVal",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "updateSupplyValue"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_newTeamFeeInWei",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "updateTeamFee"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_newOwnerFeeBaseTenK",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "updateownerFee"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_newFeePer",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "updateteamFeeper"
+        ]
     }
 ]

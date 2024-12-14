@@ -1,5 +1,5 @@
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
-import {  bscTestnet, sepolia } from "viem/chains";
+import {  taraxaTestnet, sepolia } from "viem/chains";
 import {  http } from "wagmi";
 import deployerAbi from "./abi/deployerAbi.json";
 import erc20Abi from "./abi/erc20Abi.json";
@@ -8,12 +8,14 @@ import poolAbi from "./abi/poolAbi.json"
 export const web3Config = getDefaultConfig({
   appName: "Taraxafun",
   projectId: "dzdezdzedez",
-  chains: [bscTestnet as any],
+  chains: [taraxaTestnet as any],
   ssr: false,
   transports : {
-    [bscTestnet.id]: http()
+    [taraxaTestnet.id]: http("https://rpc.testnet.taraxa.io")
   }
 });
+
+export const TaraToApiUrl = "https://tara.to/api/v2"
 
 export const taraxaContract = {
   address: "0x363Ca3F16F1Eaa97814d7718818D3d50628c0055",
@@ -21,16 +23,19 @@ export const taraxaContract = {
 } as const;
 
 export const poolContract = {
-  address: "0xb714D168D7737DDC12F75d227da00FcF158c5dAF",
+  address: "0x157F24E522490802f06dbf686c66791558B3E441",
   abi: poolAbi as any,
 } as const
 
 export const deployerContract = {
-  address: "0xbD12Ba1114c1d72A362FC34c4b738B80ce398737",
+  address: "0x2312627c96105fBa00E9DfF4d4791Ab795E705AA",
   abi: deployerAbi as any,
 } as const;
 
 export const funStorageContract = {
-    address: "0xC871CD7F02606ac8Fb079174AeE6c59323CCBc4D",
-
+    address: "0x34dEF17d19409168C36b8dD5427C101b8b9dA8Ff",
 };
+
+export const MulticallAddress = {
+  address: "0x8a573f2360eB2Ff794bc14F97B43789b51a296D7"
+}

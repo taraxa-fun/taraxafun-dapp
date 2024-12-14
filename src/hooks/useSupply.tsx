@@ -1,6 +1,10 @@
 import { deployerContract, web3Config } from "@/config";
 import { parseEther, parseGwei } from "viem";
-import { multicall, waitForTransactionReceipt } from "@wagmi/core";
+import {
+  multicall,
+  readContract,
+  waitForTransactionReceipt,
+} from "@wagmi/core";
 import { useEffect, useState } from "react";
 
 export const useSupply = (
@@ -14,19 +18,21 @@ export const useSupply = (
 
   useEffect(() => {
     const fetch = async () => {
-      const res = await multicall(web3Config, {
-        contracts: [
-          {
-            ...deployerContract,
-            functionName: "supplyValue",
-            args: [],
-          },
-        ],
-      });
-      setData({
-        suplyValue: res[0].result as bigint,
-      });
+      try {
+        const result = (await readContract(web3Config, {
+          ...deployerContract,
+          functionName: "supplyValue",
+          args: [],
+        })) as bigint;
+
+        setData({
+          suplyValue: result,
+        });
+      } catch (error) {
+        console.error("Error fetching supply value:", error);
+      }
     };
+
     if (account) fetch();
   }, [account, refresh, update]);
   return data;

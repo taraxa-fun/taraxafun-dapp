@@ -56,7 +56,7 @@ export const CreateToken = () => {
   const [errors, setErrors] = useState<string | null>(null);
   const [priceStartInEth, setPriceStartInEth] = useState<number | null>(null);
   const { address } = useAccount();
-  const { suplyValue } = useSupply(address as any, false, false);
+  const supplyValue = parseEther("1000000000")
   type TokenKey = keyof typeof tokenData;
   type SocialKey = keyof typeof tokenData.socialLinks;
   const [percentageAntiSniperRequired, setPercentageAntiSniperRequired] =
@@ -150,7 +150,7 @@ export const CreateToken = () => {
     if (priceStartInEth) {
       const tokensReceived =
         Number(tokenData._amountAntiSnipe) / priceStartInEth;
-      const totalSupply = Number(formatEther(suplyValue));
+      const totalSupply = Number(formatEther(supplyValue));
       const maxAllowedTokens =
         (totalSupply * Number(antiSniperPercentage)) / 100;
 
@@ -169,7 +169,7 @@ export const CreateToken = () => {
         parseFloat(tokenData._amountAntiSnipe || "0") > 0;
       const finalTotalSupply =
         !tokenData._totalSupply || parseFloat(tokenData._totalSupply) === 0
-          ? suplyValue.toString()
+          ? supplyValue.toString()
           : tokenData._totalSupply;
 
       const transactionResult = await deployToken(
@@ -219,13 +219,13 @@ export const CreateToken = () => {
   };
 
   useEffect(() => {
-    if (initialReserveETH && suplyValue) {
+    if (initialReserveETH && supplyValue) {
       const reserveInEth = Number(formatEther(initialReserveETH));
-      const supplyInTokens = Number(formatEther(suplyValue));
+      const supplyInTokens = Number(formatEther(supplyValue));
       const price = reserveInEth / supplyInTokens;
       setPriceStartInEth(price);
     }
-  }, [initialReserveETH, suplyValue]);
+  }, [initialReserveETH, supplyValue]);
   return (
     <section className="pt-32 pb-20 lg:w-6/12 w-12/12 md:w-8/12 mx-auto max-w-lg px-4">
       <div className="relative w-full mb-8">
@@ -390,7 +390,6 @@ export const CreateToken = () => {
                   Initial supply
                 </label>
                 <input
-                  disabled
                   type="text"
                   value={tokenData._totalSupply}
                   onChange={(e) => {

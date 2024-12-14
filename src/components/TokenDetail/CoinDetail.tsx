@@ -10,29 +10,46 @@ import WebsiteLogo from "../../assets/logo/websiteLogo.png";
 import { usePool } from "@/hooks/usePool";
 import { formatEther, formatUnits } from "viem";
 import { useEffect, useState } from "react";
+import { useHoldersForToken } from "@/hooks/useHoldersForToken";
+import { useWebSocketStore } from "@/store/WS/useWebSocketStore";
 
 export const TokenDetails = () => {
   const { tokenData, singleTokenisLoading } = useSingleTokenStore();
+  const [update, setUpdate] = useState<number>(0);
   const { poolData, isLoading, error } = usePool(
     tokenData?.address as `0x${string}`
   );
-  const [percentageBondingCurve, setPercentageBondingCurve] = useState<string>("")
-  console.log("pool data", poolData);
+  const { latestTrades } = useWebSocketStore();
+  const { holders } = useHoldersForToken(
+    tokenData?.address as `0x${string}`,
+    update
+  );
+  const [percentageBondingCurve, setPercentageBondingCurve] =
+    useState<string>("");
+
+  useEffect(() => {
+    if (tokenData && tokenData.address) {
+      setUpdate(update + 1);
+    }
+  }, [latestTrades]);
 
   useEffect(() => {
     const calculateProgress = () => {
       try {
+        console.log(poolData?.pool?.listThreshold);
         if (!poolData?.pool?.listThreshold || !tokenData?.marketcap) {
           setPercentageBondingCurve("0");
           return 0;
         }
-  
+
         const threshold = Number(poolData.pool.listThreshold);
-        const currentMarketCap = Number(formatUnits(BigInt(tokenData.marketcap), 6));
-        
+        const currentMarketCap = Number(
+          formatUnits(BigInt(tokenData.marketcap), 6)
+        );
+
         console.log("Formatted threshold:", threshold);
         console.log("Formatted marketcap:", currentMarketCap);
-    
+
         const percentage = (currentMarketCap / threshold) * 100;
         const percentageFinal = Math.min(Math.max(percentage, 0), 100);
         setPercentageBondingCurve(percentageFinal.toFixed(2));
@@ -43,10 +60,10 @@ export const TokenDetails = () => {
         return 0;
       }
     };
-  
+
     calculateProgress();
   }, [poolData?.pool?.listThreshold, tokenData?.marketcap]);
-  
+
   if (singleTokenisLoading || !tokenData) {
     return (
       <div className="flex flex-col mt-4">
@@ -135,7 +152,10 @@ export const TokenDetails = () => {
       </div>
       <div className="flex flex-col space-y-2">
         <div className="flex justify-between">
-          <p className="font-medium text-base">Bonding curve progress: {percentageBondingCurve ? percentageBondingCurve : "0"}%</p>
+          <p className="font-medium text-base">
+            Bonding curve progress:{" "}
+            {percentageBondingCurve ? percentageBondingCurve : "0"}%
+          </p>
           <p className="font-medium text-base">type: linear</p>
         </div>
 
@@ -153,7 +173,7 @@ export const TokenDetails = () => {
         <p className="font-medium text-base">Pump emperor progress %</p>
 
         <Progress
-          value={80}
+          value={Number(percentageBondingCurve) * 2}
           fillColor="bg-[#FFE862]"
           backgroundColor="bg-[#887843]"
         />
@@ -162,31 +182,37 @@ export const TokenDetails = () => {
         </p>
       </div>
       <div className="mt-5 flex flex-col">
-        <h3 className="font-bold mb-4 text-2xl">holder distribution</h3>
-        <div className="w-full flex justify-between space-y-1">
-          <p className="text-xs font-normal">
-            1. 0x19308akklazkealezm 🏦 (bonding curve)
-          </p>
-          <p className="text-xs font-normal">48.12%</p>
-        </div>
-        <div className="w-full flex justify-between space-y-1">
-          <p className="text-xs font-normal">
-            1. 0x19308akklazkealezm 🏦 (bonding curve)
-          </p>
-          <p className="text-xs font-normal">48.12%</p>
-        </div>
-        <div className="w-full flex justify-between space-y-1">
-          <p className="text-xs font-normal">
-            1. 0x19308akklazkealezm 🏦 (bonding curve)
-          </p>
-          <p className="text-xs font-normal">48.12%</p>
-        </div>
-        <div className="w-full flex justify-between space-y-1">
-          <p className="text-xs font-normal">
-            1. 0x19308akklazkealezm 🏦 (bonding curve)
-          </p>
-          <p className="text-xs font-normal">48.12%</p>
-        </div>
+        <h3 className="font-bold mb-4 text-2xl">Holder Distribution</h3>
+        {holders.length === 0 ? (
+          <p>No holders found.</p>
+        ) : (
+          holders.map((holder, index) => {
+            const percentage =
+              (parseFloat(holder.value) /
+                parseFloat(holder.token.total_supply)) *
+              100;
+
+            return (
+              <div
+                key={index}
+                className="w-full flex justify-between space-y-1"
+              >
+                <p className="text-md font-normal">
+                  {index + 1}.{" "}
+                  <a
+                    href={`https://etherscan.io/address/${holder.address.hash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#9A62FF] hover:underline"
+                  >
+                    {holder.address.hash.slice(0, 5)}
+                  </a>
+                </p>
+                <p className="text-md font-normal">{percentage.toFixed(2)}%</p>
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );

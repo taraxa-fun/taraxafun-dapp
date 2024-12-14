@@ -1,78 +1,78 @@
 import { deployerContract, poolContract, web3Config } from "@/config";
 import { parseEther, parseGwei } from "viem";
-import { multicall, waitForTransactionReceipt } from "@wagmi/core";
+import {
+  multicall,
+  readContract,
+  waitForTransactionReceipt,
+} from "@wagmi/core";
 import { useEffect, useState } from "react";
 
 interface PoolData {
- reserveTokens: bigint;
- reserveETH: bigint;
- volume: bigint;
- listThreshold: bigint;
- initialReserveEth: bigint;
- maxBuyPerWallet: bigint;
- tradeActive: boolean;
- royalemitted: boolean;
+  reserveTokens: bigint;
+  reserveETH: bigint;
+  volume: bigint;
+  listThreshold: bigint;
+  initialReserveEth: bigint;
+  maxBuyPerWallet: bigint;
+  tradeActive: boolean;
+  royalemitted: boolean;
 }
 
 interface FunTokenPool {
- creator: `0x${string}`;
- token: `0x${string}`;
- baseToken: `0x${string}`;
- router: `0x${string}`;
- lockerAddress: `0x${string}`;
- storedLPAddress: `0x${string}`;
- deployer: `0x${string}`;
- pool: PoolData;
+  creator: `0x${string}`;
+  token: `0x${string}`;
+  baseToken: `0x${string}`;
+  router: `0x${string}`;
+  lockerAddress: `0x${string}`;
+  storedLPAddress: `0x${string}`;
+  deployer: `0x${string}`;
+  pool: PoolData;
 }
 
 interface PoolState {
- poolData: FunTokenPool;
- isLoading: boolean;
- error: string | null;
+  poolData: FunTokenPool;
+  isLoading: boolean;
+  error: string | null;
 }
 
 export const usePool = (
- address: `0x${string}`,
- refresh?: unknown,
- update?: unknown
+  address: `0x${string}`,
+  refresh?: unknown,
+  update?: unknown
 ) => {
- const [data, setData] = useState<PoolState>({
-   poolData: {
-     creator: '0x' as `0x${string}`,
-     token: '0x' as `0x${string}`,
-     baseToken: '0x' as `0x${string}`,
-     router: '0x' as `0x${string}`,
-     lockerAddress: '0x' as `0x${string}`,
-     storedLPAddress: '0x' as `0x${string}`,
-     deployer: '0x' as `0x${string}`,
-     pool: {
-       reserveTokens: BigInt(0),
-       reserveETH: BigInt(0),
-       volume: BigInt(0),
-       listThreshold: BigInt(0),
-       initialReserveEth: BigInt(0),
-       maxBuyPerWallet: BigInt(0),
-       tradeActive: false,
-       royalemitted: false
-     }
-   },
-   isLoading: true,
-   error: null
- });
+  const [data, setData] = useState<PoolState>({
+    poolData: {
+      creator: "0x" as `0x${string}`,
+      token: "0x" as `0x${string}`,
+      baseToken: "0x" as `0x${string}`,
+      router: "0x" as `0x${string}`,
+      lockerAddress: "0x" as `0x${string}`,
+      storedLPAddress: "0x" as `0x${string}`,
+      deployer: "0x" as `0x${string}`,
+      pool: {
+        reserveTokens: BigInt(0),
+        reserveETH: BigInt(0),
+        volume: BigInt(0),
+        listThreshold: BigInt(0),
+        initialReserveEth: BigInt(0),
+        maxBuyPerWallet: BigInt(0),
+        tradeActive: false,
+        royalemitted: false,
+      },
+    },
+    isLoading: true,
+    error: null,
+  });
 
-useEffect(() => {
+  useEffect(() => {
     const fetch = async () => {
       try {
-        const res = await multicall(web3Config, {
-          contracts: [
-            {
-              ...poolContract,
-              functionName: "tokenPools",
-              args: [address],
-            },
-          ],
-        });
-  
+        const res = (await readContract(web3Config, {
+          ...poolContract,
+          functionName: "tokenPools",
+          args: [address],
+        })) as any;
+
         const result = res[0].result as any;
         setData({
           poolData: {
@@ -91,26 +91,26 @@ useEffect(() => {
               initialReserveEth: result[7].initialReserveEth,
               maxBuyPerWallet: result[7].maxBuyPerWallet,
               tradeActive: result[7].tradeActive,
-              royalemitted: result[7].royalemitted
-            }
+              royalemitted: result[7].royalemitted,
+            },
           },
           isLoading: false,
-          error: null
+          error: null,
         });
       } catch (error) {
         console.error("Error details:", error);
-        setData(prev => ({
+        setData((prev) => ({
           ...prev,
           isLoading: false,
-          error: 'Failed to fetch pool data'
+          error: "Failed to fetch pool data",
         }));
       }
     };
-  
+
     if (address) {
       fetch();
     }
   }, [address, refresh, update]);
 
- return data;
+  return data;
 };

@@ -14,13 +14,15 @@ import { useWebSocketStore } from "@/store/WS/useWebSocketStore";
 import { formatEther } from "viem";
 import { useLastTrades } from "@/hooks/useLastTrade";
 import { useTokenStore } from "@/store/useAllTokenStore";
+import { Skeleton } from "../ui/skeleton";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { latestTrades, latestTokens } = useWebSocketStore();
   const { trades } = useLastTrades();
   const { tokens, fetchTokens, isLoading } = useTokenStore();
-
+  const [isTradesLoading, setIsTradesLoading] = useState(true);
+  const [isTokensLoading, setIsTokensLoading] = useState(true);
   const [currentTradeIndex, setCurrentTradeIndex] = useState(0);
   const [displayedTrade, setDisplayedTrade] = useState<any>(null);
   const [isTradeShaking, setIsTradeShaking] = useState(false);
@@ -41,6 +43,7 @@ export const Navbar = () => {
       latestTrades && latestTrades.length > 0 ? latestTrades : trades;
 
     if (tradesToDisplay.length > 0) {
+      setIsTradesLoading(false);
       const tradeInterval = setInterval(() => {
         setCurrentTradeIndex(
           (prevIndex) => (prevIndex + 1) % tradesToDisplay.length
@@ -48,6 +51,8 @@ export const Navbar = () => {
       }, 2000);
 
       return () => clearInterval(tradeInterval);
+    } else {
+      setIsTradesLoading(true);
     }
   }, [latestTrades, trades]);
 
@@ -68,6 +73,7 @@ export const Navbar = () => {
       latestTokens && latestTokens.symbol ? [latestTokens] : tokens.slice(0, 5);
 
     if (tokensToDisplay.length > 0) {
+      setIsTokensLoading(false);
       const tokenInterval = setInterval(() => {
         setCurrentTokenIndex(
           (prevIndex) => (prevIndex + 1) % tokensToDisplay.length
@@ -75,8 +81,11 @@ export const Navbar = () => {
       }, 2000);
 
       return () => clearInterval(tokenInterval);
+    } else {
+      setIsTokensLoading(true);
     }
   }, [latestTokens, tokens]);
+
   useEffect(() => {
     const tokensToDisplay =
       latestTokens && latestTokens.symbol ? [latestTokens] : tokens.slice(0, 5);
@@ -88,27 +97,6 @@ export const Navbar = () => {
     }
   }, [currentTokenIndex]);
 
-  const handleClickOutside = (event: any) => {
-    if (
-      event.target.closest("#navbar-sticky") ||
-      event.target.closest("#burger-menu-button")
-    ) {
-      return;
-    }
-    setIsOpen(false);
-  };
-
-  useEffect(() => {
-    if (isOpen) {
-      document.addEventListener("click", handleClickOutside);
-    } else {
-      document.removeEventListener("click", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [isOpen]);
   return (
     <>
       <nav className="absolute w-full lg:w-12/12 lg:mx-auto z-40 lg:top-2 top-0 px-4 backdrop-blur-[10px] rounded-none lg:rounded-full">
@@ -161,24 +149,26 @@ export const Navbar = () => {
                   isTradeShaking ? "shake-animation" : ""
                 }`}
               >
-                <a
-                  href={`https://etherscan.io/tx/${
-                    displayedTrade?.hash || "#"
-                  }`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-2 py-2 rounded bg-[#79FF62] text-black font-normal text-sm"
-                >
-                  {displayedTrade && displayedTrade.user?.avatar && (
-                    <Image
-                      src={displayedTrade.user?.avatar}
-                      alt="User Avatar"
-                      width={20}
-                      height={20}
-                    />
-                  )}
-                  {displayedTrade ? (
-                    displayedTrade.type === "buy" ? (
+                {isTradesLoading || !displayedTrade ? (
+                  <Skeleton className="h-10 w-64 rounded" />
+                ) : (
+                  <a
+                    href={`https://etherscan.io/tx/${
+                      displayedTrade.hash || "#"
+                    }`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-2 py-2 rounded bg-[#79FF62] text-black font-normal text-sm"
+                  >
+                    {displayedTrade.user?.avatar && (
+                      <Image
+                        src={displayedTrade.user.avatar}
+                        alt="User Avatar"
+                        width={20}
+                        height={20}
+                      />
+                    )}
+                    {displayedTrade.type === "buy" ? (
                       <span>
                         {displayedTrade.user.username} bought{" "}
                         {Number(
@@ -187,28 +177,24 @@ export const Navbar = () => {
                         TARA of ${displayedTrade.token.symbol}
                       </span>
                     ) : (
-                      <>
-                        <span>
-                          {displayedTrade.user.username} sold{" "}
-                          {Number(
-                            formatEther(BigInt(displayedTrade.outAmount))
-                          ).toFixed(4)}{" "}
-                          ${displayedTrade.token.symbol}
-                        </span>
-                      </>
-                    )
-                  ) : (
-                    <span>No trades to display</span>
-                  )}
-                  {displayedTrade && displayedTrade.token.image && (
-                    <Image
-                      src={displayedTrade.token?.image}
-                      alt="User Avatar"
-                      width={20}
-                      height={20}
-                    />
-                  )}
-                </a>
+                      <span>
+                        {displayedTrade.user.username} sold{" "}
+                        {Number(
+                          formatEther(BigInt(displayedTrade.outAmount))
+                        ).toFixed(4)}{" "}
+                        ${displayedTrade.token.symbol}
+                      </span>
+                    )}
+                    {displayedTrade.token.image && (
+                      <Image
+                        src={displayedTrade.token.image}
+                        alt="User Avatar"
+                        width={20}
+                        height={20}
+                      />
+                    )}
+                  </a>
+                )}
               </li>
 
               {/* Latest Token */}
@@ -217,37 +203,36 @@ export const Navbar = () => {
                   isTokenShaking ? "shake-animation" : ""
                 }`}
               >
-                <a
-                  href=""
-                  target="_blank"
-                  className="flex items-center gap-2 px-2 py-2 rounded bg-[#FFE862] text-black font-normal text-sm"
-                >
-                  {displayedToken && displayedToken.user.avatar && (
-                    <Image
-                      src={displayedToken.user.avatar}
-                      width={20}
-                      height={20}
-                      alt="Placeholder Nav"
-                    />
-                  )}
-
-                  {displayedToken ? (
+                {isTokensLoading || !displayedToken ? (
+                  <Skeleton className="h-10 w-64 rounded" />
+                ) : (
+                  <a
+                    href=""
+                    target="_blank"
+                    className="flex items-center gap-2 px-2 py-2 rounded bg-[#FFE862] text-black font-normal text-sm"
+                  >
+                    {displayedToken.user.avatar && (
+                      <Image
+                        src={displayedToken.user.avatar}
+                        width={20}
+                        height={20}
+                        alt="Placeholder Nav"
+                      />
+                    )}
                     <span>
                       {displayedToken.user?.username} created $
                       {displayedToken.symbol}
                     </span>
-                  ) : (
-                    <span>No tokens to display</span>
-                  )}
-                  {displayedToken && displayedToken.image && (
-                    <Image
-                      src={displayedToken.image}
-                      alt="User Avatar"
-                      width={20}
-                      height={20}
-                    />
-                  )}
-                </a>
+                    {displayedToken.image && (
+                      <Image
+                        src={displayedToken.image}
+                        alt="User Avatar"
+                        width={20}
+                        height={20}
+                      />
+                    )}
+                  </a>
+                )}
               </li>
             </ul>
           </div>
