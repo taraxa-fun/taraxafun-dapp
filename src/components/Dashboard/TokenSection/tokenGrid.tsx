@@ -125,7 +125,6 @@ export const TokenGrid = () => {
       );
   
       const updatedTokens = [mappedReply, ...filteredTokens];
-      console.log("mapped reply", mappedReply);
 
       setDisplayedTokens(updatedTokens);
       setIsShaking(true);

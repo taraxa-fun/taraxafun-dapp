@@ -37,7 +37,6 @@ export const TokenDetails = () => {
   useEffect(() => {
     const calculateProgress = () => {
       try {
-        console.log(poolData?.pool?.listThreshold);
         if (!poolData?.pool?.listThreshold || !tokenData?.marketcap) {
           setPercentageBondingCurve("0");
           return 0;
@@ -47,9 +46,6 @@ export const TokenDetails = () => {
         const currentMarketCap = Number(
           formatUnits(BigInt(tokenData.marketcap), 6)
         );
-
-        console.log("Formatted threshold:", threshold);
-        console.log("Formatted marketcap:", currentMarketCap);
 
         const percentage = (currentMarketCap / threshold) * 100;
         const percentageFinal = Math.min(Math.max(percentage, 0), 100);
@@ -65,6 +61,7 @@ export const TokenDetails = () => {
     calculateProgress();
   }, [poolData?.pool?.listThreshold, tokenData?.marketcap]);
 
+  {/**
   useEffect(() => {
     if (
       percentageBondingCurve &&
@@ -74,6 +71,7 @@ export const TokenDetails = () => {
       fetchTokenData(tokenData.address);
     }
   }, [tokenData]);
+   */}
 
   if (singleTokenisLoading || !tokenData) {
     return (
@@ -94,7 +92,6 @@ export const TokenDetails = () => {
       </div>
     );
   }
-  console.log(tokenData);
   return (
     <div className="flex flex-col gap-4 mx-auto w-full mt-4">
       <div className="flex md:gap-3 gap-1">

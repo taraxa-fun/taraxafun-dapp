@@ -20,7 +20,7 @@ const CoinPage: NextPage = () => {
   const { fetchReplies } = useRepliesTokenIdStore();
   const router = useRouter();
   const { address } = router.query;
-
+ console.log("address for page detail token ", address)
   useEffect(() => {
     if (address) {
       fetchTokenData(address as string);

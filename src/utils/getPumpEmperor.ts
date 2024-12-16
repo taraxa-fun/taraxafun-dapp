@@ -4,7 +4,7 @@ import { servUrl } from '@/config/servUrl';
 
 export const getPumpEmperor = async (): Promise<TokenType> => {
  try {
-   const response = await axios.get<TokenType>(`${servUrl}/emperor/last`, {
+   const response = await axios.get<TokenType>(`${servUrl}/token/emperor/last`, {
      headers: {
        'Content-Type': 'application/json'
      }

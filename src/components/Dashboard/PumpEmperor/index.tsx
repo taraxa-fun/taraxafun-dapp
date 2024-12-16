@@ -27,13 +27,13 @@ export const PumpEmperor = () => {
 
     fetchData();
   }, []);
-
+  const isEmpty = !pumpEmperor || Object.keys(pumpEmperor).length === 0;
   return (
     <section className="pt-24 lg:w-6/12 w-12/12 md:w-8/12 flex flex-col items-center justify-center mx-auto">
       <h2 className="knewave text-[40px] text-center mb-8 bg-gradient-to-b from-[#D6C8FF] to-[#8100FB] text-transparent bg-clip-text title-shadow">
         Pump Emperor
       </h2>
-      {isLoading ? (
+      {isLoading || isEmpty ? (
         <div className="flex md:gap-3 gap-1 mx-auto lg:px-4 px-1">
           <Skeleton className="h-40 w-40" />
           <div className="flex flex-col space-y-1 justify-center w-full">
@@ -58,21 +58,26 @@ export const PumpEmperor = () => {
             <div className="flex items-center gap-4">
               <p className="text-xs font-normal">created by</p>
               <div className="flex items-center gap-2">
-                <Image
-                  src={pumpEmperor?.user.avatar || placeHodlerRounded}
-                  alt="avatar"
-                  width={20}
-                  height={20}
-                />
+                {pumpEmperor?.user?.avatar && (
+                  <Image
+                    src={pumpEmperor.user.avatar}
+                    alt="avatar"
+                    width={20}
+                    height={20}
+                  />
+                )}
+
                 <Link
                   href={`/profile/${pumpEmperor?.user.username}`}
                   className="text-xs font-normal"
                 >
-                  {pumpEmperor?.user.username}
+                  {pumpEmperor?.user.username ? pumpEmperor?.user.username  : ""}
                 </Link>
               </div>
               <p className="text-xs">
-                {pumpEmperor?.created_at != null ? getTimeAgo(pumpEmperor.created_at) : ""}
+                {pumpEmperor?.created_at != null
+                  ? getTimeAgo(pumpEmperor.created_at)
+                  : ""}
                 {getTimeAgo(pumpEmperor?.created_at || "")}
               </p>
             </div>

@@ -34,7 +34,6 @@ export const CoinReplies = () => {
       </div>
     );
   }
-  console.log(replies);
   return (
     <div className="mt-8 space-y-4">
       {replies.map((reply, index) => (

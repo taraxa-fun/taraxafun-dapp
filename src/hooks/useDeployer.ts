@@ -25,7 +25,6 @@ export const useDeployer = () => {
           },
         ],
       });
-      console.log(res[1].result);
 
       setData({
         antiSniperPercentage: (

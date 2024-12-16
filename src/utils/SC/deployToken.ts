@@ -43,6 +43,7 @@ export const deployToken = async (
       if (!tokenAddress) {
         console.error("Token address not found in transaction logs.");
       }
+      console.log("token logs", result.logs)
       return { hash: tx, tokenAddress };
     }
     return false;

@@ -183,7 +183,7 @@ export const CreateToken = () => {
         tokenData._amountAntiSnipe || "0",
         showMaxBuy ? tokenData._maxBuyPerWallet || "0" : "0"
       );
-
+      console.log("transactionResult", transactionResult);
       if (transactionResult) {
         const res = await saveTokenToDatabase(
           jwt,
