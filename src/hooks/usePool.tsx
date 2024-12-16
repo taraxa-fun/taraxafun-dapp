@@ -72,8 +72,8 @@ export const usePool = (
           functionName: "tokenPools",
           args: [address],
         })) as any;
-
-        const result = res[0].result as any;
+        const result = res as any;
+        console.log(res);
         setData({
           poolData: {
             creator: result[0],

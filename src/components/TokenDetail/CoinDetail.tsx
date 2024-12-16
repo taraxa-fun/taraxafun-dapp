@@ -60,8 +60,7 @@ export const TokenDetails = () => {
 
     calculateProgress();
   }, [poolData?.pool?.listThreshold, tokenData?.marketcap]);
-
-  {/**
+  console.log(poolData.pool.listThreshold);
   useEffect(() => {
     if (
       percentageBondingCurve &&
@@ -71,7 +70,6 @@ export const TokenDetails = () => {
       fetchTokenData(tokenData.address);
     }
   }, [tokenData]);
-   */}
 
   if (singleTokenisLoading || !tokenData) {
     return (
@@ -172,22 +170,25 @@ export const TokenDetails = () => {
           fillColor="bg-[#79FF62]"
           backgroundColor="bg-[#458343]"
         />
+        {/** 
         <p className="text-xs text-[#A9A8AD] font-medium ">
           graduate this coin to raydium at $98,325 market cap there
           is 34,631 SOL in the bonding curve
         </p>
+        */}
       </div>
       <div className="flex flex-col space-y-2">
-        <p className="font-medium text-base">Pump emperor progress %</p>
-
+        <p className="font-medium text-base">Pump emperor progress {Number(percentageBondingCurve) * 2}%</p>
         <Progress
           value={Number(percentageBondingCurve) * 2}
           fillColor="bg-[#FFE862]"
           backgroundColor="bg-[#887843]"
         />
+        {/**
         <p className="text-xs text-[#A9A8AD] font-medium ">
           dethrone the current king at $47,794 market cap
         </p>
+         */}
       </div>
       <div className="mt-5 flex flex-col">
         <h3 className="font-bold mb-4 text-2xl">Holder Distribution</h3>
