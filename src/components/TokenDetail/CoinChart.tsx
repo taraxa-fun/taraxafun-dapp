@@ -1,158 +1,163 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { 
-  ColorType, 
-  createChart, 
-  type IChartApi, 
+import React, { useEffect, useRef } from 'react';
+import {
+  createChart,
+  ColorType,
+  type IChartApi,
   type ISeriesApi,
+  type CandlestickData,
   type Time,
-  type CandlestickData
 } from 'lightweight-charts';
+
+// Fonction pour générer des données aléatoires
+const randomFactor = 25 + Math.random() * 25;
+
+const samplePoint = (i: number) =>
+  i *
+    (0.5 +
+      Math.sin(i / 1) * 0.2 +
+      Math.sin(i / 2) * 0.4 +
+      Math.sin(i / randomFactor) * 0.8 +
+      Math.sin(i / 50) * 0.5) +
+  200 +
+  i * 2;
+
+const generateData = (
+  numberOfCandles = 500,
+  updatesPerCandle = 5,
+  startAt = 100
+) => {
+  const createCandle = (val: number, time: Time): CandlestickData => ({
+    time,
+    open: val,
+    high: val,
+    low: val,
+    close: val,
+  });
+
+  const updateCandle = (candle: CandlestickData, val: number): CandlestickData => ({
+    time: candle.time,
+    close: val,
+    open: candle.open,
+    low: Math.min(candle.low, val),
+    high: Math.max(candle.high, val),
+  });
+
+  const date = new Date(Date.UTC(2018, 0, 1, 12, 0, 0, 0));
+  const numberOfPoints = numberOfCandles * updatesPerCandle;
+  const initialData: CandlestickData[] = [];
+  const realtimeUpdates: CandlestickData[] = [];
+  let lastCandle: CandlestickData = createCandle(0, date.getTime() / 1000 as Time); // Initialisation par défaut
+  let previousValue = samplePoint(-1);
+
+  for (let i = 0; i < numberOfPoints; ++i) {
+    if (i % updatesPerCandle === 0) {
+      date.setUTCDate(date.getUTCDate() + 1);
+    }
+    const time = Math.floor(date.getTime() / 1000) as Time; // Conversion explicite
+    let value = samplePoint(i);
+    const diff = (value - previousValue) * Math.random();
+    value = previousValue + diff;
+    previousValue = value;
+
+    if (i % updatesPerCandle === 0) {
+      const candle = createCandle(value, time);
+      lastCandle = candle;
+      if (i >= startAt) {
+        realtimeUpdates.push(candle);
+      }
+    } else {
+      const newCandle = updateCandle(lastCandle, value);
+      lastCandle = newCandle;
+      if (i >= startAt) {
+        realtimeUpdates.push(newCandle);
+      } else if ((i + 1) % updatesPerCandle === 0) {
+        initialData.push(newCandle);
+      }
+    }
+  }
+
+  return {
+    initialData,
+    realtimeUpdates,
+  };
+};
 
 export const CoinChart: React.FC = () => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
-  const seriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
-  const [interval, setInterval] = useState<'1' | '5'>('1');
+  const seriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
 
-  const generateData = useCallback((interval: '1' | '5'): CandlestickData<Time>[] => {
-    const data: CandlestickData<Time>[] = [];
-    const intervalMinutes = parseInt(interval);
-    const now = Math.floor(Date.now() / 1000);
-    let lastClose = 0.00015;
-
-    for (let i = 100; i >= 0; i--) {
-      const timestamp = now - (i * intervalMinutes * 60);
-      const change = (Math.random() - 0.5) * 0.00000005;
-      const open = lastClose;
-      const close = open + change;
-      const high = Math.max(open, close) + Math.random() * 0.00000002;
-      const low = Math.min(open, close) - Math.random() * 0.00000002;
-      
-      data.push({
-        time: timestamp as Time,
-        open: parseFloat(open.toFixed(8)),
-        high: parseFloat(high.toFixed(8)),
-        low: parseFloat(low.toFixed(8)),
-        close: parseFloat(close.toFixed(8)),
-      });
-
-      lastClose = close;
-    }
-
-    return data;
-  }, []);
-
-  const initChart = useCallback(() => {
+  useEffect(() => {
     if (!chartContainerRef.current) return;
 
-    // Créez un nouveau graphique
+    // Configure le graphique
     const chart = createChart(chartContainerRef.current, {
       layout: {
         textColor: 'white',
-        background: { 
-          type: ColorType.Solid, 
-          color: '#110724' 
-        }
-      },
-      timeScale: {
-        timeVisible: true,
-        secondsVisible: false,
-        tickMarkFormatter: (time: Time) => {
-          const date = new Date(Number(time) * 1000);
-          const hours = date.getHours().toString().padStart(2, '0');
-          const minutes = date.getMinutes().toString().padStart(2, '0');
-          return `${hours}:${minutes}`;
-        }
+        background: { type: ColorType.Solid, color: 'black' },
       },
       width: chartContainerRef.current.clientWidth,
-      height: 500
+      height: 400,
     });
 
-    // Ajouter la série des chandeliers
-    const series = chart.addCandlestickSeries({
+    const candlestickSeries = chart.addCandlestickSeries({
       upColor: '#26a69a',
       downColor: '#ef5350',
       borderVisible: false,
       wickUpColor: '#26a69a',
       wickDownColor: '#ef5350',
-      priceFormat: {
-        type: 'price',
-        precision: 8,
-        minMove: 0.00000001,
-      }
     });
 
-    // Charger les données en fonction de l'intervalle
-    const data = generateData(interval);
-    series.setData(data);
+    chartRef.current = chart;
+    seriesRef.current = candlestickSeries;
+
+    // Génère les données initiales et les mises à jour en temps réel
+    const { initialData, realtimeUpdates } = generateData(2500, 20, 1000);
+    candlestickSeries.setData(initialData);
     chart.timeScale().fitContent();
 
-    // Sauvegarder les références pour le nettoyage
-    chartRef.current = chart;
-    seriesRef.current = series;
-
-    return () => {
-      if (chartRef.current) {
-        chartRef.current.remove();
-        chartRef.current = null;
-        seriesRef.current = null;
+    // Simule les mises à jour en temps réel
+    const streamingDataProvider = (function* () {
+      for (const dataPoint of realtimeUpdates) {
+        yield dataPoint;
       }
-    };
-  }, [interval, generateData]);
+      return null;
+    })();
 
-  useEffect(() => {
-    const cleanup = initChart();
-    
+    const intervalID = setInterval(() => {
+      const update = streamingDataProvider.next();
+      if (update.done) {
+        clearInterval(intervalID);
+        return;
+      }
+      candlestickSeries.update(update.value);
+    }, 1000);
+
     const handleResize = () => {
-      if (chartRef.current && chartContainerRef.current) {
-        chartRef.current.applyOptions({
-          width: chartContainerRef.current.clientWidth
-        });
+      if (chartContainerRef.current) {
+        chart.applyOptions({ width: chartContainerRef.current.clientWidth });
       }
     };
 
     window.addEventListener('resize', handleResize);
 
     return () => {
-      cleanup?.();
+      clearInterval(intervalID);
       window.removeEventListener('resize', handleResize);
+      if (chartRef.current) {
+        chartRef.current.remove();
+        chartRef.current = null;
+      }
     };
-  }, [interval, initChart]);
+  }, []);
 
-  const handleIntervalChange = (newInterval: '1' | '5') => {
-    setInterval(newInterval);
+  const goToRealtime = () => {
+    chartRef.current?.timeScale().scrollToRealTime();
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex justify-end p-4">
-        <div className="flex gap-2 bg-[#1e1e1e] rounded-lg p-1">
-          <button
-            onClick={() => handleIntervalChange('1')}
-            className={`px-4 py-2 rounded-md transition-colors ${
-              interval === '1'
-                ? "bg-[#9A62FF] text-white"
-                : "bg-[#9A62FF] text-white opacity-50"
-            }`}
-          >
-            1m
-          </button>
-          <button
-            onClick={() => handleIntervalChange('5')}
-            className={`px-4 py-2 rounded-md transition-colors ${
-              interval === '5'
-                ? "bg-[#9A62FF] text-white"
-                :"bg-[#9A62FF] text-white opacity-50"
-            }`}
-          >
-            5m
-          </button>
-        </div>
-      </div>
-      <div 
-        ref={chartContainerRef} 
-        className="w-full h-[500px]"
-      />
+    <div>
+      <div ref={chartContainerRef} style={{ height: 400 }} />
     </div>
   );
 };

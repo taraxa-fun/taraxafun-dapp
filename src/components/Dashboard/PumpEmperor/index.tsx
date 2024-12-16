@@ -34,12 +34,25 @@ export const PumpEmperor = () => {
         Pump Emperor
       </h2>
       {isLoading || isEmpty ? (
-        <div className="flex md:gap-3 gap-1 mx-auto lg:px-4 px-1">
-          <Skeleton className="h-40 w-40" />
-          <div className="flex flex-col space-y-1 justify-center w-full">
-            <Skeleton className="h-6 w-3/4" />
-            <Skeleton className="h-6 w-1/2" />
-            <Skeleton className="h-20 w-full" />
+        <div className="flex gap-1 mx-auto px-4 md:px-4 max-w-md w-full overflow-hidden">
+          <Skeleton className="h-[110px] w-[110px] flex-shrink-0" />
+          <div className="flex flex-col space-y-1 justify-center min-w-0 w-full">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Skeleton className="h-4 w-16" /> {/* "created by" */}
+              <div className="flex items-center gap-1">
+                <Skeleton className="h-5 w-5 rounded-full" /> {/* avatar */}
+                <Skeleton className="h-4 w-20" /> {/* username */}
+              </div>
+              <Skeleton className="h-4 w-10" /> {/* timestamp */}
+            </div>
+            <div className="flex justify-between gap-2">
+              <Skeleton className="h-4 w-24" /> {/* first stat */}
+              <Skeleton className="h-4 w-24" /> {/* second stat */}
+            </div>
+            <div className="flex flex-col gap-1">
+              <Skeleton className="h-4 w-32" /> {/* title */}
+              <Skeleton className="h-12 w-full" /> {/* description */}
+            </div>
           </div>
         </div>
       ) : (
@@ -71,7 +84,7 @@ export const PumpEmperor = () => {
                   href={`/profile/${pumpEmperor?.user.username}`}
                   className="text-xs font-normal"
                 >
-                  {pumpEmperor?.user.username ? pumpEmperor?.user.username  : ""}
+                  {pumpEmperor?.user.username ? pumpEmperor?.user.username : ""}
                 </Link>
               </div>
               <p className="text-xs">
