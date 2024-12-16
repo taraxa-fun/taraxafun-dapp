@@ -1,4 +1,4 @@
-import { deployerContract, MulticallAddress, web3Config } from "@/config";
+import { deployerContract, web3Config } from "@/config";
 import { parseEther, parseGwei } from "viem";
 import { multicall, waitForTransactionReceipt } from "@wagmi/core";
 import { useEffect, useState } from "react";
@@ -24,7 +24,6 @@ export const useDeployer = () => {
             args: [],
           },
         ],
-        multicallAddress: `0x8a573f2360eB2Ff794bc14F97B43789b51a296D7`,
       });
       console.log(res[1].result);
 

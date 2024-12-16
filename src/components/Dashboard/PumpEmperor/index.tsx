@@ -72,6 +72,7 @@ export const PumpEmperor = () => {
                 </Link>
               </div>
               <p className="text-xs">
+                {pumpEmperor?.created_at != null ? getTimeAgo(pumpEmperor.created_at) : ""}
                 {getTimeAgo(pumpEmperor?.created_at || "")}
               </p>
             </div>

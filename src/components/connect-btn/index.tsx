@@ -6,7 +6,7 @@ import logoPlaceHolder from "../../assets/logo/taraxafunLogo.png";
 import { useEffect } from "react";
 import { useAuthStore } from "@/store/User/useAuthStore";
 import Link from "next/link";
-import { bscTestnet, taraxaTestnet } from "viem/chains";
+import { baseSepolia, bscTestnet, taraxaTestnet } from "viem/chains";
 
 export const CustomBtnApp: React.FC<{ className?: string }> = ({
   className,
@@ -30,7 +30,7 @@ export const CustomBtnApp: React.FC<{ className?: string }> = ({
           (!authenticationStatus || authenticationStatus === "authenticated");
         const { data: balanceData, isLoading: isBalanceLoading } = useBalance({
           address: account?.address as any,
-          chainId: taraxaTestnet.id,
+          chainId: baseSepolia.id,
         });
 
         return (

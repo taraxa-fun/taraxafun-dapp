@@ -9,12 +9,13 @@ import Telegramlogo from "../../assets/logo/telegramLogo.png";
 import WebsiteLogo from "../../assets/logo/websiteLogo.png";
 import { usePool } from "@/hooks/usePool";
 import { formatEther, formatUnits } from "viem";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useHoldersForToken } from "@/hooks/useHoldersForToken";
 import { useWebSocketStore } from "@/store/WS/useWebSocketStore";
 
 export const TokenDetails = () => {
-  const { tokenData, singleTokenisLoading } = useSingleTokenStore();
+  const { tokenData, singleTokenisLoading, fetchTokenData } =
+    useSingleTokenStore();
   const [update, setUpdate] = useState<number>(0);
   const { poolData, isLoading, error } = usePool(
     tokenData?.address as `0x${string}`
@@ -63,6 +64,16 @@ export const TokenDetails = () => {
 
     calculateProgress();
   }, [poolData?.pool?.listThreshold, tokenData?.marketcap]);
+
+  useEffect(() => {
+    if (
+      percentageBondingCurve &&
+      Number(percentageBondingCurve) >= 100 &&
+      tokenData?.address
+    ) {
+      fetchTokenData(tokenData.address);
+    }
+  }, [tokenData]);
 
   if (singleTokenisLoading || !tokenData) {
     return (

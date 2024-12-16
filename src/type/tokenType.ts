@@ -1,10 +1,8 @@
 interface Creator {
   _id: string;
   username: string;
-  avatar ?: string;
+  avatar?: string;
 }
-
-
 
 export interface TokenType {
   _id: string;
@@ -15,14 +13,15 @@ export interface TokenType {
   twitter?: string;
   telegram?: string;
   website?: string;
-  supply?: string; 
+  supply?: string;
   address: `0x${string}`;
   created_at: string;
   marketcap?: string;
   replies_count?: number;
+  listed: boolean;
+  pair_address: string;
   user: Creator;
 }
-
 
 export interface TokenCreatedProfile {
   _id: string;
@@ -34,7 +33,6 @@ export interface TokenCreatedProfile {
   supply: string;
   symbol: string;
   user: string;
-  
 }
 
 // Interface pour la réponse de l'API
