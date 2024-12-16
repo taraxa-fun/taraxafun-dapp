@@ -56,7 +56,7 @@ export const CreateToken = () => {
   const [errors, setErrors] = useState<string | null>(null);
   const [priceStartInEth, setPriceStartInEth] = useState<number | null>(null);
   const { address } = useAccount();
-  const supplyValue = parseEther("1000000000")
+  const supplyValue = parseEther("1000000000");
   type TokenKey = keyof typeof tokenData;
   type SocialKey = keyof typeof tokenData.socialLinks;
   const [percentageAntiSniperRequired, setPercentageAntiSniperRequired] =
@@ -154,15 +154,15 @@ export const CreateToken = () => {
       const maxAllowedTokens =
         (totalSupply * Number(antiSniperPercentage)) / 100;
 
-    if (tokensReceived > maxAllowedTokens) {
-      showErrorToast(
-        `You cannot receive more than ${antiSniperPercentage}% (${formatNumber(
-          maxAllowedTokens
-        )} tokens) of total supply`
-      );
-      return;
+      if (tokensReceived > maxAllowedTokens) {
+        showErrorToast(
+          `You cannot receive more than ${antiSniperPercentage}% (${formatNumber(
+            maxAllowedTokens
+          )} tokens) of total supply`
+        );
+        return;
+      }
     }
-  }
     setLoading(true);
     try {
       const isAntiSnipeEnabled =
@@ -183,8 +183,10 @@ export const CreateToken = () => {
         tokenData._amountAntiSnipe || "0",
         showMaxBuy ? tokenData._maxBuyPerWallet || "0" : "0"
       );
-      console.log("transactionResult", transactionResult);
+
+
       if (transactionResult) {
+        await new Promise((resolve) => setTimeout(resolve, 5000));
         const res = await saveTokenToDatabase(
           jwt,
           transactionResult.tokenAddress,
