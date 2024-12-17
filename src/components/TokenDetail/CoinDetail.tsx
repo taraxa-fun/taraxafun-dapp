@@ -6,8 +6,8 @@ import Twitterlogo from "../../assets/logo/xLogo.png";
 import Telegramlogo from "../../assets/logo/telegramLogo.png";
 import WebsiteLogo from "../../assets/logo/websiteLogo.png";
 import { usePool } from "@/hooks/usePool";
-import {  formatUnits } from "viem";
-import { useEffect, useState } from "react";
+import { formatUnits } from "viem";
+import { use, useEffect, useState } from "react";
 import { useHoldersForToken } from "@/hooks/useHoldersForToken";
 import { useWebSocketStore } from "@/store/WS/useWebSocketStore";
 
@@ -46,7 +46,6 @@ export const TokenDetails = () => {
         );
 
         const percentage = (currentMarketCap / threshold) * 100;
-        console.log(threshold, "TREEEEEE");
         const percentageFinal = Math.min(Math.max(percentage, 0), 100);
         setPercentageBondingCurve(percentageFinal.toFixed(2));
         return percentageFinal;
@@ -59,7 +58,6 @@ export const TokenDetails = () => {
 
     calculateProgress();
   }, [poolData?.pool?.listThreshold, tokenData?.marketcap]);
-  console.log(poolData.pool.listThreshold);
   useEffect(() => {
     if (
       percentageBondingCurve &&
@@ -89,6 +87,17 @@ export const TokenDetails = () => {
       </div>
     );
   }
+
+  useEffect(() => {
+    if (
+      percentageBondingCurve &&
+      Number(percentageBondingCurve) >= 100 &&
+      tokenData?.address
+    ) {
+      fetchTokenData(tokenData.address);
+    }
+  }, [tokenData]);
+  console.log(tokenData);
   return (
     <div className="flex flex-col gap-4 mx-auto w-full mt-4">
       <div className="flex md:gap-3 gap-1">
@@ -183,7 +192,7 @@ export const TokenDetails = () => {
           Pump emperor progress {Number(percentageBondingCurve) * 2}%
         </p>
         <Progress
-          value={Number(percentageBondingCurve) * 2}
+          value={Math.min(Number(percentageBondingCurve) * 2, 100)}
           fillColor="bg-[#FFE862]"
           backgroundColor="bg-[#887843]"
         />

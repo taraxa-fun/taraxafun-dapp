@@ -67,7 +67,6 @@ export const useSingleTokenStore = create<TokenState>((set) => ({
           },
         }
       );
-      console.log(response.data, "RESSSSSS DATATTATATATATA");
       set({
         tokenData: response.data,
         singleTokenisLoading: false,

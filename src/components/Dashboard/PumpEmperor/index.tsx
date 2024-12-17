@@ -15,7 +15,6 @@ export const PumpEmperor = () => {
     const fetchData = async () => {
       try {
         const data = await getPumpEmperor();
-        console.log(data);
         setPumpEmperor(data);
       } catch (error) {
         console.error("Error fetching pump emperor:", error);
@@ -55,6 +54,7 @@ export const PumpEmperor = () => {
           </div>
         </div>
       ) : (
+        <Link href={`/coin/${pumpEmperor?.token?.address || ""}`}>
         <div className="flex md:gap-3 gap-1 mx-auto lg:px-4 px-1">
           <div className="flex-shrink-0">
             {pumpEmperor?.token?.image && (
@@ -105,7 +105,9 @@ export const PumpEmperor = () => {
             </p>
           </div>
         </div>
+        </Link>
       )}
+
     </section>
   );
 };
