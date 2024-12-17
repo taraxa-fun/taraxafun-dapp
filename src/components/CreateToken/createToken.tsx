@@ -179,7 +179,6 @@ export const CreateToken = () => {
         tokenData._data,
         finalTotalSupply,
         tokenData._liquidityETHAmount,
-        isAntiSnipeEnabled,
         tokenData._amountAntiSnipe || "0",
         showMaxBuy ? tokenData._maxBuyPerWallet || "0" : "0"
       );

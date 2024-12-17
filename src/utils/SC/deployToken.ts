@@ -10,25 +10,23 @@ export const deployToken = async (
   description: string,
   totalSupply: string,
   liquidityETHAmount: string,
-  antiSnipe: boolean,
   amountAntiSnipe: string,
   maxBuyPerWallet: string
 ): Promise<{ hash: string; tokenAddress: string } | false> => {
   try {
     const tx = await writeContractAsync({
       ...deployerContract,
-      functionName: "CreateFun",
+      functionName: "createFun",
       args: [
         nameToken,
         ticker,
         description,
         totalSupply,
         0,
-        antiSnipe,
         parseEther(amountAntiSnipe),
         parseEther(maxBuyPerWallet),
       ],
-      value: antiSnipe
+      value: amountAntiSnipe
         ? parseEther(amountAntiSnipe + 10000000).toString()
         : "10000000",
     });
