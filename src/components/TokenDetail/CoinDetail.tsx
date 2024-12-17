@@ -48,6 +48,7 @@ export const TokenDetails = () => {
         );
 
         const percentage = (currentMarketCap / threshold) * 100;
+        console.log(threshold,"TREEEEEE");
         const percentageFinal = Math.min(Math.max(percentage, 0), 100);
         setPercentageBondingCurve(percentageFinal.toFixed(2));
         return percentageFinal;
@@ -96,13 +97,15 @@ export const TokenDetails = () => {
         <div className="flex-shrink-0">
           <Image src={tokenData.image} alt="" width={200} height={200} />
         </div>
-        <div className="flex flex-col w-full space-y-1 justify-start">
+        <div className="flex flex-col w-full space-y-1 justify-start overflow-hidden">
           <p className="text-white font-normal text-sm">
             <strong>
               {tokenData.name.toLocaleUpperCase()} ({tokenData.symbol})
             </strong>
           </p>
-          <p className="text-xs text-gray-300">"{tokenData.description}"</p>
+          <p className="text-xs text-gray-300 break-words overflow-hidden">
+            "{tokenData.description}"
+          </p>
         </div>
       </div>
       <div className="flex flex-col gap-3">
@@ -178,7 +181,9 @@ export const TokenDetails = () => {
         */}
       </div>
       <div className="flex flex-col space-y-2">
-        <p className="font-medium text-base">Pump emperor progress {Number(percentageBondingCurve) * 2}%</p>
+        <p className="font-medium text-base">
+          Pump emperor progress {Number(percentageBondingCurve) * 2}%
+        </p>
         <Progress
           value={Number(percentageBondingCurve) * 2}
           fillColor="bg-[#FFE862]"
