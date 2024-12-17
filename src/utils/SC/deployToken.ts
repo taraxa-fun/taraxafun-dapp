@@ -26,9 +26,7 @@ export const deployToken = async (
         parseEther(amountAntiSnipe),
         parseEther(maxBuyPerWallet),
       ],
-      value: amountAntiSnipe
-        ? parseEther(amountAntiSnipe + 10000000).toString()
-        : "10000000",
+      value: "10000000"
     });
 
     const result = await waitForTransactionReceipt(web3Config, {
