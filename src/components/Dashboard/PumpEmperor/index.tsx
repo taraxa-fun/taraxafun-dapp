@@ -7,16 +7,18 @@ import { TokenType } from "@/type/tokenType";
 import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getTimeAgo } from "@/utils/calculeTime";
-import { getPumpEmperor } from "@/utils/getPumpEmperor";
+import { EmperorToken, getPumpEmperor } from "@/utils/getPumpEmperor";
+import { formatMarketCap } from "@/utils/formatMarketCap";
 
 export const PumpEmperor = () => {
-  const [pumpEmperor, setPumpEmperor] = useState<TokenType | null>(null);
+  const [pumpEmperor, setPumpEmperor] = useState<EmperorToken | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await getPumpEmperor();
+        console.log(data);
         setPumpEmperor(data);
       } catch (error) {
         console.error("Error fetching pump emperor:", error);
@@ -34,7 +36,7 @@ export const PumpEmperor = () => {
         Pump Emperor
       </h2>
       {isLoading || isEmpty ? (
-        <div className="flex gap-1 mx-auto px-4 md:px-4 max-w-md w-full overflow-hidden">
+        <div className="flex gap-1 mx-auto  md:px-4 max-w-md w-full overflow-hidden">
           <Skeleton className="h-[110px] w-[110px] flex-shrink-0" />
           <div className="flex flex-col space-y-1 justify-center min-w-0 w-full">
             <div className="flex items-center gap-2 flex-wrap">
@@ -58,9 +60,9 @@ export const PumpEmperor = () => {
       ) : (
         <div className="flex md:gap-3 gap-1 mx-auto lg:px-4 px-1">
           <div className="flex-shrink-0">
-            {pumpEmperor && pumpEmperor?.image && (
+            {pumpEmperor?.token?.image && (
               <Image
-                src={pumpEmperor?.image}
+                src={pumpEmperor.token.image}
                 alt="Pump Emperor"
                 width={160}
                 height={160}
@@ -71,42 +73,38 @@ export const PumpEmperor = () => {
             <div className="flex items-center gap-4">
               <p className="text-xs font-normal">created by</p>
               <div className="flex items-center gap-2">
-                {pumpEmperor?.user?.avatar && (
+                {pumpEmperor?.token?.user?.avatar && (
                   <Image
-                    src={pumpEmperor.user.avatar}
+                    src={pumpEmperor.token.user.avatar}
                     alt="avatar"
                     width={20}
                     height={20}
                   />
                 )}
-
                 <Link
-                  href={`/profile/${pumpEmperor?.user.username}`}
+                  href={`/profile/${pumpEmperor?.token?.user?.username || ""}`}
                   className="text-xs font-normal"
                 >
-                  {pumpEmperor?.user.username ? pumpEmperor?.user.username : ""}
+                  {pumpEmperor?.token?.user?.username || ""}
                 </Link>
               </div>
               <p className="text-xs">
-                {pumpEmperor?.created_at != null
-                  ? getTimeAgo(pumpEmperor.created_at)
-                  : ""}
-                {getTimeAgo(pumpEmperor?.created_at || "")}
+                {pumpEmperor?.created_at && getTimeAgo(pumpEmperor.created_at)}
               </p>
             </div>
             <div className="flex justify-between">
               <p className="text-xs font-normal text-[#79FF62]">
-                market cap: ${pumpEmperor?.marketcap || "0"}
-              </p>
-              <p className="text-xs font-normal">
-                replies: {pumpEmperor?.replies_count || 0}
+                market cap:{" "}
+                {pumpEmperor?.token.marketcap
+                  ? formatMarketCap(pumpEmperor?.token.marketcap)
+                  : "0"}
               </p>
             </div>
             <p className="text-gray-300 font-normal text-xs">
               <span className="text-white font-bold">
-                {pumpEmperor?.name} ({pumpEmperor?.symbol}):
+                {pumpEmperor?.token?.name} ({pumpEmperor?.token?.symbol}):
               </span>{" "}
-              {pumpEmperor?.description}
+              {pumpEmperor?.token?.description}
             </p>
           </div>
         </div>

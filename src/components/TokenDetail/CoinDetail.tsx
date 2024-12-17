@@ -48,7 +48,7 @@ export const TokenDetails = () => {
         );
 
         const percentage = (currentMarketCap / threshold) * 100;
-        console.log(threshold,"TREEEEEE");
+        console.log(threshold, "TREEEEEE");
         const percentageFinal = Math.min(Math.max(percentage, 0), 100);
         setPercentageBondingCurve(percentageFinal.toFixed(2));
         return percentageFinal;

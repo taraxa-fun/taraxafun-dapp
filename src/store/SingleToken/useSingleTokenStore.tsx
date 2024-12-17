@@ -7,32 +7,32 @@ interface Creator {
   _id: string;
   username: string;
   avatar: string;
- }
- 
+}
 
- interface Comment {
+interface Comment {
   _id: string;
   content: string;
   likes: number;
   user: string;
   token: string;
   created_at: string;
- }
- 
- interface CommentsStats {
+}
+
+interface CommentsStats {
   count: number;
   likes: number;
- }
- 
- interface TokenData {
+}
+
+interface TokenData {
   _id: string;
   address: `0x${string}`;
   created_at: string;
   description: string;
   image: string;
-  telegram ?: string;
-  twitter ?: string;
-  website ?: string
+  listed: boolean;
+  telegram?: string;
+  twitter?: string;
+  website?: string;
   name: string;
   supply: string;
   symbol: string;
@@ -40,33 +40,37 @@ interface Creator {
   user: Creator;
   comments: Comment[];
   trades: TradeData[];
-  replies_count?: number; 
- }
- 
- interface TokenState {
+  replies_count?: number;
+}
+
+interface TokenState {
   tokenData: TokenData | null;
   singleTokenisLoading: boolean;
   error: string | null;
   fetchTokenData: (address: string) => Promise<void>;
   clearData: () => void;
- }
- 
- export const useSingleTokenStore = create<TokenState>((set) => ({
+}
+
+export const useSingleTokenStore = create<TokenState>((set) => ({
   tokenData: null,
   singleTokenisLoading: false,
   error: null,
- 
+
   fetchTokenData: async (address: string) => {
     set({ singleTokenisLoading: true, error: null });
     try {
-      const response = await axios.get<TokenData>(`${servUrl}/token/${address}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      set({ 
+      const response = await axios.get<TokenData>(
+        `${servUrl}/token/${address}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.data, "RESSSSSS DATATTATATATATA");
+      set({
         tokenData: response.data,
-        singleTokenisLoading: false 
+        singleTokenisLoading: false,
       });
     } catch (error) {
       console.error("Error fetching token data:", error);
@@ -76,9 +80,10 @@ interface Creator {
       });
     }
   },
- 
-  clearData: () => set({ 
-    tokenData: null, 
-    error: null 
-  }),
- }));
+
+  clearData: () =>
+    set({
+      tokenData: null,
+      error: null,
+    }),
+}));
