@@ -1,8 +1,4 @@
-import { useEffect } from "react";
-import Image from "next/image";
-
 import { Skeleton } from "../ui/skeleton";
-import { Reply } from "@/type/reply";
 import { UserComment } from "@/type/user";
 import { getTimeAgo } from "@/utils/calculeTime";
 import Link from "next/link";

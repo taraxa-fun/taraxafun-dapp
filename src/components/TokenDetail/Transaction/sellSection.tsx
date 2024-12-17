@@ -210,31 +210,31 @@ export const SellSection = () => {
       <div className="flex gap-2 mb-4">
         <button
           className="bg-[#5600AA] p-2 rounded text-sm font-normal flex-1"
-          onClick={() => setAmount("")} // Réinitialiser à vide
+          onClick={() => setAmount("")}
         >
           reset
         </button>
         <button
           className="bg-[#5600AA] p-2 rounded text-sm font-normal flex-1"
-          onClick={() => handleSetPercentage(25)} // 25% de la balance
+          onClick={() => handleSetPercentage(25)}
         >
           25%
         </button>
         <button
           className="bg-[#5600AA] p-2 rounded text-sm font-normal flex-1"
-          onClick={() => handleSetPercentage(50)} // 50% de la balance
+          onClick={() => handleSetPercentage(50)}
         >
           50%
         </button>
         <button
           className="bg-[#5600AA] p-2 rounded text-sm font-normal flex-1"
-          onClick={() => handleSetPercentage(75)} // 75% de la balance
+          onClick={() => handleSetPercentage(75)}
         >
           75%
         </button>
         <button
           className="bg-[#5600AA] p-2 rounded text-sm font-normal flex-1"
-          onClick={() => handleSetPercentage(99)} // 100% de la balance
+          onClick={() => handleSetPercentage(99)}
         >
           100%
         </button>

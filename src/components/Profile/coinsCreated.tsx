@@ -1,13 +1,10 @@
-import { useEffect } from "react";
 import Image from "next/image";
-import placeHodlerRounded from "../../assets/placeholderRounded.png";
-import { TokenCreatedProfile } from "@/type/tokenType";
 import { Skeleton } from "../ui/skeleton";
 import { getTimeAgo } from "@/utils/calculeTime";
 import Link from "next/link";
 import { UserToken } from "@/type/user";
 import { formatNumber } from "@/utils/formatNumber";
-import { formatEther, parseEther } from "viem";
+import { formatEther } from "viem";
 
 interface CoinsCreatedProps {
   coins: UserToken[];

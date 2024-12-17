@@ -1,3 +1,4 @@
+import { wsUrl } from "@/config/servUrl";
 import { create } from "zustand";
 
 interface CommentMessage {
@@ -37,7 +38,7 @@ export const useCommentWebSocketStore = create<CommentWebSocketStore>((set, get)
 
     if (!state.commentWs) {
       const commentWs = new WebSocket(
-        "wss://taraxafun-server-590541650183.us-central1.run.app/ws/comment-created"
+        `${wsUrl}/comment-created`
       );
 
       commentWs.onmessage = (event) => {

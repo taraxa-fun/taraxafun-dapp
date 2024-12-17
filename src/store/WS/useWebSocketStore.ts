@@ -1,3 +1,4 @@
+import { wsUrl } from "@/config/servUrl";
 import { create } from "zustand";
 
 interface TokenMessage {
@@ -90,7 +91,7 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
     // WebSocket pour les tokens
     if (!state.tokenWs) {
       const tokenWs = new WebSocket(
-        "wss://taraxafun-server-590541650183.us-central1.run.app/ws/create-fun"
+        `${wsUrl}/create-fun`
       );
 
       tokenWs.onmessage = (event) => {
@@ -121,7 +122,7 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
     // WebSocket pour les trades
     if (!state.tradeWs) {
       const tradeWs = new WebSocket(
-        "wss://taraxafun-server-590541650183.us-central1.run.app/ws/trade-call"
+        `${wsUrl}/trade-call`
       );
 
       tradeWs.onmessage = (event) => {

@@ -1,12 +1,10 @@
 import Image from "next/image";
-import placeHodlerRounded from "../../assets/placeholderRounded.png";
 import { Skeleton } from "../ui/skeleton";
 import { getTimeAgo } from "@/utils/calculeTime";
 import Link from "next/link";
 import { useSingleTokenStore } from "@/store/SingleToken/useSingleTokenStore";
 import { useWebSocketStore } from "@/store/WS/useWebSocketStore";
 import { useEffect, useState } from "react";
-import { formatUnits } from "viem";
 import { formatMarketCap } from "@/utils/formatMarketCap";
 
 export const CoinHeader = () => {

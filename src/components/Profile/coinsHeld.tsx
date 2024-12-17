@@ -1,10 +1,5 @@
 // components/Profile/CoinsHeld.tsx
-import { useEffect } from "react";
-import Image from "next/image";
-import placeHodlerRounded from "../../assets/placeholderRounded.png";
 import { CoinHeld } from "@/type/coinHeld";
-import { Skeleton } from "../ui/skeleton";
-import Link from "next/link";
 
 interface CoinsHeldProps {
   coins: CoinHeld[];

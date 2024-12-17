@@ -8,7 +8,6 @@ import {
   type Time,
 } from 'lightweight-charts';
 
-// Fonction pour générer des données aléatoires
 const randomFactor = 25 + Math.random() * 25;
 
 const samplePoint = (i: number) =>
@@ -46,14 +45,14 @@ const generateData = (
   const numberOfPoints = numberOfCandles * updatesPerCandle;
   const initialData: CandlestickData[] = [];
   const realtimeUpdates: CandlestickData[] = [];
-  let lastCandle: CandlestickData = createCandle(0, date.getTime() / 1000 as Time); // Initialisation par défaut
+  let lastCandle: CandlestickData = createCandle(0, date.getTime() / 1000 as Time); 
   let previousValue = samplePoint(-1);
 
   for (let i = 0; i < numberOfPoints; ++i) {
     if (i % updatesPerCandle === 0) {
       date.setUTCDate(date.getUTCDate() + 1);
     }
-    const time = Math.floor(date.getTime() / 1000) as Time; // Conversion explicite
+    const time = Math.floor(date.getTime() / 1000) as Time; 
     let value = samplePoint(i);
     const diff = (value - previousValue) * Math.random();
     value = previousValue + diff;
@@ -90,7 +89,6 @@ export const CoinChart: React.FC = () => {
   useEffect(() => {
     if (!chartContainerRef.current) return;
 
-    // Configure le graphique
     const chart = createChart(chartContainerRef.current, {
       layout: {
         textColor: 'white',
@@ -111,12 +109,10 @@ export const CoinChart: React.FC = () => {
     chartRef.current = chart;
     seriesRef.current = candlestickSeries;
 
-    // Génère les données initiales et les mises à jour en temps réel
     const { initialData, realtimeUpdates } = generateData(2500, 20, 1000);
     candlestickSeries.setData(initialData);
     chart.timeScale().fitContent();
 
-    // Simule les mises à jour en temps réel
     const streamingDataProvider = (function* () {
       for (const dataPoint of realtimeUpdates) {
         yield dataPoint;

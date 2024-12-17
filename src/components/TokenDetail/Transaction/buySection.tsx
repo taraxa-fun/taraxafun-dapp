@@ -79,11 +79,11 @@ export const BuySection = () => {
 
   const handleSubmitBuy = async () => {
     if (!address) return showErrorToast("Please connect your wallet");
-    setLoading(true); // Début du chargement
+    setLoading(true);
     try {
       if (!tradeData.amount) {
         showErrorToast("Please enter an amount and select a token");
-        setLoading(false); // Fin du chargement en cas d'erreur
+        setLoading(false); 
         return;
       }
       const amountOut = await getAmountTokens(
@@ -97,9 +97,8 @@ export const BuySection = () => {
       const minTokens = (
         (amountOut * slippageRatio) /
         BigInt(10000)
-      ).toString(); // Calcul après slippage
+      ).toString(); 
 
-      // Appel de la fonction buyToken
       const tx = await buyToken(
         writeContractAsync,
         tokenAddress as `0x${string}`,
@@ -119,7 +118,7 @@ export const BuySection = () => {
       console.error("Error during buy:", error);
       showErrorToast("Failed to complete the purchase. Please try again.");
     } finally {
-      setLoading(false); // Fin du chargement, que la transaction réussisse ou échoue
+      setLoading(false);
     }
   };
 

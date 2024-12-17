@@ -188,7 +188,7 @@ export const Navbar = () => {
                     {displayedTrade.token.image && (
                       <Image
                         src={displayedTrade.token.image}
-                        alt="User Avatar"
+                        alt="token image"
                         width={20}
                         height={20}
                       />
