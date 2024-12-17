@@ -11,7 +11,7 @@ import { formatEther, parseEther } from "viem";
 
 interface CoinsCreatedProps {
   coins: UserToken[];
-  username: string;
+  username: string; 
   isLoading: boolean;
 }
 
@@ -48,53 +48,53 @@ export const CoinsCreated = ({
     return <div className="mt-8 text-center text-white">No coins created</div>;
   }
   return (
-    <div className="mt-8 grid grid-cols-1 gap-4">
-      {coins.map((token, index) => (
-        <Link href={`/coin/${token.address}`} key={`${token.symbol}-${index}`}>
-          <div
-            key={token._id}
-            className="flex md:gap-3 gap-1 mx-auto lg:px-4 px-1 w-full"
-          >
-            <div className="flex-shrink-0">
-              {token.image && (
-                <Image
-                  src={token.image}
-                  alt={`Token ${token.name}`}
-                  width={50}
-                  height={50}
-                  className="rounded-full"
-                />
-              )}
-            </div>
+<div className="pt-10 grid grid-cols-1 gap-4 ">
+  {coins.map((token, index) => (
+    <Link href={`/coin/${token.address}`} key={`${token.symbol}-${index}`}>
+      <div className="flex md:gap-3 gap-1">
+        <div className="flex-shrink-0">
+          {token.image && (
+            <Image
+              src={token.image}
+              alt={`Token ${token.name}`}
+              width={200}
+              height={200}
+            />
+          )}
+        </div>
 
-            <div className="flex flex-col space-y-1 justify-center">
-              <div className="flex items-center lg:gap-4 gap-1">
-                <p className="text-xs font-normal">Created by</p>
-                <p className="text-xs font-normal">
-                  {username || "Unknown"}{" "}
-                  {/* Remplacez par le nom de l'utilisateur si disponible                */}
-                </p>
-                <p className="text-xs">{getTimeAgo(token.created_at)}</p>
-              </div>
-
-              <div className="flex justify-between">
-                <p className="text-xs font-normal text-[#79FF62]">
-                  Supply:{" "}
-                  {token.supply
-                    ? formatNumber(
-                        parseFloat(formatEther(BigInt(token.supply)))
-                      )
-                    : "0"}
-                </p>
-              </div>
-
-              <p className="text-gray-300 font-normal text-xs">
-                {token.symbol}: {token.description}
-              </p>
-            </div>
+        <div className="flex flex-col w-full space-y-1 justify-start overflow-hidden">
+          <div className="flex items-center lg:gap-4 gap-1">
+            <p className="text-xs font-normal">Created by</p>
+            <p className="text-xs font-normal">
+              {username || "Unknown"}
+            </p>
+            <p className="text-xs">{getTimeAgo(token.created_at)}</p>
           </div>
-        </Link>
-      ))}
-    </div>
+
+          <div className="flex justify-between">
+            <p className="text-xs font-normal text-[#79FF62]">
+              Supply:{" "}
+              {token.supply
+                ? formatNumber(
+                    parseFloat(formatEther(BigInt(token.supply)))
+                  )
+                : "0"}
+            </p>
+          </div>
+
+          <p className="text-white font-normal text-sm text-start">
+            <strong>
+              {token.name.toLocaleUpperCase()} ({token.symbol})
+            </strong>
+          </p>
+          <p className="text-xs text-gray-300 break-words  text-start overflow-hidden">
+            "{token.description}"
+          </p>
+        </div>
+      </div>
+    </Link>
+  ))}
+</div>
   );
 };
