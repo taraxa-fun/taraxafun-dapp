@@ -189,7 +189,8 @@ export const TokenDetails = () => {
       </div>
       <div className="flex flex-col space-y-2">
         <p className="font-medium text-base">
-          Pump emperor progress {Number(percentageBondingCurve) * 2}%
+          Pump emperor progress{" "}
+          {Math.min(Number(percentageBondingCurve) * 2, 100)}%
         </p>
         <Progress
           value={Math.min(Number(percentageBondingCurve) * 2, 100)}

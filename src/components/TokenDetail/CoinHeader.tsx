@@ -38,7 +38,7 @@ export const CoinHeader = () => {
         </div>
       </div>
     );
-  }
+  } console.log(tokenData.marketcap);
 
   return (
     <div className="col-span-12 lg:col-span-8 space-y-8">
@@ -67,7 +67,7 @@ export const CoinHeader = () => {
           <p className="text-xs font-normal text-[#79FF62]">
             market cap: $
             {marketCap
-              ? marketCap
+              ? formatMarketCap(marketCap)
               : formatMarketCap(tokenData.marketcap ?? "0")}
           </p>
           <p className="text-xs font-normal">

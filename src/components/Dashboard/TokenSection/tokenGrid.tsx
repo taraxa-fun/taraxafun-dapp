@@ -133,6 +133,7 @@ export const TokenGrid = () => {
   }, [tokens, latestTrades, latestComments, sortBy, showAnimation, currentPage]);
 
   useEffect(() => {
+    console.log("CONDITION CREATED AT APPELÉ")
     if (
       sortBy === "created-at" &&
       hasNewToken &&
@@ -140,6 +141,7 @@ export const TokenGrid = () => {
       showAnimation
     ) {
       setTimeout(() => {
+        console.log("SET TIME OUT APPELÉ");
         fetchTokens();
         setDisplayedTokens(tokens);
         setIsShaking(true);
