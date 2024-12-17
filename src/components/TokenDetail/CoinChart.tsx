@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   createChart,
   ColorType,
@@ -8,83 +8,42 @@ import {
   type Time,
 } from 'lightweight-charts';
 
-const randomFactor = 25 + Math.random() * 25;
+const generateData = (candles: number, intervalMinutes: number): CandlestickData<Time>[] => {
+  const now = Math.floor(Date.now() / 1000);
+  const data: CandlestickData<Time>[] = [];
+  let lastClose = 100;
 
-const samplePoint = (i: number) =>
-  i *
-    (0.5 +
-      Math.sin(i / 1) * 0.2 +
-      Math.sin(i / 2) * 0.4 +
-      Math.sin(i / randomFactor) * 0.8 +
-      Math.sin(i / 50) * 0.5) +
-  200 +
-  i * 2;
+  for (let i = 0; i < candles; i++) {
+    const time = now - i * intervalMinutes * 60;
+    const open = lastClose;
+    const close = open + (Math.random() - 0.5) * 2;
+    const high = Math.max(open, close) + Math.random();
+    const low = Math.min(open, close) - Math.random();
 
-const generateData = (
-  numberOfCandles = 500,
-  updatesPerCandle = 5,
-  startAt = 100
-) => {
-  const createCandle = (val: number, time: Time): CandlestickData => ({
-    time,
-    open: val,
-    high: val,
-    low: val,
-    close: val,
-  });
+    data.unshift({
+      time: time as Time,
+      open: parseFloat(open.toFixed(2)),
+      high: parseFloat(high.toFixed(2)),
+      low: parseFloat(low.toFixed(2)),
+      close: parseFloat(close.toFixed(2)),
+    });
 
-  const updateCandle = (candle: CandlestickData, val: number): CandlestickData => ({
-    time: candle.time,
-    close: val,
-    open: candle.open,
-    low: Math.min(candle.low, val),
-    high: Math.max(candle.high, val),
-  });
-
-  const date = new Date(Date.UTC(2018, 0, 1, 12, 0, 0, 0));
-  const numberOfPoints = numberOfCandles * updatesPerCandle;
-  const initialData: CandlestickData[] = [];
-  const realtimeUpdates: CandlestickData[] = [];
-  let lastCandle: CandlestickData = createCandle(0, date.getTime() / 1000 as Time); 
-  let previousValue = samplePoint(-1);
-
-  for (let i = 0; i < numberOfPoints; ++i) {
-    if (i % updatesPerCandle === 0) {
-      date.setUTCDate(date.getUTCDate() + 1);
-    }
-    const time = Math.floor(date.getTime() / 1000) as Time; 
-    let value = samplePoint(i);
-    const diff = (value - previousValue) * Math.random();
-    value = previousValue + diff;
-    previousValue = value;
-
-    if (i % updatesPerCandle === 0) {
-      const candle = createCandle(value, time);
-      lastCandle = candle;
-      if (i >= startAt) {
-        realtimeUpdates.push(candle);
-      }
-    } else {
-      const newCandle = updateCandle(lastCandle, value);
-      lastCandle = newCandle;
-      if (i >= startAt) {
-        realtimeUpdates.push(newCandle);
-      } else if ((i + 1) % updatesPerCandle === 0) {
-        initialData.push(newCandle);
-      }
-    }
+    lastClose = close;
   }
 
-  return {
-    initialData,
-    realtimeUpdates,
-  };
+  return data;
 };
 
-export const CoinChart: React.FC = () => {
+const CoinChart: React.FC = () => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
+  const [selectedInterval, setSelectedInterval] = useState<'1m' | '5m'>('1m');
+
+  const intervalData = new Map([
+    ['1m', generateData(100, 1)],
+    ['5m', generateData(100, 5)],
+  ]);
 
   useEffect(() => {
     if (!chartContainerRef.current) return;
@@ -109,25 +68,17 @@ export const CoinChart: React.FC = () => {
     chartRef.current = chart;
     seriesRef.current = candlestickSeries;
 
-    const { initialData, realtimeUpdates } = generateData(2500, 20, 1000);
-    candlestickSeries.setData(initialData);
+    const updateData = () => {
+      const newData = generateData(1, selectedInterval === '1m' ? 1 : 5)[0];
+      seriesRef.current?.update(newData);
+      console.log(newData);
+    };
+
+    // Initial data load
+    candlestickSeries.setData(intervalData.get(selectedInterval)!);
     chart.timeScale().fitContent();
 
-    const streamingDataProvider = (function* () {
-      for (const dataPoint of realtimeUpdates) {
-        yield dataPoint;
-      }
-      return null;
-    })();
-
-    const intervalID = setInterval(() => {
-      const update = streamingDataProvider.next();
-      if (update.done) {
-        clearInterval(intervalID);
-        return;
-      }
-      candlestickSeries.update(update.value);
-    }, 1000);
+    const updateInterval = setInterval(updateData, 5000);
 
     const handleResize = () => {
       if (chartContainerRef.current) {
@@ -138,21 +89,52 @@ export const CoinChart: React.FC = () => {
     window.addEventListener('resize', handleResize);
 
     return () => {
-      clearInterval(intervalID);
+      clearInterval(updateInterval);
       window.removeEventListener('resize', handleResize);
       if (chartRef.current) {
         chartRef.current.remove();
         chartRef.current = null;
       }
     };
-  }, []);
+  }, [selectedInterval]);
 
-  const goToRealtime = () => {
-    chartRef.current?.timeScale().scrollToRealTime();
+  const updateInterval = (interval: '1m' | '5m') => {
+    if (seriesRef.current) {
+      seriesRef.current.setData(intervalData.get(interval)!);
+      chartRef.current?.timeScale().fitContent();
+      setSelectedInterval(interval);
+    }
   };
+
 
   return (
     <div>
+      <div className="buttons-container" style={{ marginBottom: '1rem', display: 'flex', gap: '8px' }}>
+        <button
+          onClick={() => updateInterval('1m')}
+          style={{
+            padding: '8px 16px',
+            borderRadius: '8px',
+            background: selectedInterval === '1m' ? '#2962FF' : '#F0F3FA',
+            color: selectedInterval === '1m' ? 'white' : 'black',
+            cursor: 'pointer',
+          }}
+        >
+          1m
+        </button>
+        <button
+          onClick={() => updateInterval('5m')}
+          style={{
+            padding: '8px 16px',
+            borderRadius: '8px',
+            background: selectedInterval === '5m' ? '#2962FF' : '#F0F3FA',
+            color: selectedInterval === '5m' ? 'white' : 'black',
+            cursor: 'pointer',
+          }}
+        >
+          5m
+        </button>
+      </div>
       <div ref={chartContainerRef} style={{ height: 400 }} />
     </div>
   );

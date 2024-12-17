@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/store/User/useAuthStore";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useAccount, useSignMessage } from "wagmi";
 
@@ -6,11 +7,13 @@ export const InitAuth = () => {
   const { address } = useAccount();
   const { signMessageAsync } = useSignMessage();
   const { initAuth, jwt, userMe, fetchUserMe, logout, verifyJwt } = useAuthStore();
+  const router = useRouter();
+
 
   useEffect(() => {
     if (jwt) {
       const isJwtValid = verifyJwt();
-      if (!isJwtValid) { 
+      if (!isJwtValid) {
         logout(); 
       } else if (!userMe) {
         fetchUserMe(); 
@@ -28,7 +31,7 @@ export const InitAuth = () => {
     if (!jwt && address && signMessageAsync) {
       initAuth(address, signMessageAsync);
     }
-  }, [address, jwt, signMessageAsync, initAuth]);
+  }, [router.asPath, address, jwt, signMessageAsync, initAuth]);
 
   return null;
 };

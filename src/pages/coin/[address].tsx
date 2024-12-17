@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { Navbar } from "@/components/Navbar/navbar";
 import { NextPage } from "next";
-import { CoinChart } from "@/components/TokenDetail/CoinChart";
 import { CoinReplies } from "@/components/TokenDetail/CoinReplies";
 import { useState } from "react";
 import { CoinTrades } from "@/components/TokenDetail/CoinTrade";
@@ -13,6 +12,7 @@ import { TokenDetails } from "@/components/TokenDetail/CoinDetail";
 import { CreateReply } from "@/components/CreateReply/createReply";
 import { useSingleTokenStore } from "@/store/SingleToken/useSingleTokenStore";
 import { useRepliesTokenIdStore } from "@/store/SingleToken/useRepliesTokenIdStore";
+import CoinChart from "@/components/TokenDetail/CoinChart";
 
 const CoinPage: NextPage = () => {
   const [activeTab, setActiveTab] = useState<"thread" | "trades">("thread");
