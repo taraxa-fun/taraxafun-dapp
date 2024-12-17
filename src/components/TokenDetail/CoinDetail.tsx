@@ -1,15 +1,13 @@
 import Image from "next/image";
-import placeHodlerRounded from "../../assets/placeholderRounded.png";
 import { Skeleton } from "../ui/skeleton";
-import { getTimeAgo } from "@/utils/calculeTime";
 import { useSingleTokenStore } from "@/store/SingleToken/useSingleTokenStore";
 import { Progress } from "../ui/progress";
 import Twitterlogo from "../../assets/logo/xLogo.png";
 import Telegramlogo from "../../assets/logo/telegramLogo.png";
 import WebsiteLogo from "../../assets/logo/websiteLogo.png";
 import { usePool } from "@/hooks/usePool";
-import { formatEther, formatUnits } from "viem";
-import { use, useEffect, useState } from "react";
+import {  formatUnits } from "viem";
+import { useEffect, useState } from "react";
 import { useHoldersForToken } from "@/hooks/useHoldersForToken";
 import { useWebSocketStore } from "@/store/WS/useWebSocketStore";
 

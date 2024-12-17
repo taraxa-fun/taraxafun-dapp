@@ -1,14 +1,11 @@
 import Image from "next/image";
-import placeHodlerPumpEmpror from "../../../assets/placeHodlerPumpEmperor.png";
-import placeHodlerRounded from "../../../assets/placeholderNavRounded.png";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { TokenType } from "@/type/tokenType";
-import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getTimeAgo } from "@/utils/calculeTime";
-import { EmperorToken, getPumpEmperor } from "@/utils/getPumpEmperor";
+import { getPumpEmperor } from "@/utils/getPumpEmperor";
 import { formatMarketCap } from "@/utils/formatMarketCap";
+import { EmperorToken } from "@/type/PumpEmpror/PumpEmperorType";
 
 export const PumpEmperor = () => {
   const [pumpEmperor, setPumpEmperor] = useState<EmperorToken | null>(null);
