@@ -58,7 +58,6 @@ const CoinChart: React.FC = () => {
       seriesRef.current.setData(formattedData);
       chartRef.current?.timeScale().fitContent();
     } catch (error) {
-      console.error("Error fetching or formatting candle data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -170,7 +169,6 @@ const CoinChart: React.FC = () => {
   useEffect(() => {
     if (seriesRef.current && chartData.length > 0) {
       seriesRef.current.setData(chartData);
-      console.log(chartData, "chart data");
     }
   }, [chartData]);
 

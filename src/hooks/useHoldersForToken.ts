@@ -28,17 +28,17 @@ export const useHoldersForToken = (address: `0x${string}`, update: number) => {
         setHoldersIsLoading(true);
         setHoldersError(null);
         try {
-          const response = await axios.get(`${TaraToApiUrl}/tokens/0x712037beab9a29216650b8d032b4d9a59af8ad6c/holders`, {
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_TARA_TO_API_URL}/tokens/0x712037beab9a29216650b8d032b4d9a59af8ad6c/holders`, {
             headers: {
               "Content-Type": "application/json",
             },
           });
           if (response.data?.items) {
+            setHolders(response.data.items);
           } else {
             setHolders([]);
           }
         } catch (err) {
-          console.error("Error fetching holders:", err);
           setHoldersError("Failed to fetch holders.");
         } finally {
           setHoldersIsLoading(false);

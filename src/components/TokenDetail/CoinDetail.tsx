@@ -102,6 +102,7 @@ export const TokenDetails = () => {
       fetchTokenData(tokenData.address);
     }
   }, [tokenData]);
+
   return (
     <div className="flex flex-col gap-4 mx-auto w-full mt-4">
       <div className="flex md:gap-3 gap-1">
