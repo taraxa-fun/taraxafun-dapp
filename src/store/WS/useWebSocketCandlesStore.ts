@@ -21,10 +21,12 @@ interface WebSocketMessage {
 }
 
 interface WebSocketStore {
+  isConnected: boolean;
   latestCandle1m: {
     type: "CANDLE_UPDATE" | "NEW_CANDLE";
     candle: WebSocketCandle;
   } | null;
+  subscribeToCandle: (tokenAddress: string) => void;
   tokenWs: WebSocket | null;
   hasNewCandle: boolean;
   initWebSockets: () => void;
@@ -32,9 +34,23 @@ interface WebSocketStore {
 }
 
 export const useWebSocketCandlesStore = create<WebSocketStore>((set, get) => ({
-  latestCandle1m: null, 
+  isConnected: false,
+  latestCandle1m: null,
   tokenWs: null,
   hasNewCandle: false,
+
+  subscribeToCandle: (tokenAddress: string) => {
+    const { tokenWs } = get();
+    if (tokenWs && tokenWs.readyState === WebSocket.OPEN) {
+
+      const message = {
+        type: "SUBSCRIBE_CANDLE",
+        token_address: tokenAddress,
+      };
+      console.log("message", message);
+      tokenWs.send(JSON.stringify(message));
+    }
+  },
 
   initWebSockets: () => {
     const state = get();
@@ -42,17 +58,17 @@ export const useWebSocketCandlesStore = create<WebSocketStore>((set, get) => ({
     if (!state.tokenWs) {
       const tokenWs = new WebSocket(`${wsUrl}/candle-1m`);
 
+      tokenWs.onopen = () => {
+        set({ tokenWs, isConnected: true });
+      };
+
       tokenWs.onmessage = (event) => {
         try {
           const message: WebSocketMessage = JSON.parse(event.data);
 
-          if (
-            message.type === "candle1M" 
-          ) {
-
-
+          if (message.type === "candle1M") {
             set({
-              latestCandle1m: message.data, 
+              latestCandle1m: message.data,
               hasNewCandle: true,
             });
             setTimeout(() => {
@@ -60,15 +76,16 @@ export const useWebSocketCandlesStore = create<WebSocketStore>((set, get) => ({
             }, 100);
           }
         } catch (error) {
-          return error 
+          return error;
         }
       };
+
       tokenWs.onclose = () => {
-        set({ tokenWs: null });
+        set({ tokenWs: null, isConnected: false });
         setTimeout(() => get().initWebSockets(), 5000);
       };
 
-      set({ tokenWs });
+      // Supprimé le set({ tokenWs }) redondant
     }
   },
 
@@ -79,8 +96,9 @@ export const useWebSocketCandlesStore = create<WebSocketStore>((set, get) => ({
     }
     set({
       tokenWs: null,
-      latestCandle1m: null, 
+      latestCandle1m: null,
       hasNewCandle: false,
+      isConnected: false,
     });
   },
 }));

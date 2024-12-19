@@ -6,6 +6,8 @@ import { useSingleTokenStore } from "@/store/SingleToken/useSingleTokenStore";
 import { useWebSocketStore } from "@/store/WS/useWebSocketStore";
 import { useEffect, useState } from "react";
 import { formatMarketCap } from "@/utils/formatMarketCap";
+import boltLogo from "../../assets/logo/bolt.png";
+import emprorLogo from "../../assets/logo/emprorLogo.png";
 
 export const CoinHeader = () => {
   const { tokenData, singleTokenisLoading } = useSingleTokenStore();
@@ -43,6 +45,18 @@ export const CoinHeader = () => {
           {tokenData.name} ({tokenData.symbol})
         </p>
         <div className="flex items-center gap-2">
+          {tokenData && tokenData.listed && (
+            <>
+              <Image src={boltLogo} alt="placeholder" width={24} height={24} />
+              <Image
+                src={emprorLogo}
+                alt="placeholder"
+                width={24}
+                height={24}
+              />
+            </>
+          )}
+
           <p className="text-xs font-normal">created by</p>
           {tokenData && tokenData.user.avatar && (
             <Image

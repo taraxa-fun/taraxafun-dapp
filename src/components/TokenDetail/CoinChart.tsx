@@ -24,7 +24,7 @@ interface CandleData {
 
 const CoinChart: React.FC = () => {
   const { tokenData } = useSingleTokenStore();
-  const { latestCandle1m, initWebSockets, cleanup } = useWebSocketCandlesStore();
+  const { latestCandle1m, initWebSockets, cleanup, subscribeToCandle } = useWebSocketCandlesStore();
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
@@ -50,10 +50,7 @@ const CoinChart: React.FC = () => {
       setIsLoading(true);
       const candles: CandleData[] = await getCandles(tokenData.address);
       const formattedData = candles.map(formatCandle);
-
-
       formattedData.sort((a, b) => (a.time as number) - (b.time as number));
-
       setChartData(formattedData);
       seriesRef.current.setData(formattedData);
       chartRef.current?.timeScale().fitContent();
@@ -122,19 +119,23 @@ const CoinChart: React.FC = () => {
 
   useEffect(() => {
     if (!tokenData?.address) return;
-
     fetchData();
-
     if (selectedInterval === "1m") {
       initWebSockets(); 
     } else if (selectedInterval === "5m") {
       initWebSockets(); 
     }
-
     return () => {
       cleanup(); 
     };
   }, [tokenData, selectedInterval]);
+
+  useEffect(() => {
+    const { isConnected } = useWebSocketCandlesStore.getState();
+    if (isConnected && tokenData?.address) {
+      subscribeToCandle(tokenData.address);
+    }
+  }, [tokenData?.address, useWebSocketCandlesStore(state => state.isConnected)]);
 
   useEffect(() => {
     const latestCandle = selectedInterval === "1m" ? latestCandle1m : null;

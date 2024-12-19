@@ -1,4 +1,6 @@
 import Image from "next/image";
+import boltLogo from "../../assets/logo/bolt.png";
+import emprorLogo from "../../assets/logo/emprorLogo.png";
 import { Skeleton } from "../ui/skeleton";
 import { useSingleTokenStore } from "@/store/SingleToken/useSingleTokenStore";
 import { Progress } from "../ui/progress";
@@ -7,10 +9,10 @@ import Telegramlogo from "../../assets/logo/telegramLogo.png";
 import WebsiteLogo from "../../assets/logo/websiteLogo.png";
 import { usePool } from "@/hooks/usePool";
 import { formatUnits } from "viem";
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useHoldersForToken } from "@/hooks/useHoldersForToken";
 import { useWebSocketStore } from "@/store/WS/useWebSocketStore";
-
+import { formatDate } from "@/utils/formatDate";
 
 export const TokenDetails = () => {
   const { tokenData, singleTokenisLoading, fetchTokenData } =
@@ -49,7 +51,7 @@ export const TokenDetails = () => {
         const currentMarketCap = Number(
           formatUnits(BigInt(tokenData.marketcap), 6)
         );
-
+        console.log(currentMarketCap, "currentmarket cap");
         const percentage = (currentMarketCap / threshold) * 100;
         const percentageFinal = Math.min(Math.max(percentage, 0), 100);
         setPercentageBondingCurve(percentageFinal.toFixed(2));
@@ -71,7 +73,6 @@ export const TokenDetails = () => {
       fetchTokenData(tokenData.address);
     }
   }, [tokenData]);
-
 
   if (singleTokenisLoading || !tokenData) {
     return (
@@ -185,21 +186,30 @@ export const TokenDetails = () => {
           fillColor="bg-[#79FF62]"
           backgroundColor="bg-[#458343]"
         />
-        {/**
+
         {tokenData.listed ? (
-          <p className="text-xs text-[#A9A8AD] font-medium ">
-            raydium pool seeded! view on raydium{" "}
-            <a href="" target="_blank" rel="noreferrer">
-              here
-            </a>
-          </p>
+          <>
+            <div className="flex items-center gap-2">
+              <Image src={boltLogo} alt="placeholder" width={24} height={24} />
+              <p className="text-xs text-[#A9A8AD] font-medium">
+                taraswap pool seeded ! view on taraswap{" "}
+                <a
+                  href=""
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[#9A62FF] hover:underline"
+                >
+                  here
+                </a>
+              </p>
+            </div>
+          </>
         ) : (
           <p className="text-xs text-[#A9A8AD] font-medium ">
-            graduate this coin to raydium at $35,000 market cap. there is ??
-            SOL in the bonding curve.
+            graduate this coin to raydium at $35,000 market cap. there is ?? SOL
+            in the bonding curve.
           </p>
         )}
-           */}
       </div>
       <div className="flex flex-col space-y-2">
         <p className="font-medium text-base">
@@ -211,14 +221,15 @@ export const TokenDetails = () => {
           fillColor="bg-[#FFE862]"
           backgroundColor="bg-[#887843]"
         />
-            {/** 
-        {tokenData && tokenData.pump_emperor && (
-          <p className="text-xs text-[#A9A8AD] font-medium ">
-            crowned pump emperor on {formatDate(tokenData.pump_emperor)} the
-            current king at ?? market cap
-          </p>
+
+        {tokenData && tokenData.pump_emperor && tokenData.listed && (
+          <div className="flex items-center gap-2">
+            <Image src={emprorLogo} alt="empror logo" width={24} height={24} />
+            <p className="text-xs text-[#A9A8AD] font-medium ">
+              Nominated Pump Emperor on the {formatDate(tokenData.pump_emperor)}
+            </p>
+          </div>
         )}
-          */}
       </div>
       <div className="mt-5 flex flex-col">
         <h3 className="font-bold mb-4 text-2xl">Holder Distribution</h3>
