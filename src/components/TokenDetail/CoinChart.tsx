@@ -12,7 +12,10 @@ import {
 import { useSingleTokenStore } from "@/store/SingleToken/useSingleTokenStore";
 import { getCandles } from "@/utils/getCandles";
 import { formatEther } from "viem";
-import { useWebSocketCandlesStore, WebSocketCandle } from "@/store/WS/useWebSocketCandlesStore";
+import {
+  useWebSocketCandlesStore,
+  WebSocketCandle,
+} from "@/store/WS/useWebSocketCandlesStore";
 
 interface CandleData {
   open: bigint;
@@ -24,7 +27,13 @@ interface CandleData {
 
 const CoinChart: React.FC = () => {
   const { tokenData } = useSingleTokenStore();
-  const { latestCandle1m, initWebSockets, cleanup, subscribeToCandle } = useWebSocketCandlesStore();
+  const {
+    latestCandle1m,
+    initWebSockets,
+    cleanup,
+    subscribeToCandle,
+    unsubscribeFromCandle,
+  } = useWebSocketCandlesStore();
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
@@ -32,11 +41,13 @@ const CoinChart: React.FC = () => {
   const [chartData, setChartData] = useState<CandlestickData<Time>[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-
-  const formatCandle = (candle: CandleData | WebSocketCandle): CandlestickData<Time> => ({
-    time: "time" in candle
-      ? Math.floor(parseInt(candle.time) / 1000) as Time
-      : Math.floor(new Date(candle.startTime).getTime() / 1000) as Time,
+  const formatCandle = (
+    candle: CandleData | WebSocketCandle
+  ): CandlestickData<Time> => ({
+    time:
+      "time" in candle
+        ? (Math.floor(parseInt(candle.time) / 1000) as Time)
+        : (Math.floor(new Date(candle.startTime).getTime() / 1000) as Time),
     open: parseFloat(formatEther(BigInt(candle.open))),
     high: parseFloat(formatEther(BigInt(candle.high))),
     low: parseFloat(formatEther(BigInt(candle.low))),
@@ -53,8 +64,14 @@ const CoinChart: React.FC = () => {
       formattedData.sort((a, b) => (a.time as number) - (b.time as number));
       setChartData(formattedData);
       seriesRef.current.setData(formattedData);
-      chartRef.current?.timeScale().fitContent();
+
+      if (chartRef.current) {
+        chartRef.current.timeScale().applyOptions({
+          rightOffset: 20,
+        });
+      }
     } catch (error) {
+      console.error("Error fetching data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -76,11 +93,16 @@ const CoinChart: React.FC = () => {
       height: 400,
       rightPriceScale: {
         visible: true,
-        borderColor: '#3B2948',
+        borderColor: "#3B2948",
         scaleMargins: {
           top: 0.1,
           bottom: 0.1,
         },
+      },
+      timeScale: {
+        borderColor: "#3B2948",
+        timeVisible: true,
+        secondsVisible: true,
       },
     });
 
@@ -91,9 +113,11 @@ const CoinChart: React.FC = () => {
       wickUpColor: "#26a69a",
       wickDownColor: "#ef5350",
       priceFormat: {
-        type: 'price',
-        precision: 12, 
-        minMove: 1e-12, 
+        type: "custom",
+        formatter: (price: number) => {
+          return price.toExponential(6);
+        },
+        minMove: 1e-12,
       },
     });
 
@@ -116,17 +140,21 @@ const CoinChart: React.FC = () => {
     };
   }, []);
 
-
   useEffect(() => {
     if (!tokenData?.address) return;
+
     fetchData();
     if (selectedInterval === "1m") {
-      initWebSockets(); 
+      initWebSockets();
     } else if (selectedInterval === "5m") {
-      initWebSockets(); 
+      initWebSockets();
     }
+
     return () => {
-      cleanup(); 
+      if (tokenData?.address) {
+        unsubscribeFromCandle(tokenData.address);
+      }
+      cleanup();
     };
   }, [tokenData, selectedInterval]);
 
@@ -135,16 +163,19 @@ const CoinChart: React.FC = () => {
     if (isConnected && tokenData?.address) {
       subscribeToCandle(tokenData.address);
     }
-  }, [tokenData?.address, useWebSocketCandlesStore(state => state.isConnected)]);
+  }, [
+    tokenData?.address,
+    useWebSocketCandlesStore((state) => state.isConnected),
+  ]);
 
   useEffect(() => {
     const latestCandle = selectedInterval === "1m" ? latestCandle1m : null;
     if (latestCandle) {
       const newCandle = formatCandle(latestCandle.candle);
-      
+
       setChartData((prevData) => {
         const updatedData = [...prevData];
-  
+
         if (latestCandle.type === "CANDLE_UPDATE") {
           if (updatedData.length > 0) {
             updatedData[updatedData.length - 1] = newCandle;
@@ -153,7 +184,7 @@ const CoinChart: React.FC = () => {
           const existingIndex = updatedData.findIndex(
             (candle) => candle.time === newCandle.time
           );
-  
+
           if (existingIndex !== -1) {
             updatedData[existingIndex] = newCandle;
           } else {
@@ -161,7 +192,7 @@ const CoinChart: React.FC = () => {
           }
         }
         updatedData.sort((a, b) => (a.time as number) - (b.time as number));
-  
+
         return updatedData;
       });
     }

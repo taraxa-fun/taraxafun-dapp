@@ -27,6 +27,7 @@ interface WebSocketStore {
     candle: WebSocketCandle;
   } | null;
   subscribeToCandle: (tokenAddress: string) => void;
+  unsubscribeFromCandle: (tokenAddress: string) => void;
   tokenWs: WebSocket | null;
   hasNewCandle: boolean;
   initWebSockets: () => void;
@@ -42,12 +43,21 @@ export const useWebSocketCandlesStore = create<WebSocketStore>((set, get) => ({
   subscribeToCandle: (tokenAddress: string) => {
     const { tokenWs } = get();
     if (tokenWs && tokenWs.readyState === WebSocket.OPEN) {
-
       const message = {
         type: "SUBSCRIBE_CANDLE",
         token_address: tokenAddress,
       };
       console.log("message", message);
+      tokenWs.send(JSON.stringify(message));
+    }
+  },
+
+  unsubscribeFromCandle: () => {
+    const { tokenWs } = get();
+    if (tokenWs && tokenWs.readyState === WebSocket.OPEN) {
+      const message = {
+        type: "UNSUBSCRIBE_CANDLE",
+      };
       tokenWs.send(JSON.stringify(message));
     }
   },
@@ -83,9 +93,8 @@ export const useWebSocketCandlesStore = create<WebSocketStore>((set, get) => ({
       tokenWs.onclose = () => {
         set({ tokenWs: null, isConnected: false });
         setTimeout(() => get().initWebSockets(), 5000);
-      };
 
-      // Supprimé le set({ tokenWs }) redondant
+      };
     }
   },
 

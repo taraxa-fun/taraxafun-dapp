@@ -9,17 +9,21 @@ export const InitAuth = () => {
   const { initAuth, jwt, userMe, fetchUserMe, logout, verifyJwt } = useAuthStore();
   const router = useRouter();
 
-
   useEffect(() => {
     if (jwt) {
       const isJwtValid = verifyJwt();
       if (!isJwtValid) {
         logout(); 
       } else if (!userMe) {
-        fetchUserMe(); 
+        fetchUserMe().catch(() => {
+          logout();
+          if (address && signMessageAsync) {
+            initAuth(address, signMessageAsync);
+          }
+        });
       }
     }
-  }, [jwt, verifyJwt, logout, userMe, fetchUserMe]);
+  }, [jwt, verifyJwt, logout, userMe, fetchUserMe, address, signMessageAsync, initAuth]);
 
   useEffect(() => {
     if (userMe && !address) {

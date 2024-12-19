@@ -25,6 +25,7 @@ export const Navbar = () => {
   const [displayedToken, setDisplayedToken] = useState<any>(null);
   const [isTokenShaking, setIsTokenShaking] = useState(false);
   const [currentTradeIndex, setCurrentTradeIndex] = useState(0);
+  const [currentTokenIndex, setCurrentTokenIndex] = useState(0);
   useEffect(() => {
     if (tokens.length === 0) {
       fetchTokens();
@@ -62,12 +63,22 @@ export const Navbar = () => {
       setTimeout(() => setIsTokenShaking(false), 200);
       setIsTokensLoading(false);
     } else if (tokens.length > 0) {
-      setDisplayedToken(tokens[0]);
       setIsTokensLoading(false);
+      const tokensToDisplay = tokens.slice(0, 5);
+      
+      const tokenInterval = setInterval(() => {
+        setCurrentTokenIndex((prevIndex) => (prevIndex + 1) % tokensToDisplay.length);
+      }, 2000);
+  
+      setDisplayedToken(tokensToDisplay[currentTokenIndex]);
+      setIsTokenShaking(true);
+      setTimeout(() => setIsTokenShaking(false), 200);
+  
+      return () => clearInterval(tokenInterval);
     } else {
       setIsTokensLoading(true);
     }
-  }, [latestTokens, tokens]);
+  }, [latestTokens, tokens, currentTokenIndex]);
   return (
     <>
       <nav className="absolute w-full lg:w-12/12 lg:mx-auto z-40 lg:top-2 top-0 px-4 backdrop-blur-[10px] rounded-none lg:rounded-full">
