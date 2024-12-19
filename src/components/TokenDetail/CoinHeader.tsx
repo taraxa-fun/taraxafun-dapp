@@ -9,20 +9,17 @@ import { formatMarketCap } from "@/utils/formatMarketCap";
 
 export const CoinHeader = () => {
   const { tokenData, singleTokenisLoading } = useSingleTokenStore();
-  const { latestTrades } = useWebSocketStore();
+  const { latestTrade } = useWebSocketStore();
   const [marketCap, setMarketCap] = useState<string | null>(null);
 
   useEffect(() => {
-    if (latestTrades && tokenData?.address) {
-      const matchingTrade = latestTrades.find(
-        (trade) => trade.token.address === tokenData.address
-      );
-
-      if (matchingTrade) {
-        setMarketCap(matchingTrade.token.marketcap);
+    if (latestTrade && tokenData?.address) {
+      // Vérifier directement si l'adresse correspond
+      if (latestTrade.token.address === tokenData.address) {
+        setMarketCap(latestTrade.token.marketcap);
       }
     }
-  }, [latestTrades, tokenData?.address]);
+  }, [latestTrade, tokenData?.address]);
   if (!tokenData || singleTokenisLoading) {
     return (
       <div className="col-span-12 lg:col-span-8 space-y-8">
@@ -38,7 +35,7 @@ export const CoinHeader = () => {
         </div>
       </div>
     );
-  } 
+  }
 
   return (
     <div className="col-span-12 lg:col-span-8 space-y-8">
