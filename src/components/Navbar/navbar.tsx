@@ -18,16 +18,13 @@ import { Skeleton } from "../ui/skeleton";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { latestTrades, latestTokens } = useWebSocketStore();
+  const { latestTrade, latestTokens } = useWebSocketStore();
   const { trades } = useLastTrades();
   const { tokens, fetchTokens, isLoading } = useTokenStore();
   const [isTradesLoading, setIsTradesLoading] = useState(true);
   const [isTokensLoading, setIsTokensLoading] = useState(true);
-  const [currentTradeIndex, setCurrentTradeIndex] = useState(0);
   const [displayedTrade, setDisplayedTrade] = useState<any>(null);
   const [isTradeShaking, setIsTradeShaking] = useState(false);
-
-  const [currentTokenIndex, setCurrentTokenIndex] = useState(0);
   const [displayedToken, setDisplayedToken] = useState<any>(null);
   const [isTokenShaking, setIsTokenShaking] = useState(false);
 
@@ -37,66 +34,35 @@ export const Navbar = () => {
     }
   }, []);
 
-  // Handle trades
+  // Réagir directement au latestTrade
   useEffect(() => {
-    const tradesToDisplay =
-      latestTrades && latestTrades.length > 0 ? latestTrades : trades;
-
-    if (tradesToDisplay.length > 0) {
+    if (latestTrade) {
+      setDisplayedTrade(latestTrade);
+      setIsTradeShaking(true);
+      setTimeout(() => setIsTradeShaking(false), 200);
       setIsTradesLoading(false);
-      const tradeInterval = setInterval(() => {
-        setCurrentTradeIndex(
-          (prevIndex) => (prevIndex + 1) % tradesToDisplay.length
-        );
-      }, 2000);
-
-      return () => clearInterval(tradeInterval);
+    } else if (trades.length > 0) {
+      setDisplayedTrade(trades[0]);
+      setIsTradesLoading(false);
     } else {
       setIsTradesLoading(true);
     }
-  }, [latestTrades, trades]);
+  }, [latestTrade, trades]);
 
+  // Réagir directement au latestTokens
   useEffect(() => {
-    const tradesToDisplay =
-      latestTrades && latestTrades.length > 0 ? latestTrades : trades;
-
-    if (tradesToDisplay.length > 0) {
-      setDisplayedTrade(tradesToDisplay[currentTradeIndex]);
-      setIsTradeShaking(true);
-      setTimeout(() => setIsTradeShaking(false), 200);
-    }
-  }, [currentTradeIndex]);
-
-  // Handle tokens
-  useEffect(() => {
-    const tokensToDisplay =
-      latestTokens && latestTokens.symbol ? [latestTokens] : tokens.slice(0, 5);
-
-    if (tokensToDisplay.length > 0) {
+    if (latestTokens && latestTokens.symbol) {
+      setDisplayedToken(latestTokens);
+      setIsTokenShaking(true);
+      setTimeout(() => setIsTokenShaking(false), 200);
       setIsTokensLoading(false);
-      const tokenInterval = setInterval(() => {
-        setCurrentTokenIndex(
-          (prevIndex) => (prevIndex + 1) % tokensToDisplay.length
-        );
-      }, 2000);
-
-      return () => clearInterval(tokenInterval);
+    } else if (tokens.length > 0) {
+      setDisplayedToken(tokens[0]);
+      setIsTokensLoading(false);
     } else {
       setIsTokensLoading(true);
     }
   }, [latestTokens, tokens]);
-
-  useEffect(() => {
-    const tokensToDisplay =
-      latestTokens && latestTokens.symbol ? [latestTokens] : tokens.slice(0, 5);
-
-    if (tokensToDisplay.length > 0) {
-      setDisplayedToken(tokensToDisplay[currentTokenIndex]);
-      setIsTokenShaking(true);
-      setTimeout(() => setIsTokenShaking(false), 200);
-    }
-  }, [currentTokenIndex]);
-
   return (
     <>
       <nav className="absolute w-full lg:w-12/12 lg:mx-auto z-40 lg:top-2 top-0 px-4 backdrop-blur-[10px] rounded-none lg:rounded-full">
@@ -172,7 +138,7 @@ export const Navbar = () => {
                       <span>
                         {displayedTrade.user.username} bought{" "}
                         {Number(
-                          formatEther(BigInt(displayedTrade.outAmount))
+                          formatEther(BigInt(displayedTrade.inAmount))
                         ).toFixed(4)}{" "}
                         TARA of ${displayedTrade.token.symbol}
                       </span>
@@ -182,7 +148,7 @@ export const Navbar = () => {
                         {Number(
                           formatEther(BigInt(displayedTrade.outAmount))
                         ).toFixed(4)}{" "}
-                        ${displayedTrade.token.symbol}
+                        TARA of ${displayedTrade.token.symbol}
                       </span>
                     )}
                     {displayedTrade.token.image && (

@@ -56,13 +56,7 @@ export const useCommentWebSocketStore = create<CommentWebSocketStore>((set, get)
         }
       };
 
-      commentWs.onerror = (event) => {
-        console.error("Comment WS error", event);
-      };
 
-      commentWs.onopen = () => {
-        console.log("Comment WS connected");
-      };
 
       commentWs.onclose = () => {
         set({ commentWs: null });

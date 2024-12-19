@@ -55,9 +55,10 @@ export const SellSection = () => {
 
   const handleSetPercentage = (percentage: number) => {
     if (!balanceOfUser) return;
-    const balanceInTokens = formatEther(balanceOfUser);
-    const calculatedAmount = (Number(balanceInTokens) * percentage) / 100;
-    setAmount(calculatedAmount.toString());
+    const balanceInEther = formatEther(balanceOfUser);
+    const calculatedAmount =
+      (BigInt(balanceOfUser) * BigInt(percentage)) / BigInt(100);
+    setAmount(formatEther(calculatedAmount));
   };
 
   const handleSubmitSell = async () => {
@@ -73,16 +74,15 @@ export const SellSection = () => {
         return;
       }
 
-      if (
-        balanceOfUser &&
-        parseFloat(amount) > parseFloat(formatEther(balanceOfUser))
-      ) {
+      const parsedAmount = parseEther(amount);
+
+      if (balanceOfUser && parsedAmount > balanceOfUser) {
         showErrorToast("Insufficient balance");
         setLoading(false);
         return;
       }
 
-      if (!allowanceOfUser || parseEther(amount) > allowanceOfUser) {
+      if (!allowanceOfUser || parsedAmount > allowanceOfUser) {
         const approveTx = await approveSell(
           writeContractAsync,
           amount,
@@ -94,12 +94,7 @@ export const SellSection = () => {
           setLoading(false);
           return;
         }
-      } else {
-        showErrorToast(
-          "Approval not required, sufficient allowance available."
-        );
       }
-
       const amountOut = await getAmountOutETH(
         tokenAddress as `0x${string}`,
         amount
@@ -234,7 +229,7 @@ export const SellSection = () => {
         </button>
         <button
           className="bg-[#5600AA] p-2 rounded text-sm font-normal flex-1"
-          onClick={() => handleSetPercentage(99)}
+          onClick={() => handleSetPercentage(100)}
         >
           100%
         </button>

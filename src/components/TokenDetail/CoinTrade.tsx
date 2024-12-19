@@ -11,19 +11,19 @@ import Link from "next/link";
 export const CoinTrades = () => {
   const router = useRouter();
   const { tokenData, singleTokenisLoading } = useSingleTokenStore();
-  const { latestTrades } = useWebSocketStore();
+  const { latestTrade } = useWebSocketStore(); // Récupère le dernier trade unique
   const [displayedTrades, setDisplayedTrades] = useState(
     tokenData?.trades || []
   );
 
+  // Met à jour les trades lorsqu'un nouveau trade arrive via WebSocket
   useEffect(() => {
-    if (latestTrades && tokenData?.address) {
-      const newTrades = latestTrades.filter(
-        (trade) => trade.token.address === tokenData.address
-      );
-      if (newTrades.length > 0) {
+    if (latestTrade && tokenData?.address) {
+      // Vérifie si le nouveau trade correspond au token actuel
+      if (latestTrade.token.address === tokenData.address) {
         setDisplayedTrades((prevTrades) => {
-          const combinedTrades = [...newTrades, ...prevTrades];
+          // Combine les trades et trie par date
+          const combinedTrades = [latestTrade, ...prevTrades];
           return combinedTrades.sort(
             (a, b) =>
               new Date(b.created_at).getTime() -
@@ -32,8 +32,7 @@ export const CoinTrades = () => {
         });
       }
     }
-  }, [latestTrades, tokenData?.address]);
-  
+  }, [latestTrade, tokenData?.address]);
   useEffect(() => {
     if (tokenData?.trades) {
       setDisplayedTrades(
@@ -44,6 +43,7 @@ export const CoinTrades = () => {
       );
     }
   }, [tokenData?.trades]);
+
   if (singleTokenisLoading) {
     return (
       <div className="mt-8 space-y-4">
@@ -61,7 +61,6 @@ export const CoinTrades = () => {
   if (displayedTrades.length === 0) {
     return <div className="mt-8 text-center text-white">No trades yet</div>;
   }
-
   return (
     <>
       <div className="mt-8">
@@ -98,13 +97,13 @@ export const CoinTrades = () => {
                   </td>
                   <td className="py-2 px-4">
                     {trade.type === "buy"
-                      ? trade.outAmount
-                        ? Number(formatEther(BigInt(trade.outAmount))).toFixed(
+                      ? trade.inAmount
+                        ? Number(formatEther(BigInt(trade.inAmount))).toFixed(
                             4
                           )
                         : ""
-                      : trade.inAmount
-                      ? Number(formatEther(BigInt(trade.inAmount))).toFixed(6)
+                      : trade.outAmount
+                      ? Number(formatEther(BigInt(trade.outAmount))).toFixed(6)
                       : ""}
                   </td>
 

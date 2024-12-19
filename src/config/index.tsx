@@ -23,17 +23,17 @@ export const taraxaContract = {
 } as const;
 
 export const poolContract = {
-  address: "0x82353a6D85E691c9b434f239eb5180db73a14231",
+  address: "0xd1d0834b7Fa41515f93a3a3625411dA23b3CeF02",
   abi: poolAbi as any,
 } as const
 
 export const deployerContract = {
-  address: "0x1DD294370D8856732BB3dDF9a4874e84f77A1b51",
+  address: "0xd2aeEEC9732787dD47d825782C23ef8d156BD021",
   abi: deployerAbi as any,
 } as const;
 
 export const funStorageContract = {
-    address: "0x93c3869324b07095D37a92A37154BA95AB2503b3",
+    address: "0x2d45F592b1f6D988A523d4A0BDb16f2f8F62d7A2",
 };
 
 {/*

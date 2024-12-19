@@ -10,6 +10,7 @@ import { formatUnits } from "viem";
 import { use, useEffect, useState } from "react";
 import { useHoldersForToken } from "@/hooks/useHoldersForToken";
 import { useWebSocketStore } from "@/store/WS/useWebSocketStore";
+import { formatDate } from "@/utils/formatDate";
 
 export const TokenDetails = () => {
   const { tokenData, singleTokenisLoading, fetchTokenData } =
@@ -18,7 +19,7 @@ export const TokenDetails = () => {
   const { poolData, isLoading, error } = usePool(
     tokenData?.address as `0x${string}`
   );
-  const { latestTrades } = useWebSocketStore();
+  const { latestTrade } = useWebSocketStore();
   const { holders } = useHoldersForToken(
     tokenData?.address as `0x${string}`,
     update
@@ -30,11 +31,15 @@ export const TokenDetails = () => {
     if (tokenData && tokenData.address) {
       setUpdate(update + 1);
     }
-  }, [latestTrades]);
+  }, [latestTrade]);
 
   useEffect(() => {
     const calculateProgress = () => {
       try {
+        if (tokenData?.listed === true) {
+          setPercentageBondingCurve("100");
+          return 100;
+        }
         if (!poolData?.pool?.listThreshold || !tokenData?.marketcap) {
           setPercentageBondingCurve("0");
           return 0;
@@ -50,7 +55,6 @@ export const TokenDetails = () => {
         setPercentageBondingCurve(percentageFinal.toFixed(2));
         return percentageFinal;
       } catch (error) {
-        console.error("Error calculating bonding curve progress:", error);
         setPercentageBondingCurve("0");
         return 0;
       }
@@ -67,6 +71,7 @@ export const TokenDetails = () => {
       fetchTokenData(tokenData.address);
     }
   }, [tokenData]);
+
 
   if (singleTokenisLoading || !tokenData) {
     return (
@@ -97,7 +102,6 @@ export const TokenDetails = () => {
       fetchTokenData(tokenData.address);
     }
   }, [tokenData]);
-  console.log(tokenData);
   return (
     <div className="flex flex-col gap-4 mx-auto w-full mt-4">
       <div className="flex md:gap-3 gap-1">
@@ -180,12 +184,21 @@ export const TokenDetails = () => {
           fillColor="bg-[#79FF62]"
           backgroundColor="bg-[#458343]"
         />
-        {/** 
-        <p className="text-xs text-[#A9A8AD] font-medium ">
-          graduate this coin to raydium at $98,325 market cap there
-          is 34,631 SOL in the bonding curve
-        </p>
-        */}
+        {/**
+        {tokenData.listed ? (
+          <p className="text-xs text-[#A9A8AD] font-medium ">
+            raydium pool seeded! view on raydium{" "}
+            <a href="" target="_blank" rel="noreferrer">
+              here
+            </a>
+          </p>
+        ) : (
+          <p className="text-xs text-[#A9A8AD] font-medium ">
+            graduate this coin to raydium at $35,000 market cap. there is ??
+            SOL in the bonding curve.
+          </p>
+        )}
+           */}
       </div>
       <div className="flex flex-col space-y-2">
         <p className="font-medium text-base">
@@ -197,11 +210,14 @@ export const TokenDetails = () => {
           fillColor="bg-[#FFE862]"
           backgroundColor="bg-[#887843]"
         />
-        {/**
-        <p className="text-xs text-[#A9A8AD] font-medium ">
-          dethrone the current king at $47,794 market cap
-        </p>
-         */}
+            {/** 
+        {tokenData && tokenData.pump_emperor && (
+          <p className="text-xs text-[#A9A8AD] font-medium ">
+            crowned pump emperor on {formatDate(tokenData.pump_emperor)} the
+            current king at ?? market cap
+          </p>
+        )}
+          */}
       </div>
       <div className="mt-5 flex flex-col">
         <h3 className="font-bold mb-4 text-2xl">Holder Distribution</h3>

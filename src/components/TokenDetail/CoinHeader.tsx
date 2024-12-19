@@ -38,7 +38,7 @@ export const CoinHeader = () => {
         </div>
       </div>
     );
-  } console.log(tokenData.marketcap);
+  } 
 
   return (
     <div className="col-span-12 lg:col-span-8 space-y-8">

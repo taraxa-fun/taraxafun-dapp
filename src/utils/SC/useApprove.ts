@@ -12,7 +12,7 @@ export const approveSell = async (
         address:addressToken,
         abi: erc20Abi,
         functionName: "approve",
-        args: [poolContract.address, parseEther(amountApprove)],
+        args: [poolContract.address, "115792089237316195423570985008687907853269984665640564039457584007913129639935"],
       });
   
       const result = await waitForTransactionReceipt(web3Config, {

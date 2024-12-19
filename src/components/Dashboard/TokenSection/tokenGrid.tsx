@@ -15,7 +15,7 @@ import { useCommentWebSocketStore } from "@/store/WS/useWebSocketRepliesStore";
 export const TokenGrid = () => {
   const { tokens, isLoading, fetchTokens, currentPage } = useTokenStore();
   const { sortBy } = useTokenStore();
-  const { latestTrades, latestTokens, hasNewToken } = useWebSocketStore();
+  const { latestTrade, latestTokens, hasNewToken } = useWebSocketStore();
   const {initCommentWebSocket, cleanupCommentWebSocket, latestComments} = useCommentWebSocketStore()
   const { showAnimation } = useAnimationStore();
   const [displayedTokens, setDisplayedTokens] = useState<any[]>([]);
@@ -44,11 +44,11 @@ export const TokenGrid = () => {
   useEffect(() => {
     if (
       sortBy === "last-trade" &&
-      latestTrades.length > 0 &&
+      latestTrade &&
       showAnimation &&
       currentPage === 1
     ) {
-      const lastTrade = latestTrades[0];
+      const lastTrade = latestTrade;
   
       const existingToken = tokens.find(
         (token) =>
@@ -130,10 +130,10 @@ export const TokenGrid = () => {
       setIsShaking(true);
       setTimeout(() => setIsShaking(false), 200);
     }
-  }, [tokens, latestTrades, latestComments, sortBy, showAnimation, currentPage]);
+  }, [tokens, latestTrade, latestComments, sortBy, showAnimation, currentPage]);
 
   useEffect(() => {
-    console.log("CONDITION CREATED AT APPELÉ")
+
     if (
       sortBy === "created-at" &&
       hasNewToken &&
@@ -141,7 +141,7 @@ export const TokenGrid = () => {
       showAnimation
     ) {
       setTimeout(() => {
-        console.log("SET TIME OUT APPELÉ");
+
         fetchTokens();
         setDisplayedTokens(tokens);
         setIsShaking(true);

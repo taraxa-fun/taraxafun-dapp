@@ -41,6 +41,7 @@ interface TokenData {
   comments: Comment[];
   trades: TradeData[];
   replies_count?: number;
+  pump_emperor?: string;
 }
 
 interface TokenState {
@@ -67,6 +68,7 @@ export const useSingleTokenStore = create<TokenState>((set) => ({
           },
         }
       );
+
       set({
         tokenData: response.data,
         singleTokenisLoading: false,

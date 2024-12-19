@@ -49,7 +49,7 @@ export interface TradeData {
   user: {
     username: string;
     _id: string;
-    wallet: `0x${string}` ;
+    wallet: `0x${string}`;
     avatar: string;
   };
   token: {
@@ -67,7 +67,7 @@ export interface TradeData {
 interface WebSocketStore {
   hasNewToken: boolean;
   latestTokens: TokenMessage | null;
-  latestTrades: TradeData[];
+  latestTrade: TradeData | null;
   latestComment: CommentMessage | null;
   tokenWs: WebSocket | null;
   tradeWs: WebSocket | null;
@@ -79,37 +79,34 @@ interface WebSocketStore {
 export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
   hasNewToken: false,
   latestTokens: null,
-  latestTrades: [],
+  latestTrade: null, // Remplace `latestTrades` par un seul trade
+  latestComment: null,
   tokenWs: null,
   tradeWs: null,
-  latestComment: null,
   commentWs: null,
-  
+
   initWebSockets: () => {
     const state = get();
 
     // WebSocket pour les tokens
     if (!state.tokenWs) {
-      const tokenWs = new WebSocket(
-        `${wsUrl}/create-fun`
-      );
+      const tokenWs = new WebSocket(`${wsUrl}/create-fun`);
 
       tokenWs.onmessage = (event) => {
         const message = JSON.parse(event.data);
         if (message.type === "funCreated") {
           const tokenData = message.data as TokenMessage;
-          set({ 
+          set({
             latestTokens: tokenData,
-            hasNewToken: true  // Met le flag à true quand un nouveau token arrive
+            hasNewToken: true, // Met le flag à true quand un nouveau token arrive
           });
-          
+
           // Remet le flag à false après un court délai
           setTimeout(() => {
             set({ hasNewToken: false });
           }, 100);
         }
       };
-      
 
       tokenWs.onclose = () => {
         set((state) => ({ tokenWs: null }));
@@ -121,33 +118,23 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
 
     // WebSocket pour les trades
     if (!state.tradeWs) {
-      const tradeWs = new WebSocket(
-        `${wsUrl}/trade-call`
-      );
+      const tradeWs = new WebSocket(`${wsUrl}/trade-call`);
 
       tradeWs.onmessage = (event) => {
         const message = JSON.parse(event.data);
+
         if (message.type === "tradeCall") {
           const tradeData = message.data as TradeData;
-          set((state) => ({
-            latestTrades: [tradeData, ...state.latestTrades],
-          }));
+          set({ latestTrade: tradeData }); // Stocke uniquement le dernier trade
+
         }
       };
-
-      tradeWs.onerror = (event) => {
-        console.error("Trade WS error", event);
-      }
-
-      tradeWs.onopen = () => {
-        console.log("Trade WS connected");
-      }
 
       tradeWs.onclose = () => {
         set((state) => ({ tradeWs: null }));
         setTimeout(() => get().initWebSockets(), 5000);
       };
-      
+
       set({ tradeWs });
     }
   },
@@ -160,6 +147,6 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
     if (tradeWs) {
       tradeWs.close();
     }
-    set({ tokenWs: null, tradeWs: null });
+    set({ tokenWs: null, tradeWs: null, latestTrade: null }); 
   },
 }));

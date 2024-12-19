@@ -73,7 +73,6 @@ export const usePool = (
           args: [address],
         })) as any;
         const result = res as any;
-        console.log(res);
         setData({
           poolData: {
             creator: result[0],
@@ -98,7 +97,6 @@ export const usePool = (
           error: null,
         });
       } catch (error) {
-        console.error("Error details:", error);
         setData((prev) => ({
           ...prev,
           isLoading: false,
