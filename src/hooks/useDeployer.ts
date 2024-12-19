@@ -1,11 +1,10 @@
 import { deployerContract, web3Config } from "@/config";
-import { parseEther, parseGwei } from "viem";
-import { multicall, waitForTransactionReceipt } from "@wagmi/core";
+import { multicall } from "@wagmi/core";
 import { useEffect, useState } from "react";
 
 export const useDeployer = () => {
   const [data, setData] = useState({
-    antiSniperPercentage: "0",
+    antiSniperPercentage: BigInt(0),
     initialReserveETH: BigInt(0),
   });
 
@@ -27,11 +26,10 @@ export const useDeployer = () => {
       });
 
       setData({
-        antiSniperPercentage: (
-          (res[0].result as bigint) ?? BigInt(0)
-        ).toString(),
+        antiSniperPercentage: res[0].result as bigint,
         initialReserveETH: res[1].result as any,
       });
+      console.log(res[0].result);
     };
     fetch();
   }, []);

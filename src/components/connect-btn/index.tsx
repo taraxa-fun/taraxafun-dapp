@@ -3,7 +3,6 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useBalance, useSignMessage } from "wagmi";
 import Image from "next/image";
 import logoPlaceHolder from "../../assets/logo/taraxafunLogo.png";
-import { useEffect } from "react";
 import { useAuthStore } from "@/store/User/useAuthStore";
 import Link from "next/link";
 import { baseSepolia, bscTestnet, taraxaTestnet } from "viem/chains";

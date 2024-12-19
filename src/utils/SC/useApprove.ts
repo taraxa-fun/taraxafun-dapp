@@ -1,4 +1,4 @@
-import { poolContract, taraxaContract, web3Config } from "@/config";
+import { poolContract, web3Config } from "@/config";
 import { waitForTransactionReceipt } from "@wagmi/core";
 import { erc20Abi, parseEther } from "viem";
 
@@ -24,7 +24,6 @@ export const approveSell = async (
       }
       return false;
     } catch (e) {
-      console.error("Error in approveSell:", e);
       return false;
     }
   };

@@ -34,7 +34,6 @@ export const useHoldersForToken = (address: `0x${string}`, update: number) => {
             },
           });
           if (response.data?.items) {
-            setHolders(response.data.items);
           } else {
             setHolders([]);
           }

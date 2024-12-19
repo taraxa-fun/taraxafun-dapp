@@ -12,7 +12,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { TokenData } from "@/type/tokenDataCreate";
-import { useSupply } from "@/hooks/useSupply";
 import { useAccount, useWriteContract } from "wagmi";
 import { useAuthStore } from "@/store/User/useAuthStore";
 import { saveTokenToDatabase } from "@/utils/saveTokenToDb";
@@ -20,7 +19,6 @@ import { useRouter } from "next/router";
 import { deployToken } from "@/utils/SC/deployToken";
 import { uploadImageToken } from "@/utils/uploadImgeToken";
 import { showErrorToast, showSuccessToastTx } from "@/utils/toast/showToasts";
-import { getPercentageAntiSniperBeforeBuy } from "@/utils/SC/antiSniper";
 import { useDeployer } from "@/hooks/useDeployer";
 import { formatEther, parseEther } from "viem";
 import { formatNumber } from "@/utils/formatNumber";
@@ -43,7 +41,7 @@ export const CreateToken = () => {
   const [tokenData, setTokenData] = useState<TokenData>(initialTokenData);
   const resetForm = () => {
     setTokenData(initialTokenData);
-  };
+  };  
   const { initialReserveETH, antiSniperPercentage } = useDeployer();
   const router = useRouter();
   const { jwt } = useAuthStore();
@@ -61,8 +59,6 @@ export const CreateToken = () => {
   type SocialKey = keyof typeof tokenData.socialLinks;
   const [percentageAntiSniperRequired, setPercentageAntiSniperRequired] =
     useState("");
-
-  // check if all fields are correctly filled and check if the wallet is connected
   const validateForm = () => {
     if (!address) {
       toast({
@@ -104,13 +100,11 @@ export const CreateToken = () => {
     return true;
   };
 
-  // saves the value in the object relative to the input
   const handleInputChange = (key: TokenKey, value: string) => {
     setTokenData((prev) => ({ ...prev, [key]: value }));
     setErrors(null);
   };
 
-  // saves the value in the object relative to the social input
   const handleSocialChange = (key: SocialKey, value: string) => {
     setTokenData((prev) => ({
       ...prev,
@@ -118,7 +112,6 @@ export const CreateToken = () => {
     }));
   };
 
-  // saves the image in the object
   const handleFileChange = (file: File | null) => {
     setTokenData((prev) => ({
       ...prev,
@@ -126,19 +119,19 @@ export const CreateToken = () => {
     }));
   };
 
-  // sends the data to the contract
   const handleSubmit = async () => {
     if (!jwt || !address) return;
-
+    
+    // Validation de l'image
     if (tokenData.image) {
       const MAX_FILE_SIZE = 500 * 1024;
       const ALLOWED_FILE_TYPES = [".png", ".jpg", ".jpeg", ".gif"];
-
+  
       if (tokenData.image.size > MAX_FILE_SIZE) {
         showErrorToast("Image size must be less than 500KB");
         return;
       }
-
+  
       const fileExtension = tokenData.image.name
         .toLowerCase()
         .substring(tokenData.image.name.lastIndexOf("."));
@@ -147,43 +140,39 @@ export const CreateToken = () => {
         return;
       }
     }
-    if (priceStartInEth) {
-      const tokensReceived =
-        Number(tokenData._amountAntiSnipe) / priceStartInEth;
-      const totalSupply = Number(formatEther(supplyValue));
-      const maxAllowedTokens =
-        (totalSupply * Number(antiSniperPercentage)) / 100;
+    const finalTotalSupply = !tokenData._totalSupply || parseFloat(tokenData._totalSupply) === 0
+    ? supplyValue.toString()
+    : parseEther(tokenData._totalSupply);
+  
+    if (tokenData._amountAntiSnipe && priceStartInEth) {
+      const totalSupplyNumber = Number(formatEther(BigInt(finalTotalSupply)));
+      const antiSnipeAmount = Number(tokenData._amountAntiSnipe);
+
+      const tokensReceived = antiSnipeAmount / priceStartInEth;
+    
+      const maxAllowedTokens = (totalSupplyNumber * Number(antiSniperPercentage)) / 10000;
 
       if (tokensReceived > maxAllowedTokens) {
         showErrorToast(
-          `You cannot receive more than ${antiSniperPercentage}% (${formatNumber(
-            maxAllowedTokens
-          )} tokens) of total supply`
+          `Anti-snipe amount cannot exceed ${(Number(antiSniperPercentage) / 100).toFixed(2)}% of total supply (${maxAllowedTokens.toFixed(4)} tokens).`
         );
         return;
       }
     }
+    
     setLoading(true);
     try {
-      const isAntiSnipeEnabled =
-        parseFloat(tokenData._amountAntiSnipe || "0") > 0;
-      const finalTotalSupply =
-        !tokenData._totalSupply || parseFloat(tokenData._totalSupply) === 0
-          ? supplyValue.toString()
-          : tokenData._totalSupply;
-
       const transactionResult = await deployToken(
         writeContractAsync,
         tokenData._name,
         tokenData._symbol,
         tokenData._data,
-        finalTotalSupply,
+        finalTotalSupply.toString(),
         tokenData._liquidityETHAmount,
         tokenData._amountAntiSnipe || "0",
         showMaxBuy ? tokenData._maxBuyPerWallet || "0" : "0"
       );
-
-
+  
       if (transactionResult) {
         await new Promise((resolve) => setTimeout(resolve, 5000));
         const res = await saveTokenToDatabase(
@@ -193,6 +182,7 @@ export const CreateToken = () => {
           tokenData.socialLinks.telegram,
           tokenData.socialLinks.website
         );
+        
         if (res && tokenData.image) {
           await uploadImageToken(
             tokenData.image,
@@ -202,6 +192,7 @@ export const CreateToken = () => {
         } else {
           console.error("Error saving token to database:", res);
         }
+        
         showSuccessToastTx({
           title: `Coin "${tokenData._name}" [${tokenData._symbol}] created successfully!`,
           description: "Transaction confirmed",
@@ -230,8 +221,6 @@ export const CreateToken = () => {
   return (
     <section className="pt-32 pb-20 lg:w-6/12 w-12/12 md:w-8/12 mx-auto max-w-lg px-4">
       <div className="relative w-full mb-8">
-        {/*
-         */}
         <Link
           href="/"
           className="font-semibold text-md cursor-pointer absolute left-0 top-1/2 -translate-y-1/2"

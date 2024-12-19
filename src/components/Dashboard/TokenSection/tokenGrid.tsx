@@ -7,9 +7,7 @@ import { TokenType } from "@/type/tokenType";
 import Link from "next/link";
 import { useAnimationStore } from "@/store/useAnimationStore";
 import { useWebSocketStore } from "@/store/WS/useWebSocketStore";
-import { formatNumber } from "@/utils/formatNumber";
 import { formatMarketCap } from "@/utils/formatMarketCap";
-import { useRepliesTokenIdStore } from "@/store/SingleToken/useRepliesTokenIdStore";
 import { useCommentWebSocketStore } from "@/store/WS/useWebSocketRepliesStore";
 
 export const TokenGrid = () => {

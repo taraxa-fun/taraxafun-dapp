@@ -57,20 +57,6 @@ export const Replies = ({ replies, username }: RepliesProps) => {
               )}
      
             </div>
-            {/** 
-            {reply.imagePath && (
-              <div className="mb-4 max-w-[100px] max-h-[100px] relative overflow-hidden rounded-lg">
-                <Image
-                  src={reply.imagePath}
-                  alt="Reply image"
-                  width={100}
-                  height={100}
-                  className="object-cover w-full h-full"
-                />
-              </div>
-            )}
-              */}
-
             <p className="text-sm text-start text-gray-200">{reply.content}</p>
           </div>
         ))}

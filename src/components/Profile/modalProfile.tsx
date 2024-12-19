@@ -7,11 +7,10 @@ import {
 } from "@/components/ui/dialog";
 import logoPlaceHolder from "../../assets/logo/taraxafunLogo.png";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuthStore } from "@/store/User/useAuthStore";
 import { uploadImage } from "@/utils/uploadImageUser";
 import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/router";
 
 interface ModalProfileProps {
   trigger: React.ReactNode;
@@ -24,24 +23,9 @@ export const ModalProfile: React.FC<ModalProfileProps> = ({ trigger }) => {
   const [error, setError] = useState<string | null>(null);
   const { jwt, userMe, updateUserMe } = useAuthStore();
   const { toast } = useToast();
-  const router = useRouter();
   const [username, setUsername] = useState(userMe?.user.username || "");
   const [filedChanged, setFieldChanged] = useState(false);
 
-  {
-    /** 
-  const handleBioChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const text = event.target.value;
-    setBioText(text);
-  
-    if (text !== userMe?.user.description) {
-      setFieldChanged(true);
-    } else {
-      setFieldChanged(false);
-    }
-  };
-  */
-  }
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const text = event.target.value;
     setUsername(text);
@@ -191,22 +175,6 @@ export const ModalProfile: React.FC<ModalProfileProps> = ({ trigger }) => {
               onChange={handleUsernameChange}
             />
           </div>
-          {/** 
-          <div className="flex flex-col">
-            <div className="flex items-center justify-between mb-1">
-              <label className="text-sm font-normal">Bio (optional)</label>
-              <div className="text-sm text-gray-400">
-                {bioCharactersRemaining}/{bioCharacterLimit}
-              </div>
-            </div>
-            <textarea
-              className="bg-transparent border border-white rounded-lg p-4 text-white focus:outline-none focus:border-[#9A62FF] min-h-[100px]"
-              placeholder="Enter your bio"
-              value={bioText}
-              onChange={handleBioChange}
-            />
-          </div>
-            */}
         </div>
 
         <button

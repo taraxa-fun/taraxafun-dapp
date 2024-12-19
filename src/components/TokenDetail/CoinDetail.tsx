@@ -7,10 +7,10 @@ import Telegramlogo from "../../assets/logo/telegramLogo.png";
 import WebsiteLogo from "../../assets/logo/websiteLogo.png";
 import { usePool } from "@/hooks/usePool";
 import { formatUnits } from "viem";
-import { use, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import { useHoldersForToken } from "@/hooks/useHoldersForToken";
 import { useWebSocketStore } from "@/store/WS/useWebSocketStore";
-import { formatDate } from "@/utils/formatDate";
+
 
 export const TokenDetails = () => {
   const { tokenData, singleTokenisLoading, fetchTokenData } =

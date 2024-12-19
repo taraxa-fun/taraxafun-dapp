@@ -125,13 +125,6 @@ export const BuySection = () => {
   return (
     <>
       <div className="flex items-center justify-between gap-2 mb-1">
-        {/*
-        {selectedTransactionType === "buy" && (
-          <button className="text-white" onClick={handleTokenSwitch}>
-            (switch to {selectedToken ? "TARA" : token?.symbol})
-          </button>
-        )}
-           */}
         <Dialog>
           <DialogTrigger className="text-white underline text-sm">
             Set max. slippage (%)
@@ -155,32 +148,6 @@ export const BuySection = () => {
                 when placing trades
               </p>
             </div>
-            {/**  PRORITY FEE
-            <div className="flex flex-col space-y-1">
-              <label className="font-medium text-base">Priority fee</label>
-              <div className="flex gap-2 items-center border border-[#9A62FF] rounded mb-4">
-                <input
-                disabled
-                  className="flex-1 bg-transparent p-4 outline-none focus:outline-none"
-                  value={tradeData.priorityFee}
-                  onChange={(e) =>
-                    handleInputChange(e.target.value, "priorityFee")
-                  }
-                  type="text"
-                  placeholder="Enter priority fee"
-                />
-                <div className="flex items-center gap-1 p-4">
-                  <Image
-                    src={TaraxaLogoChain}
-                    alt="Taraxa Logo Chain"
-                    width={32}
-                    height={32}
-                  />
-                  <span className="text-sm font-bold">TARA</span>
-                </div>
-              </div>
-            </div>
-            */}
             <DialogClose asChild>
               <button className="p-2 rounded w-full bg-[#5600AA] text-base font-normal">
                 Close

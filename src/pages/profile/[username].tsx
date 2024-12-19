@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
-import { Navbar } from "@/components/Navbar/navbar";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import logoPlaceHolder from "../../assets/logo/taraxafunLogo.png";
 import { ProfileTab } from "@/type/profile";
-import { CoinsHeld } from "@/components/Profile/coinsHeld";
 import { TabNavigation } from "@/components/Profile/tabNavigation";
 import { CoinsCreated } from "@/components/Profile/coinsCreated";
 import { ModalProfile } from "@/components/Profile/modalProfile";

@@ -1,7 +1,6 @@
 import { deployerContract, web3Config } from "@/config";
 import { parseEther, parseGwei } from "viem";
-import { multicall, waitForTransactionReceipt } from "@wagmi/core";
-import { useEffect, useState } from "react";
+import {  waitForTransactionReceipt } from "@wagmi/core";
 
 export const deployToken = async (
   writeContractAsync: (params: any) => Promise<any>,

@@ -22,7 +22,6 @@ export const CreateReply = () => {
   const { jwt } = useAuthStore();
   const { tokenData } = useSingleTokenStore();
   const { createReply } = useRepliesTokenIdStore();
-  const { toast } = useToast();
   const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (e.target.value.length <= maxCharacters) {
       setComment(e.target.value);

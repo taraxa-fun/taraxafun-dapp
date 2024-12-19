@@ -11,18 +11,17 @@ import Link from "next/link";
 export const CoinTrades = () => {
   const router = useRouter();
   const { tokenData, singleTokenisLoading } = useSingleTokenStore();
-  const { latestTrade } = useWebSocketStore(); // Récupère le dernier trade unique
+  const { latestTrade } = useWebSocketStore(); 
   const [displayedTrades, setDisplayedTrades] = useState(
     tokenData?.trades || []
   );
 
-  // Met à jour les trades lorsqu'un nouveau trade arrive via WebSocket
+
   useEffect(() => {
     if (latestTrade && tokenData?.address) {
-      // Vérifie si le nouveau trade correspond au token actuel
+ 
       if (latestTrade.token.address === tokenData.address) {
         setDisplayedTrades((prevTrades) => {
-          // Combine les trades et trie par date
           const combinedTrades = [latestTrade, ...prevTrades];
           return combinedTrades.sort(
             (a, b) =>

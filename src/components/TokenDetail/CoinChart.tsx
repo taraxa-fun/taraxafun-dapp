@@ -32,18 +32,17 @@ const CoinChart: React.FC = () => {
   const [chartData, setChartData] = useState<CandlestickData<Time>[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Formatage des données en fonction de la source
+
   const formatCandle = (candle: CandleData | WebSocketCandle): CandlestickData<Time> => ({
     time: "time" in candle
-      ? Math.floor(parseInt(candle.time) / 1000) as Time // API (getCandles)
-      : Math.floor(new Date(candle.startTime).getTime() / 1000) as Time, // WebSocket
+      ? Math.floor(parseInt(candle.time) / 1000) as Time
+      : Math.floor(new Date(candle.startTime).getTime() / 1000) as Time,
     open: parseFloat(formatEther(BigInt(candle.open))),
     high: parseFloat(formatEther(BigInt(candle.high))),
     low: parseFloat(formatEther(BigInt(candle.low))),
     close: parseFloat(formatEther(BigInt(candle.close))),
   });
 
-  // Récupération initiale des données
   const fetchData = async () => {
     if (!tokenData?.address || !seriesRef.current) return;
 
@@ -52,7 +51,7 @@ const CoinChart: React.FC = () => {
       const candles: CandleData[] = await getCandles(tokenData.address);
       const formattedData = candles.map(formatCandle);
 
-      // Tri des données par ordre croissant de temps
+
       formattedData.sort((a, b) => (a.time as number) - (b.time as number));
 
       setChartData(formattedData);
@@ -121,7 +120,7 @@ const CoinChart: React.FC = () => {
     };
   }, []);
 
-  // Gestion des WebSockets
+
   useEffect(() => {
     if (!tokenData?.address) return;
 
@@ -141,26 +140,28 @@ const CoinChart: React.FC = () => {
   useEffect(() => {
     const latestCandle = selectedInterval === "1m" ? latestCandle1m : null;
     if (latestCandle) {
-
-      const newCandle = formatCandle(latestCandle);
+      const newCandle = formatCandle(latestCandle.candle);
+      
       setChartData((prevData) => {
-        const existingIndex = prevData.findIndex(
-          (candle) => candle.time === newCandle.time
-        );
-
         const updatedData = [...prevData];
-
-        if (existingIndex !== -1) {
-
-          updatedData[existingIndex] = newCandle;
-        } else {
-
-          updatedData.push(newCandle);
+  
+        if (latestCandle.type === "CANDLE_UPDATE") {
+          if (updatedData.length > 0) {
+            updatedData[updatedData.length - 1] = newCandle;
+          }
+        } else if (latestCandle.type === "NEW_CANDLE") {
+          const existingIndex = updatedData.findIndex(
+            (candle) => candle.time === newCandle.time
+          );
+  
+          if (existingIndex !== -1) {
+            updatedData[existingIndex] = newCandle;
+          } else {
+            updatedData.push(newCandle);
+          }
         }
-
-
         updatedData.sort((a, b) => (a.time as number) - (b.time as number));
-
+  
         return updatedData;
       });
     }

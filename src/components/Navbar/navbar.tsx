@@ -5,8 +5,6 @@ import xLogo from "../../assets/logo/xLogo.png";
 import telegramLogo from "../../assets/logo/telegramLogo.png";
 import instagramLogo from "../../assets/logo/instagramLogo.png";
 import tiktokLogo from "../../assets/logo/tiktokLogo.png";
-import placeholderNav from "../../assets/placeholderNav.png";
-import placeholderNavRounded from "../../assets/placeholderNavRounded.png";
 import { CustomBtnApp } from "../connect-btn";
 import { HowItWorksModal } from "../HowItWorks/modalHowItWorks";
 import Link from "next/link";
@@ -17,7 +15,6 @@ import { useTokenStore } from "@/store/useAllTokenStore";
 import { Skeleton } from "../ui/skeleton";
 
 export const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const { latestTrade, latestTokens } = useWebSocketStore();
   const { trades } = useLastTrades();
   const { tokens, fetchTokens, isLoading } = useTokenStore();
@@ -27,14 +24,13 @@ export const Navbar = () => {
   const [isTradeShaking, setIsTradeShaking] = useState(false);
   const [displayedToken, setDisplayedToken] = useState<any>(null);
   const [isTokenShaking, setIsTokenShaking] = useState(false);
-
+  const [currentTradeIndex, setCurrentTradeIndex] = useState(0);
   useEffect(() => {
     if (tokens.length === 0) {
       fetchTokens();
     }
   }, []);
 
-  // Réagir directement au latestTrade
   useEffect(() => {
     if (latestTrade) {
       setDisplayedTrade(latestTrade);
@@ -42,14 +38,23 @@ export const Navbar = () => {
       setTimeout(() => setIsTradeShaking(false), 200);
       setIsTradesLoading(false);
     } else if (trades.length > 0) {
-      setDisplayedTrade(trades[0]);
       setIsTradesLoading(false);
+      const tradesToDisplay = trades.slice(0, 5);
+      
+      const tradeInterval = setInterval(() => {
+        setCurrentTradeIndex((prevIndex) => (prevIndex + 1) % tradesToDisplay.length);
+      }, 2000);
+  
+      setDisplayedTrade(tradesToDisplay[currentTradeIndex]);
+      setIsTradeShaking(true);
+      setTimeout(() => setIsTradeShaking(false), 200);
+  
+      return () => clearInterval(tradeInterval);
     } else {
       setIsTradesLoading(true);
     }
-  }, [latestTrade, trades]);
-
-  // Réagir directement au latestTokens
+  }, [latestTrade, trades, currentTradeIndex]);
+  
   useEffect(() => {
     if (latestTokens && latestTokens.symbol) {
       setDisplayedToken(latestTokens);
@@ -83,7 +88,9 @@ export const Navbar = () => {
                 <p className="text-sm font-semibold">(support)</p>
               </div>
               <div className="flex items-center gap-1">
+                <a href='https://x.com/taraxadotfun' target="_blank" rel="noopener noreferrer">
                 <Image src={xLogo} alt="X Logo" width={18} height={18} />
+                </a>
                 <Image
                   src={telegramLogo}
                   alt="Telegram Logo"

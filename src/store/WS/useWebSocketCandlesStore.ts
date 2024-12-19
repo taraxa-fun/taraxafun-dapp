@@ -15,13 +15,16 @@ export interface WebSocketCandle {
 interface WebSocketMessage {
   type: string;
   data: {
-    type: string;
+    type: "CANDLE_UPDATE" | "NEW_CANDLE";
     candle: WebSocketCandle;
   };
 }
 
 interface WebSocketStore {
-  latestCandle1m: WebSocketCandle | null; // Une seule bougie
+  latestCandle1m: {
+    type: "CANDLE_UPDATE" | "NEW_CANDLE";
+    candle: WebSocketCandle;
+  } | null;
   tokenWs: WebSocket | null;
   hasNewCandle: boolean;
   initWebSockets: () => void;
@@ -29,7 +32,7 @@ interface WebSocketStore {
 }
 
 export const useWebSocketCandlesStore = create<WebSocketStore>((set, get) => ({
-  latestCandle1m: null, // Initialise avec `null`
+  latestCandle1m: null, 
   tokenWs: null,
   hasNewCandle: false,
 
@@ -44,13 +47,12 @@ export const useWebSocketCandlesStore = create<WebSocketStore>((set, get) => ({
           const message: WebSocketMessage = JSON.parse(event.data);
 
           if (
-            message.type === "candle1M" &&
-            message.data.type === "NEW_CANDLE"
+            message.type === "candle1M" 
           ) {
-            const newCandle = message.data.candle;
+
 
             set({
-              latestCandle1m: newCandle,
+              latestCandle1m: message.data, 
               hasNewCandle: true,
             });
             setTimeout(() => {
@@ -64,10 +66,6 @@ export const useWebSocketCandlesStore = create<WebSocketStore>((set, get) => ({
       tokenWs.onclose = () => {
         set({ tokenWs: null });
         setTimeout(() => get().initWebSockets(), 5000);
-      };
-
-      tokenWs.onerror = (error) => {
-        console.error("WebSocket error:", error);
       };
 
       set({ tokenWs });

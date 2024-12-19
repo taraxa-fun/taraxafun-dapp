@@ -14,7 +14,6 @@ export const CoinHeader = () => {
 
   useEffect(() => {
     if (latestTrade && tokenData?.address) {
-      // Vérifier directement si l'adresse correspond
       if (latestTrade.token.address === tokenData.address) {
         setMarketCap(latestTrade.token.marketcap);
       }

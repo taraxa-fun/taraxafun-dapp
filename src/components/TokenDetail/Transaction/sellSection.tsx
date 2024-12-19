@@ -132,13 +132,6 @@ export const SellSection = () => {
   return (
     <>
       <div className="flex items-center justify-between gap-2 mb-1">
-        {/*
-        {selectedTransactionType === "buy" && (
-          <button className="text-white" onClick={handleTokenSwitch}>
-            (switch to {selectedToken ? "TARA" : token?.symbol})
-          </button>
-        )}
-           */}
         <Dialog>
           <DialogTrigger className="text-white underline text-sm">
             Set max. slippage (%)

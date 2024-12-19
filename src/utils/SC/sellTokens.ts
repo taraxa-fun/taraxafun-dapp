@@ -1,6 +1,6 @@
-import { poolContract, taraxaContract, web3Config } from "@/config";
+import { poolContract, web3Config } from "@/config";
 import { waitForTransactionReceipt } from "@wagmi/core";
-import { erc20Abi, parseEther } from "viem";
+import {  parseEther } from "viem";
 
 export const sellToken = async (
   writeContractAsync: (params: any) => Promise<any>,

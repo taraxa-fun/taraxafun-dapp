@@ -1,4 +1,4 @@
-import { TokenType } from "@/type/tokenType";
+
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { handleCopy } from "@/utils/copy";
