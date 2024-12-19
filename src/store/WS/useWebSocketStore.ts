@@ -79,7 +79,7 @@ interface WebSocketStore {
 export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
   hasNewToken: false,
   latestTokens: null,
-  latestTrade: null, // Remplace `latestTrades` par un seul trade
+  latestTrade: null,
   latestComment: null,
   tokenWs: null,
   tradeWs: null,
@@ -98,10 +98,9 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
           const tokenData = message.data as TokenMessage;
           set({
             latestTokens: tokenData,
-            hasNewToken: true, // Met le flag à true quand un nouveau token arrive
+            hasNewToken: true,
           });
 
-          // Remet le flag à false après un court délai
           setTimeout(() => {
             set({ hasNewToken: false });
           }, 100);
@@ -116,7 +115,6 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
       set({ tokenWs });
     }
 
-    // WebSocket pour les trades
     if (!state.tradeWs) {
       const tradeWs = new WebSocket(`${wsUrl}/trade-call`);
 
@@ -125,8 +123,7 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
 
         if (message.type === "tradeCall") {
           const tradeData = message.data as TradeData;
-          set({ latestTrade: tradeData }); // Stocke uniquement le dernier trade
-
+          set({ latestTrade: tradeData });
         }
       };
 
@@ -147,6 +144,6 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
     if (tradeWs) {
       tradeWs.close();
     }
-    set({ tokenWs: null, tradeWs: null, latestTrade: null }); 
+    set({ tokenWs: null, tradeWs: null, latestTrade: null });
   },
 }));

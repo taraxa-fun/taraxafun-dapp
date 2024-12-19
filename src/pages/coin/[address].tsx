@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { Navbar } from "@/components/Navbar/navbar";
 import { NextPage } from "next";
 import { CoinReplies } from "@/components/TokenDetail/CoinReplies";
 import { useState } from "react";
@@ -16,7 +15,8 @@ import CoinChart from "@/components/TokenDetail/CoinChart";
 
 const CoinPage: NextPage = () => {
   const [activeTab, setActiveTab] = useState<"thread" | "trades">("thread");
-  const { fetchTokenData, singleTokenisLoading, tokenData, error } = useSingleTokenStore();
+  const { fetchTokenData, singleTokenisLoading, tokenData, error } =
+    useSingleTokenStore();
   const { fetchReplies } = useRepliesTokenIdStore();
   const router = useRouter();
   const { address } = router.query;
@@ -28,9 +28,13 @@ const CoinPage: NextPage = () => {
   }, [address]);
 
   if (singleTokenisLoading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
   }
-  
+
   return (
     <div className="min-h-screen ">
       <div className="mb-4 pt-32 px-4">
@@ -39,20 +43,16 @@ const CoinPage: NextPage = () => {
       <div className="grid grid-cols-12 gap-4 mt-8 px-4 pb-20">
         <CoinHeader />
 
-        {/* Chart Section */}
         <div className="col-span-12 lg:col-span-8 space-y-8 order-1 lg:order-1">
           <CoinChart />
         </div>
 
-        {/* Transaction Section */}
         <div className="col-span-12 lg:col-span-4 order-2 lg:order-1 flex flex-col space-y-4">
           <CardTransaction />
         </div>
 
-        {/* Thread and Trades */}
         <div className="col-span-12 lg:col-span-8 space-y-8 order-4 lg:order-2">
           <div className="flex justify-between items-center gap-4">
-            {/* Navigation Tabs */}
             <div className="flex gap-4">
               <button
                 className={`py-2 px-4 rounded-md ${
@@ -76,18 +76,15 @@ const CoinPage: NextPage = () => {
               </button>
             </div>
 
-            {/* CreateReply Component */}
             <div>
               <CreateReply />
             </div>
           </div>
 
-          {/* Content based on active tab */}
           {activeTab === "thread" && <CoinReplies />}
           {activeTab === "trades" && <CoinTrades />}
         </div>
 
-        {/* Token Details */}
         <div className="col-span-12 lg:col-span-4 order-3 lg:order-3">
           <TokenDetails />
         </div>

@@ -10,7 +10,7 @@ interface AuthStore {
   address: string | null;
   userMe: UserProfile | null;
   loading: boolean;
-  isProfileUpdating: boolean; // Nouveau boolean
+  isProfileUpdating: boolean; 
 
   initAuth: (
     address: string,

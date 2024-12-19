@@ -83,7 +83,7 @@ export const Navbar = () => {
     <>
       <nav className="absolute w-full lg:w-12/12 lg:mx-auto z-40 lg:top-2 top-0 px-4 backdrop-blur-[10px] rounded-none lg:rounded-full">
         <div className="grid grid-cols-12 items-center mx-auto py-2">
-          {/* Left Section */}
+
           <div className="col-span-3 flex items-center gap-4">
             <Link href="/" className="flex-shrink-0">
               <Image
@@ -124,10 +124,10 @@ export const Navbar = () => {
             </div>
           </div>
 
-          {/* Center Section */}
+
           <div className="sm:col-span-6 flex justify-center items-center space-x-4">
             <ul className="flex gap-4">
-              {/* Latest Trade */}
+
               <li
                 className={`hidden md:block lg:block ${
                   isTradeShaking ? "shake-animation" : ""
@@ -181,7 +181,7 @@ export const Navbar = () => {
                 )}
               </li>
 
-              {/* Latest Token */}
+
               <li
                 className={`hidden md:block lg:block ${
                   isTokenShaking ? "shake-animation" : ""
@@ -221,7 +221,7 @@ export const Navbar = () => {
             </ul>
           </div>
 
-          {/* Right Section */}
+
           <div className="col-span-8 sm:col-span-3 flex justify-end">
             <CustomBtnApp className="text-sm font-semibold" />
           </div>

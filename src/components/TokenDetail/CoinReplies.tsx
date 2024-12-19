@@ -1,7 +1,6 @@
 import { Skeleton } from "../ui/skeleton";
 import { useRepliesTokenIdStore } from "@/store/SingleToken/useRepliesTokenIdStore";
 import Link from "next/link";
-import { getTimeAgo } from "@/utils/calculeTime";
 import { formatDate } from "@/utils/formatDate";
 import Image from "next/image";
 

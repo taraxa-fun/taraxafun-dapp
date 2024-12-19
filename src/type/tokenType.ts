@@ -35,7 +35,7 @@ export interface TokenCreatedProfile {
   user: string;
 }
 
-// Interface pour la réponse de l'API
+
 export interface TokenResponse {
   success: boolean;
   data: {

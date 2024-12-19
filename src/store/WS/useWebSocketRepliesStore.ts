@@ -44,9 +44,9 @@ export const useCommentWebSocketStore = create<CommentWebSocketStore>((set, get)
       commentWs.onmessage = (event) => {
         const message = JSON.parse(event.data);
         if (message.type === "commentCreated") {
-          const commentData = message.data as CommentMessage[]; // Le message entier est déjà un tableau
+          const commentData = message.data as CommentMessage[]; 
           set((state) => ({
-            latestComments: [...commentData, ...state.latestComments], // Ajoute les nouveaux commentaires au début
+            latestComments: [...commentData, ...state.latestComments], 
             hasNewComment: true,
           }));
 
@@ -72,6 +72,6 @@ export const useCommentWebSocketStore = create<CommentWebSocketStore>((set, get)
     if (commentWs) {
       commentWs.close();
     }
-    set({ commentWs: null, latestComments: [] }); // Réinitialise aussi le tableau
+    set({ commentWs: null, latestComments: [] });
   },
 }));

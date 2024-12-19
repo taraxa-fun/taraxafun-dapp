@@ -47,7 +47,6 @@ export const useBalanceAllowanceOfUser = (
           allowanceOfUser: results[1]?.result as bigint,
         });
       } catch (err: any) {
-        console.error("Error fetching token details:", err);
         setError("Failed to fetch token details");
         setData({ balanceOfUser: null, allowanceOfUser: null });
       } finally {

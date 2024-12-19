@@ -6,7 +6,7 @@ export const saveTokenToDatabase = async (
   tokenAddress: string,
   twitter?: string,
   telegram?: string,
-  website?: string,
+  website?: string
 ) => {
   try {
     if (!jwt) {
@@ -17,9 +17,9 @@ export const saveTokenToDatabase = async (
       `${servUrl}/token/create`,
       {
         address: tokenAddress.toLocaleLowerCase(),
-        twitter: twitter || "", 
-        telegram: telegram || "", 
-        website: website || "", 
+        twitter: twitter || "",
+        telegram: telegram || "",
+        website: website || "",
       },
       {
         headers: {

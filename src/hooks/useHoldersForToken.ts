@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { servUrl } from "@/config/servUrl";
-import { TaraToApiUrl } from "@/config";
 
 interface Holder {
     address: {

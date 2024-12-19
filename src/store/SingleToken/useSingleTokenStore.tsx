@@ -18,11 +18,6 @@ interface Comment {
   created_at: string;
 }
 
-interface CommentsStats {
-  count: number;
-  likes: number;
-}
-
 interface TokenData {
   _id: string;
   address: `0x${string}`;

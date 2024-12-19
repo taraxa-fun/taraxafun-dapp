@@ -1,11 +1,11 @@
 // components/CustomBtnApp.tsx
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useAccount, useBalance, useSignMessage } from "wagmi";
+import { useBalance } from "wagmi";
 import Image from "next/image";
 import logoPlaceHolder from "../../assets/logo/taraxafunLogo.png";
 import { useAuthStore } from "@/store/User/useAuthStore";
 import Link from "next/link";
-import { baseSepolia, bscTestnet, taraxaTestnet } from "viem/chains";
+import { baseSepolia } from "viem/chains";
 
 export const CustomBtnApp: React.FC<{ className?: string }> = ({
   className,

@@ -1,6 +1,6 @@
 import { poolContract, web3Config } from "@/config";
 import { waitForTransactionReceipt } from "@wagmi/core";
-import {  parseEther } from "viem";
+import { parseEther } from "viem";
 
 export const sellToken = async (
   writeContractAsync: (params: any) => Promise<any>,
@@ -26,5 +26,3 @@ export const sellToken = async (
     return false;
   }
 };
-
-

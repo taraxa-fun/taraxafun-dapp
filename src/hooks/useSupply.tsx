@@ -1,10 +1,6 @@
 import { deployerContract, web3Config } from "@/config";
-import { parseEther, parseGwei } from "viem";
-import {
-  multicall,
-  readContract,
-  waitForTransactionReceipt,
-} from "@wagmi/core";
+
+import { readContract } from "@wagmi/core";
 import { useEffect, useState } from "react";
 
 export const useSupply = (
@@ -29,7 +25,7 @@ export const useSupply = (
           suplyValue: result,
         });
       } catch (error) {
-        console.error("Error fetching supply value:", error);
+        return error
       }
     };
 

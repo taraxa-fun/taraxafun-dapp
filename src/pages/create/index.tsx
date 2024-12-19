@@ -3,9 +3,9 @@ import { NextPage } from "next";
 
 const Create: NextPage = () => {
   return (
-<div className="relative min-h-screen ">
-  <CreateToken />
-</div>
+    <div className="relative min-h-screen ">
+      <CreateToken />
+    </div>
   );
 };
 

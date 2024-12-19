@@ -122,7 +122,6 @@ export const CreateToken = () => {
   const handleSubmit = async () => {
     if (!jwt || !address) return;
     
-    // Validation de l'image
     if (tokenData.image) {
       const MAX_FILE_SIZE = 500 * 1024;
       const ALLOWED_FILE_TYPES = [".png", ".jpg", ".jpeg", ".gif"];
@@ -234,7 +233,7 @@ export const CreateToken = () => {
       </div>
 
       <div className="space-y-6">
-        {/* Name */}
+
         <div className="flex flex-col gap-2">
           <label className="text-[#9A62FF] text-base font-medium">Name</label>
           <input
@@ -246,7 +245,6 @@ export const CreateToken = () => {
           />
         </div>
 
-        {/* Ticker */}
         <div className="flex flex-col gap-2">
           <label className="text-[#9A62FF] text-base font-medium">Ticker</label>
           <input
@@ -263,7 +261,7 @@ export const CreateToken = () => {
           />
         </div>
 
-        {/* Description */}
+
         <div className="flex flex-col gap-2">
           <label className="text-[#9A62FF] text-base font-medium">
             Description
@@ -276,7 +274,7 @@ export const CreateToken = () => {
           />
         </div>
 
-        {/* Image */}
+
         <div className="flex flex-col gap-2">
           <label className="text-[#9A62FF] text-base font-medium">
             Image or video
@@ -342,7 +340,7 @@ export const CreateToken = () => {
           </div>
         </div>
 
-        {/* Advanced Options */}
+
         <div className="mt-6">
           <button
             className="flex items-center gap-2 text-[#9A62FF] hover:opacity-80"
@@ -374,7 +372,6 @@ export const CreateToken = () => {
 
           {showAdvanced && (
             <div className="mt-4 p-6 bg-[#2D0060] rounded-lg space-y-6">
-              {/* Initial Supply */}
               <div className="flex flex-col gap-2">
                 <label className="text-[#9A62FF] text-base font-medium">
                   Initial supply
@@ -393,7 +390,7 @@ export const CreateToken = () => {
                 />
               </div>
 
-              {/* Bonding Curve */}
+
               <div className="space-y-4">
                 <label className="text-[#9A62FF] text-base font-medium">
                   Bonding curve type
@@ -437,7 +434,7 @@ export const CreateToken = () => {
                   </div>
                 </div>
               </div>
-              {/* max buy per wallet */}
+
               <div className="space-y-4">
                 <label className="text-[#9A62FF] text-base font-medium">
                   Max buy per wallet
@@ -493,7 +490,7 @@ export const CreateToken = () => {
           )}
         </div>
 
-        {/* Social Links */}
+
         <div className="mt-6">
           <button
             className="flex items-center gap-2 text-[#9A62FF] hover:opacity-80"

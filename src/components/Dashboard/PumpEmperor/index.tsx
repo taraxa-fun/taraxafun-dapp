@@ -36,20 +36,20 @@ export const PumpEmperor = () => {
           <Skeleton className="h-[110px] w-[110px] flex-shrink-0" />
           <div className="flex flex-col space-y-1 justify-center min-w-0 w-full">
             <div className="flex items-center gap-2 flex-wrap">
-              <Skeleton className="h-4 w-16" /> {/* "created by" */}
+              <Skeleton className="h-4 w-16" /> 
               <div className="flex items-center gap-1">
-                <Skeleton className="h-5 w-5 rounded-full" /> {/* avatar */}
-                <Skeleton className="h-4 w-20" /> {/* username */}
+                <Skeleton className="h-5 w-5 rounded-full" /> 
+                <Skeleton className="h-4 w-20" /> 
               </div>
-              <Skeleton className="h-4 w-10" /> {/* timestamp */}
+              <Skeleton className="h-4 w-10" /> 
             </div>
             <div className="flex justify-between gap-2">
-              <Skeleton className="h-4 w-24" /> {/* first stat */}
-              <Skeleton className="h-4 w-24" /> {/* second stat */}
+              <Skeleton className="h-4 w-24" /> 
+              <Skeleton className="h-4 w-24" /> 
             </div>
             <div className="flex flex-col gap-1">
-              <Skeleton className="h-4 w-32" /> {/* title */}
-              <Skeleton className="h-12 w-full" /> {/* description */}
+              <Skeleton className="h-4 w-32" /> 
+              <Skeleton className="h-12 w-full" /> 
             </div>
           </div>
         </div>

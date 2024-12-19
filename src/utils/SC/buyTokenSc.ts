@@ -1,4 +1,4 @@
-import { deployerContract, poolContract, web3Config } from "@/config";
+import { poolContract, web3Config } from "@/config";
 import { parseEther } from "viem";
 import { waitForTransactionReceipt } from "@wagmi/core";
 
@@ -13,11 +13,7 @@ export const buyToken = async (
     const tx = await writeContractAsync({
       ...poolContract,
       functionName: "buyTokens",
-      args: [
-        funToken,
-        minTokens,
-        _affiliate,
-      ],
+      args: [funToken, minTokens, _affiliate],
       value: parseEther(amountETH),
     });
     const result = await waitForTransactionReceipt(web3Config, {
@@ -31,4 +27,3 @@ export const buyToken = async (
     return false;
   }
 };
-
