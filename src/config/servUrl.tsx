@@ -1,2 +1,2 @@
-export const servUrl = "https://taraxafun-serv-590541650183.us-central1.run.app"
-export const wsUrl = "wss://taraxafun-serv-590541650183.us-central1.run.app/ws"
+export const servUrl = process.env.NEXT_PUBLIC_SERV_URL!;
+export const wsUrl = process.env.NEXT_PUBLIC_WS_URL!;
