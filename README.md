@@ -1,8 +1,8 @@
 
 
-# Taraxa-fun DApp
+# Taraxa-fun dapp
 
-Taraxa.fun DApp is built on the [TARAXA](https://taraxa.io) network, enabling users to interact with blockchain functionalities through a modern, user-friendly interface. This repository contains the frontend, developed with cutting-edge technologies to ensure a seamless experience.
+Taraxa.fun dapp is built on the [TARAXA](https://taraxa.io) network, enabling users to interact with blockchain functionalities through a modern, user-friendly interface. This repository contains the frontend, developed with cutting-edge technologies to ensure a seamless experience.
 
 ## Features
 
