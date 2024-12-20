@@ -51,7 +51,6 @@ export const TokenDetails = () => {
         const currentMarketCap = Number(
           formatUnits(BigInt(tokenData.marketcap), 6)
         );
-        console.log(currentMarketCap, "currentmarket cap");
         const percentage = (currentMarketCap / threshold) * 100;
         const percentageFinal = Math.min(Math.max(percentage, 0), 100);
         setPercentageBondingCurve(percentageFinal.toFixed(2));
@@ -206,7 +205,7 @@ export const TokenDetails = () => {
           </>
         ) : (
           <p className="text-xs text-[#A9A8AD] font-medium ">
-            graduate this coin to raydium at $35,000 market cap. there is ?? SOL
+            graduate this coin to taraswap at $35,000 market cap. There is ?? TARA
             in the bonding curve.
           </p>
         )}
