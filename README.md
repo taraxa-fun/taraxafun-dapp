@@ -83,7 +83,7 @@ src/
 
 ### Web3 Integration
 - Wallet connection via `wagmi` and RainbowKit.
-- Interaction with smart contracts using `ethers.js` and ABIs.
+- Interaction with smart contracts using wagmi.
 
 ### Real-time Updates
 - WebSocket integration for real-time data streaming.
