@@ -1,18 +1,15 @@
-import { deployerContract, poolContract, web3Config } from "@/config";
-import { parseEther, parseGwei } from "viem";
+import { poolContract, web3Config } from "@/config";
 import {
-  multicall,
   readContract,
-  waitForTransactionReceipt,
 } from "@wagmi/core";
 import { useEffect, useState } from "react";
 
 interface PoolData {
   reserveTokens: bigint;
-  reserveETH: bigint;
+  reserveTARA: bigint;
   volume: bigint;
   listThreshold: bigint;
-  initialReserveEth: bigint;
+  initialReserveTARA: bigint;
   maxBuyPerWallet: bigint;
   tradeActive: boolean;
   royalemitted: boolean;
@@ -51,10 +48,10 @@ export const usePool = (
       deployer: "0x" as `0x${string}`,
       pool: {
         reserveTokens: BigInt(0),
-        reserveETH: BigInt(0),
+        reserveTARA: BigInt(0),
         volume: BigInt(0),
         listThreshold: BigInt(0),
-        initialReserveEth: BigInt(0),
+        initialReserveTARA: BigInt(0),
         maxBuyPerWallet: BigInt(0),
         tradeActive: false,
         royalemitted: false,
@@ -84,10 +81,10 @@ export const usePool = (
             deployer: result[6],
             pool: {
               reserveTokens: result[7].reserveTokens,
-              reserveETH: result[7].reserveETH,
+              reserveTARA: result[7].reserveTARA,
               volume: result[7].volume,
               listThreshold: result[7].listThreshold,
-              initialReserveEth: result[7].initialReserveEth,
+              initialReserveTARA: result[7].initialReserveTARA,
               maxBuyPerWallet: result[7].maxBuyPerWallet,
               tradeActive: result[7].tradeActive,
               royalemitted: result[7].royalemitted,

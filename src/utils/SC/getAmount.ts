@@ -18,14 +18,14 @@ export const getAmountTokens = async (
   return result;
 };
 
-export const getAmountOutETH = async (
+export const getAmountOutTARA = async (
   tokenAddress: string,
   amountIn: string
 ): Promise<bigint> => {
   const result = await readContract(web3Config, {
     address: poolContract.address,
     abi: poolContract.abi,
-    functionName: "getAmountOutETH",
+    functionName: "getAmountOutTARA",
     args: [tokenAddress, parseEther(amountIn)],
   });
   if (typeof result !== "bigint") {

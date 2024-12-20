@@ -30,7 +30,7 @@ export const CreateToken = () => {
     _symbol: "",
     _data: "",
     _totalSupply: "",
-    _liquidityETHAmount: "0",
+    _liquidityTARAAmount: "0",
     _antiSnipe: false,
     image: null,
     _amountAntiSnipe: "",
@@ -42,7 +42,7 @@ export const CreateToken = () => {
   const resetForm = () => {
     setTokenData(initialTokenData);
   };  
-  const { initialReserveETH, antiSniperPercentage } = useDeployer();
+  const { initialReserveTARA, antiSniperPercentage } = useDeployer();
   const router = useRouter();
   const { jwt } = useAuthStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -167,7 +167,7 @@ export const CreateToken = () => {
         tokenData._symbol,
         tokenData._data,
         finalTotalSupply.toString(),
-        tokenData._liquidityETHAmount,
+        tokenData._liquidityTARAAmount,
         tokenData._amountAntiSnipe || "0",
         showMaxBuy ? tokenData._maxBuyPerWallet || "0" : "0"
       );
@@ -210,13 +210,13 @@ export const CreateToken = () => {
   };
 
   useEffect(() => {
-    if (initialReserveETH && supplyValue) {
-      const reserveInEth = Number(formatEther(initialReserveETH));
+    if (initialReserveTARA && supplyValue) {
+      const reserveInEth = Number(formatEther(initialReserveTARA));
       const supplyInTokens = Number(formatEther(supplyValue));
       const price = reserveInEth / supplyInTokens;
       setPriceStartInEth(price);
     }
-  }, [initialReserveETH, supplyValue]);
+  }, [initialReserveTARA, supplyValue]);
   return (
     <section className="pt-32 pb-20 lg:w-6/12 w-12/12 md:w-8/12 mx-auto max-w-lg px-4">
       <div className="relative w-full mb-8">

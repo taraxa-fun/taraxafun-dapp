@@ -8,7 +8,7 @@ export const deployToken = async (
   ticker: string,
   description: string,
   totalSupply: string,
-  liquidityETHAmount: string,
+  liquidityTARAmount: string,
   amountAntiSnipe: string,
   maxBuyPerWallet: string
 ): Promise<{ hash: string; tokenAddress: string } | false> => {

@@ -4,7 +4,6 @@ import { erc20Abi } from "viem";
 
 export const approveSell = async (
   writeContractAsync: (params: any) => Promise<any>,
-  amountApprove: string,
   addressToken: string
 ) => {
   try {

@@ -7,14 +7,14 @@ export const buyToken = async (
   funToken: string,
   minTokens: string,
   _affiliate: string,
-  amountETH: string
+  amountTARA: string
 ) => {
   try {
     const tx = await writeContractAsync({
       ...poolContract,
       functionName: "buyTokens",
       args: [funToken, minTokens, _affiliate],
-      value: parseEther(amountETH),
+      value: parseEther(amountTARA),
     });
     const result = await waitForTransactionReceipt(web3Config, {
       hash: tx,

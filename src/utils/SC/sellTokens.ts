@@ -6,7 +6,6 @@ export const sellToken = async (
   writeContractAsync: (params: any) => Promise<any>,
   funToken: string,
   tokenAmount: string,
-  minETH: BigInt,
   _affiliate: string
 ) => {
   try {

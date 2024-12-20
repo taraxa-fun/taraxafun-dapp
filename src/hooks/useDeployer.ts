@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 export const useDeployer = () => {
   const [data, setData] = useState({
     antiSniperPercentage: BigInt(0),
-    initialReserveETH: BigInt(0),
+    initialReserveTARA: BigInt(0),
   });
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export const useDeployer = () => {
 
       setData({
         antiSniperPercentage: res[0].result as bigint,
-        initialReserveETH: res[1].result as any,
+        initialReserveTARA: res[1].result as any,
       });
       console.log(res[0].result);
     };

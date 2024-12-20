@@ -13,7 +13,7 @@ import { useBalanceAllowanceOfUser } from "@/hooks/useBalanceAllowanceOfUser";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { useSingleTokenStore } from "@/store/SingleToken/useSingleTokenStore";
 import { approveSell } from "@/utils/SC/useApprove";
-import { getAmountOutETH } from "@/utils/SC/getAmount";
+import { getAmountOutTARA } from "@/utils/SC/getAmount";
 import { sellToken } from "@/utils/SC/sellTokens";
 import { showErrorToast, showSuccessToastTx } from "@/utils/toast/showToasts";
 import Image from "next/image";
@@ -85,7 +85,6 @@ export const SellSection = () => {
       if (!allowanceOfUser || parsedAmount > allowanceOfUser) {
         const approveTx = await approveSell(
           writeContractAsync,
-          amount,
           tokenAddress as `0x${string}`
         );
 
@@ -95,7 +94,7 @@ export const SellSection = () => {
           return;
         }
       }
-      const amountOut = await getAmountOutETH(
+      const amountOut = await getAmountOutTARA(
         tokenAddress as `0x${string}`,
         amount
       );
@@ -109,7 +108,6 @@ export const SellSection = () => {
         writeContractAsync,
         tokenAddress as `0x${string}`,
         amount,
-        minTokens,
         address
       );
 

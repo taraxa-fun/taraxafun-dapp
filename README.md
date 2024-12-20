@@ -1,36 +1,113 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
 
-First, run the development server:
+# Taraxa-fun DApp
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Taraxa.fun DApp is built on the [TARAXA](https://taraxa.io) network, enabling users to interact with blockchain functionalities through a modern, user-friendly interface. This repository contains the frontend, developed with cutting-edge technologies to ensure a seamless experience.
+
+## Features
+
+- **Responsive Frontend**: Built with Next.js and TypeScript for optimal performance.
+- **Web3 Integration**: Utilizes `wagmi` for managing blockchain connections.
+- **Real-time Communication**: WebSockets for live updates.
+- **Customizable**: Flexible and easily extendable components.
+
+## Technology Stack
+
+- **Frontend Framework**: Next.js with TypeScript
+- **Web3 Integration**: wagmi & Raimbowkit
+- **Styling**: Tailwind CSS (or any preferred CSS framework) and ShadCn
+- **Real-time Communication**: WebSocket (ws)
+
+## Prerequisites
+
+- Next.js (v14 or higher)
+- Yarn or npm
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone git@github.com:taraxa-fun/taraxafun-dapp.git
+   cd taraxafun-dapp
+   ```
+
+2. Install dependencies:
+   ```bash
+   yarn install
+   ```
+
+3. Create a `.env.local` file and fill in the following variables:
+   ```env
+   NEXT_PUBLIC_APP_NAME_FOR_RAIMBOWKIT=
+   NEXT_PUBLIC_PROJECT_ID_FOR_RAIMBOWKIT=
+   NEXT_PUBLIC_TARA_TO_API_URL=
+   NEXT_PUBLIC_POOL_CONTRACT_ADDRESS=
+   NEXT_PUBLIC_DEPLOYER_CONTRACT_ADDRESS=
+   ```
+
+4. Start the development server:
+   ```bash
+   yarn dev    # development mode
+   ```
+
+   Build the project for production:
+   ```bash
+   yarn build
+   ```
+
+   Start the production server:
+   ```bash
+   yarn start
+   ```
+
+## Project Structure
+
+```
+src/
+├── components/      # All reusable components organized by pages
+│
+├── config/          # Contains ABIs, contract addresses, server and RainbowKit configuration
+│
+├── pages/           # Next.js pages
+│
+├── public/          # Static assets
+│
+├── store/           # Zustand stores for global state management
+│
+├── utils/           # Utility functions reused throughout the app
+│
+└── styles/          # Global and component-specific styles
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Main Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Web3 Integration
+- Wallet connection via `wagmi` and RainbowKit.
+- Interaction with smart contracts using `ethers.js` and ABIs.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Real-time Updates
+- WebSocket integration for real-time data streaming.
 
-## Learn More
+### Component-based Design
+- Modular and reusable components for scalability and maintainability.
 
-To learn more about Next.js, take a look at the following resources:
+## Contributing
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Fork the repository.
+2. Create your feature branch (`git checkout -b feature/amazing-feature`).
+3. Commit your changes (`git commit -m 'Add amazing feature'`).
+4. Push to the branch (`git push origin feature/amazing-feature`).
+5. Open a Pull Request.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## License
 
-## Deploy on Vercel
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Acknowledgments
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Special thanks to [Taraxa](https://taraxa.io) Foundation for support.
+- [wagmi](https://wagmi.sh) for simplifying Web3 integration.
+
+## Contact
+
+Telegram: [https://t.me/NNJRS7](https://t.me/NNJRS7)
