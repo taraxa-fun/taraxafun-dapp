@@ -97,21 +97,19 @@ body {
 }
 
 
-/*
+
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10% { transform: translateX(-2px) rotate(-1deg); }
-  20% { transform: translateX(2px) rotate(1deg); }
-  30% { transform: translateX(-2px) rotate(-1deg); }
-  40% { transform: translateX(2px) rotate(1deg); }
-  50% { transform: translateX(-2px) rotate(-1deg); }
-  60% { transform: translateX(2px) rotate(1deg); }
-  70% { transform: translateX(-2px) rotate(-1deg); }
-  80% { transform: translateX(2px) rotate(1deg); }
-  90% { transform: translateX(-2px) rotate(-1deg); }
- }
- 
- .shake-animation {
-  animation: shake 0.3s linear infinite;
- }
-  */
+  0% { 
+    transform: translateX(-100px); 
+  }
+  50% { 
+    transform: translateX(100px); 
+  }
+  100% { 
+    transform: translateX(-100px); 
+  }
+}
+
+.shake-animation {
+  animation: shake 0.2s ease-in-out infinite;
+}

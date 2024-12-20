@@ -1,33 +1,22 @@
-// components/Profile/CoinsCreated.tsx
-import { useEffect } from "react";
 import Image from "next/image";
-import placeHodlerRounded from "../../assets/placeholderRounded.png";
-import { TokenType } from "@/type/tokenType";
-import { useCoinsCreatedStore } from "@/store/useCoinsCreatedStore";
-import { Pagination } from "../Shared/pagination";
 import { Skeleton } from "../ui/skeleton";
 import { getTimeAgo } from "@/utils/calculeTime";
 import Link from "next/link";
+import { UserToken } from "@/type/user";
+import { formatNumber } from "@/utils/formatNumber";
+import { formatEther } from "viem";
 
 interface CoinsCreatedProps {
-  coins: TokenType[];
+  coins: UserToken[];
+  username: string; 
+  isLoading: boolean;
 }
 
-export const CoinsCreated = ({ coins }: CoinsCreatedProps) => {
-  const {
-    setCoins,
-    getCurrentPageCoins,
-    currentPage,
-    getTotalPages,
-    goToNextPage,
-    goToPreviousPage,
-    isLoading,
-  } = useCoinsCreatedStore();
-
-  useEffect(() => {
-    setCoins(coins);
-  }, [coins, setCoins]);
-
+export const CoinsCreated = ({
+  coins,
+  isLoading,
+  username,
+}: CoinsCreatedProps) => {
   if (isLoading) {
     return (
       <div className="mt-8 grid grid-cols-1 gap-4">
@@ -55,64 +44,54 @@ export const CoinsCreated = ({ coins }: CoinsCreatedProps) => {
   if (coins.length === 0) {
     return <div className="mt-8 text-center text-white">No coins created</div>;
   }
-
-  const currentCoins = getCurrentPageCoins();
-
   return (
-    <>
-      <div className="mt-8 grid grid-cols-1 gap-4 ">
-        {currentCoins.map((token: TokenType, index: number) => (
-          <Link href={`/coin/${token.id}`} key={`${token.symbol}-${index}`}>
-          <div
-            key={`${token.symbol}-${index}`}
-            className="flex md:gap-3 gap-1 mx-auto lg:px-4 px-1 w-full"
-          >
-            <div className="flex-shrink-0">
-              <Image
-                src={token.imagePath}
-                alt={`Token ${token.name}`}
-                width={200}
-                height={200}
-              />
-            </div>
+<div className="pt-10 grid grid-cols-1 gap-4 ">
+  {coins.map((token, index) => (
+    <Link href={`/coin/${token.address}`} key={`${token.symbol}-${index}`}>
+      <div className="flex md:gap-3 gap-1">
+        <div className="flex-shrink-0">
+          {token.image && (
+            <Image
+              src={token.image}
+              alt={`Token ${token.name}`}
+              width={200}
+              height={200}
+            />
+          )}
+        </div>
 
-            <div className="flex flex-col space-y-1 justify-center">
-              <div className="flex items-center lg:gap-4 gap-1">
-                <p className="text-xs font-normal">created by</p>
-                <div className="flex items-center gap-1">
-                  <Image
-                    src={placeHodlerRounded}
-                    alt="creator avatar"
-                    width={20}
-                    height={20}
-                  />
-                  <p className="text-xs font-normal">{token.creator}</p>
-                </div>
-                <p className="text-xs">{getTimeAgo(token.timestamp)}</p>
-              </div>
-
-              <div className="flex justify-between">
-                <p className="text-xs font-normal text-[#79FF62]">
-                  market cap: {token.marketCap}
-                </p>
-                <p className="text-xs font-normal">replies: {token.replyCount}</p>
-              </div>
-
-              <p className="text-gray-300 font-normal text-xs">
-                {token.symbol}: {token.description}
-              </p>
-            </div>
+        <div className="flex flex-col w-full space-y-1 justify-start overflow-hidden">
+          <div className="flex items-center lg:gap-4 gap-1">
+            <p className="text-xs font-normal">Created by</p>
+            <p className="text-xs font-normal">
+              {username || "Unknown"}
+            </p>
+            <p className="text-xs">{getTimeAgo(token.created_at)}</p>
           </div>
-          </Link>
-        ))}
-      </div>
 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={getTotalPages()}
-        onNextPage={goToNextPage}
-        onPreviousPage={goToPreviousPage}
-      />
-    </>
+          <div className="flex justify-between">
+            <p className="text-xs font-normal text-[#79FF62]">
+              Supply:{" "}
+              {token.supply
+                ? formatNumber(
+                    parseFloat(formatEther(BigInt(token.supply)))
+                  )
+                : "0"}
+            </p>
+          </div>
+
+          <p className="text-white font-normal text-sm text-start">
+            <strong>
+              {token.name.toLocaleUpperCase()} ({token.symbol})
+            </strong>
+          </p>
+          <p className="text-xs text-gray-300 break-words  text-start overflow-hidden">
+            "{token.description}"
+          </p>
+        </div>
+      </div>
+    </Link>
+  ))}
+</div>
   );
 };

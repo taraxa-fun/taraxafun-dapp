@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
 import TaraxaLogoChain from "../../assets/logo/TARALogoChain.png";
 import {
   Dialog,
@@ -13,8 +12,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { TokenData } from "@/type/tokenDataCreate";
-import { deployToken, useSupply } from "@/hooks/useDeploy";
 import { useAccount, useWriteContract } from "wagmi";
+import { useAuthStore } from "@/store/User/useAuthStore";
+import { saveTokenToDatabase } from "@/utils/saveTokenToDb";
+import { useRouter } from "next/router";
+import { deployToken } from "@/utils/SC/deployToken";
+import { uploadImageToken } from "@/utils/uploadImgeToken";
+import { showErrorToast, showSuccessToastTx } from "@/utils/toast/showToasts";
+import { useDeployer } from "@/hooks/useDeployer";
+import { formatEther, parseEther } from "viem";
+import { formatNumber } from "@/utils/formatNumber";
 
 export const CreateToken = () => {
   const { toast } = useToast();
@@ -23,7 +30,7 @@ export const CreateToken = () => {
     _symbol: "",
     _data: "",
     _totalSupply: "",
-    _liquidityETHAmount: "",
+    _liquidityTARAAmount: "0",
     _antiSnipe: false,
     image: null,
     _amountAntiSnipe: "",
@@ -31,25 +38,27 @@ export const CreateToken = () => {
     bondingCurveType: "linear",
     socialLinks: { twitter: "", telegram: "", website: "" },
   };
-
   const [tokenData, setTokenData] = useState<TokenData>(initialTokenData);
-
   const resetForm = () => {
     setTokenData(initialTokenData);
-  };
-
+  };  
+  const { initialReserveTARA, antiSniperPercentage } = useDeployer();
+  const router = useRouter();
+  const { jwt } = useAuthStore();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { writeContractAsync } = useWriteContract();
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showMaxBuy, setShowMaxBuy] = useState(false);
   const [showSocial, setShowSocial] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<string | null>(null);
+  const [priceStartInEth, setPriceStartInEth] = useState<number | null>(null);
   const { address } = useAccount();
-  const { suplyValue } = useSupply(address as any, false, false);
+  const supplyValue = parseEther("1000000000");
   type TokenKey = keyof typeof tokenData;
   type SocialKey = keyof typeof tokenData.socialLinks;
-
-  // check if all fields are correctly filled and check if the wallet is connected
+  const [percentageAntiSniperRequired, setPercentageAntiSniperRequired] =
+    useState("");
   const validateForm = () => {
     if (!address) {
       toast({
@@ -60,7 +69,6 @@ export const CreateToken = () => {
           </p>
         ),
         className: "w-full border border-red-500",
-        duration: 100,
       });
       return false;
     }
@@ -92,13 +100,11 @@ export const CreateToken = () => {
     return true;
   };
 
-  // saves the value in the object relative to the input
   const handleInputChange = (key: TokenKey, value: string) => {
     setTokenData((prev) => ({ ...prev, [key]: value }));
     setErrors(null);
   };
 
-  // saves the value in the object relative to the social input
   const handleSocialChange = (key: SocialKey, value: string) => {
     setTokenData((prev) => ({
       ...prev,
@@ -106,7 +112,6 @@ export const CreateToken = () => {
     }));
   };
 
-  // saves the image in the object
   const handleFileChange = (file: File | null) => {
     setTokenData((prev) => ({
       ...prev,
@@ -114,71 +119,107 @@ export const CreateToken = () => {
     }));
   };
 
-  // sends the data to the contract
   const handleSubmit = async () => {
+    if (!jwt || !address) return;
+    
+    if (tokenData.image) {
+      const MAX_FILE_SIZE = 500 * 1024;
+      const ALLOWED_FILE_TYPES = [".png", ".jpg", ".jpeg", ".gif"];
+  
+      if (tokenData.image.size > MAX_FILE_SIZE) {
+        showErrorToast("Image size must be less than 500KB");
+        return;
+      }
+  
+      const fileExtension = tokenData.image.name
+        .toLowerCase()
+        .substring(tokenData.image.name.lastIndexOf("."));
+      if (!ALLOWED_FILE_TYPES.includes(fileExtension)) {
+        showErrorToast("Image must be in PNG, JPG, JPEG or GIF format");
+        return;
+      }
+    }
+    const finalTotalSupply = !tokenData._totalSupply || parseFloat(tokenData._totalSupply) === 0
+    ? supplyValue.toString()
+    : parseEther(tokenData._totalSupply);
+  
+    if (tokenData._amountAntiSnipe && priceStartInEth) {
+      const totalSupplyNumber = Number(formatEther(BigInt(finalTotalSupply)));
+      const antiSnipeAmount = Number(tokenData._amountAntiSnipe);
+
+      const tokensReceived = antiSnipeAmount / priceStartInEth;
+    
+      const maxAllowedTokens = (totalSupplyNumber * Number(antiSniperPercentage)) / 10000;
+
+      if (tokensReceived > maxAllowedTokens) {
+        showErrorToast(
+          `Anti-snipe amount cannot exceed ${(Number(antiSniperPercentage) / 100).toFixed(2)}% of total supply (${maxAllowedTokens.toFixed(4)} tokens).`
+        );
+        return;
+      }
+    }
+    
     setLoading(true);
     try {
-      const isAntiSnipeEnabled =
-        parseFloat(tokenData._amountAntiSnipe || "0") > 0;
-      const finalTotalSupply =
-        !tokenData._totalSupply || parseFloat(tokenData._totalSupply) === 0
-          ? suplyValue.toString()
-          : tokenData._totalSupply;
-
       const transactionResult = await deployToken(
         writeContractAsync,
         tokenData._name,
         tokenData._symbol,
         tokenData._data,
-        finalTotalSupply,
-        tokenData._liquidityETHAmount,
-        isAntiSnipeEnabled,
+        finalTotalSupply.toString(),
+        tokenData._liquidityTARAAmount,
         tokenData._amountAntiSnipe || "0",
         showMaxBuy ? tokenData._maxBuyPerWallet || "0" : "0"
       );
-
+  
       if (transactionResult) {
-        toast({
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        const res = await saveTokenToDatabase(
+          jwt,
+          transactionResult.tokenAddress,
+          tokenData.socialLinks.twitter,
+          tokenData.socialLinks.telegram,
+          tokenData.socialLinks.website
+        );
+        
+        if (res && tokenData.image) {
+          await uploadImageToken(
+            tokenData.image,
+            jwt,
+            transactionResult.tokenAddress.toLowerCase()
+          );
+        } else {
+          console.error("Error saving token to database:", res);
+        }
+        
+        showSuccessToastTx({
           title: `Coin "${tokenData._name}" [${tokenData._symbol}] created successfully!`,
-          description: (
-            <div className="flex items-center justify-between gap-4 min-w-[300px]">
-              <p className="text-base font-normal">Transaction confirmed</p>
-              <a
-                href={`https://etherscan.io/tx/${transactionResult}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-[#9A62FF] text-white px-4 py-2 rounded text-sm hover:bg-[#8100FB] transition-colors whitespace-nowrap"
-              >
-                View Transaction
-              </a>
-            </div>
-          ),
-          className: "w-full border border-[#79FF62]",
+          description: "Transaction confirmed",
+          txHash: transactionResult.hash,
         });
+        router.push(`/coin/${transactionResult.tokenAddress}`);
         resetForm();
       } else {
-        toast({
-          title: "Error",
-          description: "Transaction failed.",
-          variant: "destructive",
-        });
+        showErrorToast("Transaction failed.");
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create the token. Please try again.",
-        variant: "destructive",
-      });
+      showErrorToast("Failed to create token. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    if (initialReserveTARA && supplyValue) {
+      const reserveInEth = Number(formatEther(initialReserveTARA));
+      const supplyInTokens = Number(formatEther(supplyValue));
+      const price = reserveInEth / supplyInTokens;
+      setPriceStartInEth(price);
+    }
+  }, [initialReserveTARA, supplyValue]);
   return (
     <section className="pt-32 pb-20 lg:w-6/12 w-12/12 md:w-8/12 mx-auto max-w-lg px-4">
       <div className="relative w-full mb-8">
-        {/*
-         */}
         <Link
           href="/"
           className="font-semibold text-md cursor-pointer absolute left-0 top-1/2 -translate-y-1/2"
@@ -192,7 +233,7 @@ export const CreateToken = () => {
       </div>
 
       <div className="space-y-6">
-        {/* Name */}
+
         <div className="flex flex-col gap-2">
           <label className="text-[#9A62FF] text-base font-medium">Name</label>
           <input
@@ -204,7 +245,6 @@ export const CreateToken = () => {
           />
         </div>
 
-        {/* Ticker */}
         <div className="flex flex-col gap-2">
           <label className="text-[#9A62FF] text-base font-medium">Ticker</label>
           <input
@@ -217,11 +257,11 @@ export const CreateToken = () => {
             }}
             className="bg-transparent border border-white rounded-lg p-4 text-white focus:outline-none focus:border-[#9A62FF]"
             placeholder="Enter token ticker (10 letters max)"
-            maxLength={4}
+            maxLength={10}
           />
         </div>
 
-        {/* Description */}
+
         <div className="flex flex-col gap-2">
           <label className="text-[#9A62FF] text-base font-medium">
             Description
@@ -234,7 +274,7 @@ export const CreateToken = () => {
           />
         </div>
 
-        {/* Image */}
+
         <div className="flex flex-col gap-2">
           <label className="text-[#9A62FF] text-base font-medium">
             Image or video
@@ -300,7 +340,7 @@ export const CreateToken = () => {
           </div>
         </div>
 
-        {/* Advanced Options */}
+
         <div className="mt-6">
           <button
             className="flex items-center gap-2 text-[#9A62FF] hover:opacity-80"
@@ -332,7 +372,6 @@ export const CreateToken = () => {
 
           {showAdvanced && (
             <div className="mt-4 p-6 bg-[#2D0060] rounded-lg space-y-6">
-              {/* Initial Supply */}
               <div className="flex flex-col gap-2">
                 <label className="text-[#9A62FF] text-base font-medium">
                   Initial supply
@@ -351,7 +390,7 @@ export const CreateToken = () => {
                 />
               </div>
 
-              {/* Bonding Curve */}
+
               <div className="space-y-4">
                 <label className="text-[#9A62FF] text-base font-medium">
                   Bonding curve type
@@ -395,7 +434,7 @@ export const CreateToken = () => {
                   </div>
                 </div>
               </div>
-              {/* max buy per wallet */}
+
               <div className="space-y-4">
                 <label className="text-[#9A62FF] text-base font-medium">
                   Max buy per wallet
@@ -451,7 +490,7 @@ export const CreateToken = () => {
           )}
         </div>
 
-        {/* Social Links */}
+
         <div className="mt-6">
           <button
             className="flex items-center gap-2 text-[#9A62FF] hover:opacity-80"
@@ -534,7 +573,7 @@ export const CreateToken = () => {
           )}
         </div>
         {errors && <p className="text-red-500 text-center text-lg">{errors}</p>}
-        <Dialog>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger
             className="px-3 py-4 w-full bg-[#5600AA] text-base font-normal rounded"
             onClick={(e) => {
@@ -564,6 +603,7 @@ export const CreateToken = () => {
                 <input
                   className="flex-1 bg-transparent p-4 outline-none focus:outline-none"
                   value={tokenData._amountAntiSnipe}
+                  disabled={loading}
                   onChange={(e) => {
                     const value = e.target.value;
                     if (/^\d*\.?\d*$/.test(value)) {
@@ -582,7 +622,13 @@ export const CreateToken = () => {
                 </div>
               </div>
               <p className="text-base font-normal text-[#A9A8AD]">
-                you receive 1000000 MIMI
+                you receive{" "}
+                {priceStartInEth && tokenData._amountAntiSnipe
+                  ? formatNumber(
+                      Number(tokenData._amountAntiSnipe) / priceStartInEth
+                    )
+                  : "0"}{" "}
+                {tokenData._symbol || "tokens"}
               </p>
             </div>
             <button

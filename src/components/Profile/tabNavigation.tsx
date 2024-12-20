@@ -9,7 +9,6 @@ interface TabNavigationProps {
     return (
 <div className="flex justify-center gap-8  mt-8">
   {[
-    { id: 'coins-held', label: 'Coins Held' },
     { id: 'coins-created', label: 'Coins Created' },
     { id: 'replies', label: 'Replies' },
   ].map((tab) => (

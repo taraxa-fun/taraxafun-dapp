@@ -1,19 +1,18 @@
-// components/TokenSearch.tsx
 import { useTokenStore } from '@/store/useAllTokenStore';
 
 export const TokenSearch = () => {
-  const { 
-    searchQuery, 
-    isLoading, 
+  const {
+    searchQuery,
+    isLoading,
     hasSearched,
-    setSearchQuery, 
-    searchTokens,
-    clearSearch 
+    setSearchQuery,
+    fetchTokens,
+    clearFilters,
   } = useTokenStore();
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      searchTokens(searchQuery);
+      fetchTokens({ search: searchQuery, page: 1 });
     }
   };
 
@@ -21,6 +20,10 @@ export const TokenSearch = () => {
     if (e.key === "Enter" && searchQuery.trim()) {
       handleSearch();
     }
+  };
+
+  const handleClear = () => {
+    clearFilters();
   };
 
   return (
@@ -38,7 +41,7 @@ export const TokenSearch = () => {
           />
           {hasSearched && (
             <button
-              onClick={clearSearch}
+              onClick={handleClear}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-white"
             >
               Clear

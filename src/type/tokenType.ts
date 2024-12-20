@@ -1,24 +1,52 @@
-import { Reply } from "./reply";
-import { Trade } from "./trade";
+interface Creator {
+  _id: string;
+  username: string;
+  avatar?: string;
+}
 
 export interface TokenType {
-  id: number;
-  name: string;
-  symbol: string;
-  description: string;
+  _id: string;
+  name?: string;
+  symbol?: string;
+  image?: string;
+  description?: string;
   twitter?: string;
   telegram?: string;
   website?: string;
-  supply: number;
-  bondingCurve: number;
-  minBuy: number;
-  maxBuy: number;
-  imagePath: string;
-  creator: string;
-  timestamp: number;
-  marketCap: string;
-  replyCount: number;
-  replies: Reply[];
-  trades: Trade[];
-  address: string;
+  supply?: string;
+  address: `0x${string}`;
+  created_at: string;
+  marketcap?: string;
+  replies_count?: number;
+  listed: boolean;
+  pair_address: string;
+  user: Creator;
+}
+
+export interface TokenCreatedProfile {
+  _id: string;
+  address: `0x${string}`;
+  __v: string;
+  created_at: string;
+  description: string;
+  name: string;
+  supply: string;
+  symbol: string;
+  user: string;
+}
+
+
+export interface TokenResponse {
+  success: boolean;
+  data: {
+    tokens: TokenType[];
+    pagination: {
+      total: number;
+      currentPage: number;
+      totalPages: number;
+      itemsPerPage: number;
+      hasNextPage: boolean;
+      hasPrevPage: boolean;
+    };
+  };
 }
