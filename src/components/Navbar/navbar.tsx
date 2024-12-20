@@ -142,31 +142,46 @@ export const Navbar = () => {
                         height={20}
                       />
                     )}
-                    {displayedTrade.type === "buy" ? (
-                      <span>
-                        {displayedTrade.user.username} bought{" "}
-                        {Number(
-                          formatEther(BigInt(displayedTrade.inAmount))
-                        ).toFixed(4)}{" "}
-                        TARA of ${displayedTrade.token.symbol}
-                      </span>
-                    ) : (
-                      <span>
-                        {displayedTrade.user.username} sold{" "}
-                        {Number(
-                          formatEther(BigInt(displayedTrade.outAmount))
-                        ).toFixed(4)}{" "}
-                        TARA of ${displayedTrade.token.symbol}
-                      </span>
-                    )}
-                    {displayedTrade.token.image && (
-                      <Image
-                        src={displayedTrade.token.image}
-                        alt="token image"
-                        width={20}
-                        height={20}
-                      />
-                    )}
+                    {displayedTrade &&
+                    displayedTrade.type &&
+                    displayedTrade.user &&
+                    displayedTrade.token ? (
+                      displayedTrade.type === "buy" ? (
+                        <span>
+                          {displayedTrade.user.username} bought{" "}
+                          {displayedTrade.inAmount && (
+                            <>
+                              {Number(
+                                formatEther(BigInt(displayedTrade.inAmount))
+                              ).toFixed(4)}{" "}
+                              TARA of ${displayedTrade.token.symbol}
+                            </>
+                          )}
+                        </span>
+                      ) : (
+                        <span>
+                          {displayedTrade.user.username} sold{" "}
+                          {displayedTrade.outAmount && (
+                            <>
+                              {Number(
+                                formatEther(BigInt(displayedTrade.outAmount))
+                              ).toFixed(4)}{" "}
+                              TARA of ${displayedTrade.token.symbol}
+                            </>
+                          )}
+                        </span>
+                      )
+                    ) : null}
+                    {displayedTrade &&
+                      displayedTrade.token &&
+                      displayedTrade.token.image && (
+                        <Image
+                          src={displayedTrade.token.image}
+                          alt="token image"
+                          width={20}
+                          height={20}
+                        />
+                      )}
                   </a>
                 )}
               </li>
