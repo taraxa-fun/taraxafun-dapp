@@ -53,12 +53,12 @@ export const CardTransaction = () => {
                 </span>
                 <div className="flex justify-between mt-2 w-full">
                   <a
-                    href={`https://etherscan.io/address/${tokenAddress}`}
+                    href={`https://basescan.org/address/${tokenAddress}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-[#9A62FF] cursor-pointer"
                   >
-                    view on etherscan
+                    view on basescan
                   </a>
                   <button
                     className="hover:text-[#9A62FF] cursor-pointer"

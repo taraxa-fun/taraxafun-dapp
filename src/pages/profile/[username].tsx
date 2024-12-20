@@ -118,10 +118,6 @@ const ProfilePage: NextPage = () => {
       </div>
       <div className="space-y-2 text-center">
         <h3 className="font-bold text-xl">@{profileData.user.username}</h3>
-        <p className="text-gray-300 font-normal text-sm max-w-md mx-auto">
-          {profileData.user.description || "No description"}
-        </p>
-
         {isOwnProfile && (
           <>
             <ModalProfile
@@ -147,12 +143,12 @@ const ProfilePage: NextPage = () => {
           </span>
           <div className="flex justify-between w-full">
             <a
-              href={`https://etherscan.io/address/${profileData.user.wallet}`}
+              href={`https://basescan.org/address/${profileData.user.wallet}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs font-normal hover:text-[#9A62FF] cursor-pointer"
             >
-              view on etherscan
+              view on basescan
             </a>
             <p
               className="text-xs font-normal hover:text-[#9A62FF] cursor-pointer"

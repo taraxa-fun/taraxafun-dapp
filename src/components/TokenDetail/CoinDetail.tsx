@@ -250,7 +250,7 @@ export const TokenDetails = () => {
                 <p className="text-md font-normal">
                   {index + 1}.{" "}
                   <a
-                    href={`https://etherscan.io/address/${holder.address.hash}`}
+                    href={`https://basescan.org/address/address/${holder.address.hash}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[#9A62FF] hover:underline"
