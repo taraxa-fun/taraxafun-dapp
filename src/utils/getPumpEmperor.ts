@@ -15,7 +15,6 @@ export const getPumpEmperor = async (): Promise<EmperorToken> => {
 
     return response.data;
   } catch (error) {
-    console.error("Error fetching pump emperor token:", error);
     throw error;
   }
 };
